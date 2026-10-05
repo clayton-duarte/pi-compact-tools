@@ -1,4 +1,5 @@
 import "./pinned-themes.ts";
+import { uiRenderers } from "./ui-renderers.ts";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -1002,8 +1003,8 @@ test("animates every built-in, restores reload renderers, and reuses unchanged l
 	} as unknown as ExtensionContext;
 
 	compactTools(pi);
-	assert.deepEqual(registered.map(({ name }) => name), [...SUPPORTED_TOOLS]);
-	assert.ok(registered.every(({ renderCall, renderResult }) => renderCall && renderResult));
+	assert.equal(registered.length, 0, "UI must not register model-facing tools");
+	registered.push(...uiRenderers());
 
 	const renderTheme = fakeTheme({
 		fg: (_color: string, text: string) => text,
@@ -1171,21 +1172,20 @@ test("animates every built-in, restores reload renderers, and reuses unchanged l
 	handlers.get("session_shutdown")?.({ reason: "reload" }, ctx);
 	compactTools(pi);
 	handlers.get("session_start")?.({ reason: "reload" }, ctx);
-	assert.deepEqual(registered.map(({ name }) => name), [...SUPPORTED_TOOLS]);
-	assert.ok(registered.every(({ renderCall, renderResult }) => renderCall && renderResult));
+	assert.deepEqual(registered, [], "reload must not register tools");
+	assert.deepEqual(uiRenderers().map(({ name }) => name), [...SUPPORTED_TOOLS]);
 
 	registered.length = 0;
 	writeFileSync(join(process.env[agentDirVariable]!, "compact-tools.json"), JSON.stringify({ tools: ["read"] }));
 	handlers.get("session_start")?.({ reason: "startup" }, ctx);
-	assert.deepEqual(
-		registered.map(({ name }) => name),
-		["write", "edit", "bash", "powershell", "grep", "find", "ls", "read"],
-	);
+	assert.deepEqual(registered, []);
+	assert.deepEqual(uiRenderers().map(({ name }) => name), ["read"]);
 
 	registered.length = 0;
 	writeFileSync(join(process.env[agentDirVariable]!, "compact-tools.json"), JSON.stringify({ tools: ["read", "edit"] }));
 	handlers.get("session_start")?.({ reason: "startup" }, ctx);
-	assert.deepEqual(registered.map(({ name }) => name), ["read", "edit"]);
+	assert.deepEqual(registered, []);
+	assert.deepEqual(uiRenderers().map(({ name }) => name), ["read", "edit"]);
 
 	handlers.get("session_shutdown")?.({ reason: "quit" }, ctx);
 	if (previousAgentDir === undefined) delete process.env[agentDirVariable];
@@ -1224,7 +1224,8 @@ test("registers renderers again after every session replacement", async () => {
 
 	let host = createHost();
 	compactTools(host.pi);
-	assert.deepEqual(host.registered, [...SUPPORTED_TOOLS], "startup must install the compact renderers");
+	assert.deepEqual(host.registered, [], "startup must not register tools");
+	assert.deepEqual(uiRenderers().map(({ name }) => name), [...SUPPORTED_TOOLS]);
 
 	// /resume, /new, and /fork all tear the session down and replace it. Each one
 	// must leave the replacement session rendering compactly without a manual /reload.
@@ -1232,11 +1233,8 @@ test("registers renderers again after every session replacement", async () => {
 		host.handlers.get("session_shutdown")?.({ reason }, ctx);
 		const replacement = createHost();
 		compactTools(replacement.pi);
-		assert.deepEqual(
-			replacement.registered,
-			[...SUPPORTED_TOOLS],
-			`renderers must be reinstalled after /${reason}`,
-		);
+		assert.deepEqual(replacement.registered, [], `/${reason} must not register tools`);
+		assert.deepEqual(uiRenderers().map(({ name }) => name), [...SUPPORTED_TOOLS]);
 
 		const afterFactory = replacement.registered.length;
 		replacement.handlers.get("session_start")?.({ reason }, ctx);
@@ -1772,7 +1770,7 @@ class FakeToolRow {
 
 test("routes tool rows through the resolver once per row", () => {
 	class Row extends FakeToolRow {}
-	const resolverKey = Symbol.for("pi-compact-tools.custom.resolver");
+	const resolverKey = Symbol.for("pi-compact-tools.custom.resolver.v2");
 	const holder = globalThis as Record<symbol, unknown>;
 	const previous = holder[resolverKey];
 	let calls = 0;
@@ -1797,7 +1795,7 @@ test("routes tool rows through the resolver once per row", () => {
 		// One decision per row, however often Pi asks.
 		assert.equal(calls, 3);
 		holder[resolverKey] = () => undefined;
-		assert.equal(custom.getRenderShell(), "self", "a built row never switches renderers");
+		assert.equal(custom.getRenderShell(), "default", "a new resolver invalidates provisional cached decisions");
 		assert.equal(patchToolRows(undefined), false);
 		assert.equal(patchToolRows({ getCallRenderer() {} }), false);
 	} finally {
@@ -1881,7 +1879,7 @@ test("renders custom tools compactly and expands into the author's renderer", as
 
 		const kept = () => undefined;
 		assert.equal(new Row("keep_me", { renderCall: kept }).getCallRenderer(), kept);
-		assert.equal(new Row("read", { renderCall: kept }).getCallRenderer(), kept);
+		assert.notEqual(new Row("read", { renderCall: kept }).getCallRenderer(), kept, "enabled built-ins are routed only at the UI layer");
 	} finally {
 		if (previousAgentDir === undefined) delete process.env[agentDirVariable];
 		else process.env[agentDirVariable] = previousAgentDir;

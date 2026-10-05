@@ -1,10 +1,13 @@
 import { ToolExecutionComponent, type ToolDefinition } from "@earendil-works/pi-coding-agent";
+import { hookMethod } from "./compact-tools-hook.ts";
+import { refreshRowShell } from "./compact-tools-rendering.ts";
 
 // Symbol.for keys are shared by every evaluation of this module. The prototype is
 // Pi's and outlives a /reload, so the patch is installed once and always asks the
 // most recently loaded extension instance, through the shared slot, what to render.
-const RESOLVER_KEY = Symbol.for("pi-compact-tools.custom.resolver");
-const PATCHED_KEY = Symbol.for("pi-compact-tools.custom.patched");
+const RESOLVER_KEY = Symbol.for("pi-compact-tools.custom.resolver.v2");
+const LEGACY_RESOLVER_KEY = Symbol.for("pi-compact-tools.custom.resolver");
+const PATCHED_KEY = Symbol.for("pi-compact-tools.custom.patched.v2");
 const ROUTED_METHODS = ["getCallRenderer", "getResultRenderer", "getRenderShell", "hasRendererDefinition"] as const;
 
 type AnyToolDefinition = ToolDefinition<any, any, any>;
@@ -26,14 +29,12 @@ type RoutedPrototype = Record<(typeof ROUTED_METHODS)[number], (...args: unknown
 type ResolverSlot = typeof globalThis & { [RESOLVER_KEY]?: RowResolver };
 
 export function setRowResolver(resolver: RowResolver | undefined): void {
+	// The v1 patch may survive an npm update plus /reload. Keep its slot empty.
+	(globalThis as unknown as Record<symbol, unknown>)[LEGACY_RESOLVER_KEY] = undefined;
 	(globalThis as ResolverSlot)[RESOLVER_KEY] = resolver;
 }
 
-/**
- * Stop answering for rows, if `resolver` is still the one answering. The patch on
- * Pi's rows outlives the extension, so a /reload that leaves it out must find no
- * resolver, and Pi's own renderers draw every row made afterwards.
- */
+/** Remove this instance's resolver when the UI extension is unloaded. */
 export function clearRowResolver(resolver: RowResolver): void {
 	if ((globalThis as ResolverSlot)[RESOLVER_KEY] === resolver) setRowResolver(undefined);
 }
@@ -48,28 +49,41 @@ export function patchToolRows(prototype: object | undefined): boolean {
 	const routed = prototype as RoutedPrototype;
 	if (!ROUTED_METHODS.every((method) => typeof routed[method] === "function")) return false;
 	if (Object.hasOwn(prototype, PATCHED_KEY)) return true;
-	// Decided once per row: Pi picks the row's container from these answers in its
-	// constructor, so a row must never switch renderers after it is built. /reload
-	// rebuilds the transcript, so config changes still reach every row.
-	const decisions = new WeakMap<object, RowRenderers | null>();
-	const resolve = (row: ToolRow): RowRenderers | undefined => {
-		let renderers = decisions.get(row);
-		if (renderers === undefined) {
-			try {
-				renderers = (globalThis as ResolverSlot)[RESOLVER_KEY]?.(row) ?? null;
-			} catch {
-				renderers = null;
-			}
-			decisions.set(row, renderers);
+	hookMethod(prototype, "updateDisplay", "custom.refreshShell", (self, args, original) => {
+		refreshRowShell(self);
+		return original.apply(self, args);
+	});
+	// Cache within a configuration generation. session_start can apply trusted
+	// project settings after rows were constructed; a new resolver invalidates
+	// those provisional decisions, and updateDisplay reconciles the shell.
+	const decisions = new WeakMap<object, { resolver: RowResolver | undefined; renderers: RowRenderers | null }>();
+	const owners = new WeakMap<object, { call?: unknown; result?: unknown }>();
+	const changed = (row: object, kind: "call" | "result", renderer: unknown) => {
+		let owner = owners.get(row);
+		if (!owner) owners.set(row, owner = {});
+		if (owner[kind] !== renderer) {
+			(row as Record<string, unknown>)[kind === "call" ? "callRendererComponent" : "resultRendererComponent"] = undefined;
+			owner[kind] = renderer;
 		}
-		return renderers ?? undefined;
+		return renderer;
+	};
+	const resolve = (row: ToolRow): RowRenderers | undefined => {
+		const resolver = (globalThis as ResolverSlot)[RESOLVER_KEY];
+		let decision = decisions.get(row);
+		if (!decision || decision.resolver !== resolver) {
+			let renderers: RowRenderers | null;
+			try { renderers = resolver?.(row) ?? null; } catch { renderers = null; }
+			decision = { resolver, renderers };
+			decisions.set(row, decision);
+		}
+		return decision.renderers ?? undefined;
 	};
 	const original = Object.fromEntries(ROUTED_METHODS.map((method) => [method, routed[method]])) as RoutedPrototype;
 	routed.getCallRenderer = function (this: ToolRow, ...args) {
-		return resolve(this)?.renderCall ?? original.getCallRenderer.apply(this, args);
+		return changed(this, "call", resolve(this)?.renderCall ?? original.getCallRenderer.apply(this, args));
 	};
 	routed.getResultRenderer = function (this: ToolRow, ...args) {
-		return resolve(this)?.renderResult ?? original.getResultRenderer.apply(this, args);
+		return changed(this, "result", resolve(this)?.renderResult ?? original.getResultRenderer.apply(this, args));
 	};
 	routed.getRenderShell = function (this: ToolRow, ...args) {
 		return resolve(this) ? "self" : original.getRenderShell.apply(this, args);

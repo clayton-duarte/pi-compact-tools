@@ -5,6 +5,7 @@
  * UPDATE_GOLDEN=1 only when a change to the output is intended.
  */
 import "./pinned-themes.ts";
+import { uiRenderers } from "./ui-renderers.ts";
 import assert from "node:assert/strict";
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -258,13 +259,14 @@ async function loadExtension(config: object) {
 		mode: "print",
 		isProjectTrusted: () => false,
 	} as unknown as ExtensionContext);
+	for (const definition of uiRenderers()) definitions.set(definition.name, definition);
 	return { definitions, handlers };
 }
 
 type RowRenderers = { renderCall: Definition["renderCall"]; renderResult: Definition["renderResult"] };
 
 function customRow(toolName: string, author?: object): Definition {
-	const resolve = (globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver")] as
+	const resolve = (globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver.v2")] as
 		(row: { toolName: string; toolDefinition?: object }) => RowRenderers | undefined;
 	const renderers = resolve({ toolName, toolDefinition: author });
 	assert.ok(renderers, `custom row for ${toolName}`);

@@ -134,9 +134,7 @@ test("calls another tool makes are neither timed nor remembered", async () => {
 	announce(harness, parent, "codemode");
 	harness.handlers.get("tool_execution_start")!({ toolCallId: parent, toolName: "codemode", args: {} });
 	harness.handlers.get("tool_execution_start")!({ toolCallId: nested, toolName: "ls", args: { path: "." }, parentToolCallId: parent });
-	const ls = harness.definitions.get("ls") as unknown as { execute: (...args: unknown[]) => Promise<unknown> };
-	// The harness has no real working directory; only the timing around the run matters.
-	await ls.execute(nested, { path: "." }, undefined, undefined, undefined).catch(() => undefined);
+	// Execution belongs to the host; this UI extension observes only its events.
 	harness.handlers.get("tool_execution_end")!({ toolCallId: nested, toolName: "ls", isError: false, parentToolCallId: parent });
 	harness.handlers.get("tool_execution_end")!({ toolCallId: parent, toolName: "codemode", isError: false });
 	assert.equal(timings.has(nested), false, "the nested call left no timing behind");

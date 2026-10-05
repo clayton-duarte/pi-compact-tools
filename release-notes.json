@@ -1,4 +1,13 @@
 {
+  "0.14.1": {
+    "Fix": [
+      "Fixed unintended input-token overhead: compact rendering no longer registers or activates tools that Pi would otherwise leave inactive",
+      "Preserves Pi’s tool execution settings and other extensions’ tool definitions and renderers",
+      "Fixed tool rows not updating correctly after reloads or trusted-project style changes",
+      "Uses Pi’s native renderer API on Pi 1.0.2 and later, including compact HTML exports",
+      "Supports Pi 0.85.1 and later; Pi 1.0.2 or later is recommended. On earlier Pi versions, HTML exports use Pi’s default renderers"
+    ]
+  },
   "0.14.0": {
     "New": [
       "Codex style added.",

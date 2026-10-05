@@ -3,12 +3,12 @@
  * switch between them lands, and the guarantees the claude style's grouping keeps.
  */
 import "./pinned-themes.ts";
+import { uiRenderers } from "./ui-renderers.ts";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import * as piModule from "@earendil-works/pi-coding-agent";
 import { initTheme, type ExtensionAPI, type ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Container, stripTerminalSequences, type Component } from "@earendil-works/pi-tui";
 import { DEFAULT_CONFIG } from "../extensions/compact-tools-config.ts";
@@ -33,12 +33,6 @@ const plainTheme = fakeTheme({
 });
 
 type Registered = { name: string; renderCall?: Function; renderResult?: Function };
-
-/** Pi's own definition of a built-in tool, as it would register it. */
-function piDefinition(name: string): Registered {
-	const factory = `create${name === "ls" ? "Ls" : name === "powershell" ? "PowerShell" : name[0]!.toUpperCase() + name.slice(1)}ToolDefinition`;
-	return (piModule as unknown as Record<string, (cwd: string) => Registered>)[factory]!("/project");
-}
 
 function writeConfig(config: object): void {
 	writeFileSync(join(process.env.PI_CODING_AGENT_DIR!, "compact-tools.json"), JSON.stringify({ tools: SUPPORTED_TOOLS, ...config }));
@@ -65,7 +59,7 @@ async function startExtension(fresh = false) {
 }
 
 const resolveCustomRow = (toolName: string) =>
-	((globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver")] as
+	((globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver.v2")] as
 		(row: { toolName: string }) => unknown)({ toolName });
 
 test("off leaves every built-in and custom tool with Pi's own renderer", async () => {
@@ -76,30 +70,15 @@ test("off leaves every built-in and custom tool with Pi's own renderer", async (
 	assert.equal(resolveCustomRow("web_search"), undefined, "custom rows keep their own renderer");
 });
 
-test("switching styles re-registers built-ins, and off hands them back to Pi", async () => {
+test("style changes affect UI routing without registering tools", async () => {
 	writeConfig({ style: "compact" });
 	const { registered, start } = await startExtension();
-	// Loading registers for the process's directory; the session's own directory registers anew.
-	registered.length = 0;
-	start();
-	assert.deepEqual(registered.map(({ name }) => name), [...SUPPORTED_TOOLS]);
-	const isPis = ({ name, renderCall }: Registered) => String(renderCall) === String(piDefinition(name).renderCall);
-	assert.ok(!registered.some(isPis), "compact renderers replace Pi's");
-	assert.ok(resolveCustomRow("web_search"), "custom rows are compact too");
-
-	registered.length = 0;
-	writeConfig({ style: "off" });
-	start();
-	assert.deepEqual(registered.map(({ name }) => name), [...SUPPORTED_TOOLS], "each tool is registered once more");
-	assert.ok(registered.every(isPis), "with Pi's definitions, not this extension's");
-
-	for (const style of ["claude", "codex"]) {
-		registered.length = 0;
+	for (const style of ["compact", "off", "claude", "codex"]) {
 		writeConfig({ style });
 		start();
-		assert.deepEqual(registered.map(({ name }) => name), [...SUPPORTED_TOOLS], style);
-		assert.ok(!registered.some(isPis), style);
-		assert.ok(resolveCustomRow("web_search"), `${style}: custom rows follow the style`);
+		assert.deepEqual(registered, []);
+		assert.equal(uiRenderers().length, style === "off" ? 0 : SUPPORTED_TOOLS.length);
+		assert.equal(Boolean(resolveCustomRow("web_search")), style !== "off");
 	}
 });
 
@@ -109,7 +88,7 @@ test("shutting down stops custom rows taking this extension's renderers, until i
 	start();
 	assert.ok(resolveCustomRow("web_search"), "loaded, custom rows are drawn here");
 	handlers.get("session_shutdown")!({ reason: "reload" });
-	const slot = (globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver")];
+	const slot = (globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver.v2")];
 	assert.equal(slot, undefined, "a reload that leaves the extension out finds no resolver");
 	// A reload that keeps it makes the extension again before Pi rebuilds the transcript.
 	const again = await startExtension();
@@ -117,10 +96,10 @@ test("shutting down stops custom rows taking this extension's renderers, until i
 	assert.ok(resolveCustomRow("web_search"), "loaded again, custom rows are drawn here again");
 	// Another instance's resolver is not this one's to clear.
 	const other = () => undefined;
-	(globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver")] = other;
+	(globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver.v2")] = other;
 	again.handlers.get("session_shutdown")!({ reason: "quit" });
-	assert.equal((globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver")], other);
-	(globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver")] = undefined;
+	assert.equal((globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver.v2")], other);
+	(globalThis as Record<symbol, unknown>)[Symbol.for("pi-compact-tools.custom.resolver.v2")] = undefined;
 	(await startExtension()).start();
 });
 
@@ -133,16 +112,20 @@ test("a reload registers the tools a trusted project adds before Pi rebuilds the
 	process.chdir(project);
 	try {
 		const first = await startExtension();
-		assert.deepEqual(first.registered.map(({ name }) => name), ["read"], "before any session, trust is unknown and only global tools register");
+		assert.deepEqual(first.registered, []);
+		assert.deepEqual(uiRenderers().map(({ name }) => name), ["read"]);
 		first.start({ cwd: project, mode: "print", isProjectTrusted: () => true });
-		assert.ok(first.registered.some(({ name }) => name === "find"), "the trusted project's tool registers at session start");
+		assert.deepEqual(first.registered, []);
+		assert.ok(uiRenderers().some(({ name }) => name === "find"));
 		first.handlers.get("session_shutdown")!({ reason: "reload" });
 		// Pi evaluates the extension anew and rebuilds the transcript, all before session_start.
 		const reloaded = await startExtension(true);
-		assert.deepEqual(reloaded.registered.map(({ name }) => name), ["read", "find"], "reloaded, it registers before the rows are made");
+		assert.deepEqual(reloaded.registered, []);
+		assert.deepEqual(uiRenderers().map(({ name }) => name), ["read", "find"]);
 		reloaded.start({ cwd: project, mode: "print", isProjectTrusted: () => false });
 		const again = await startExtension(true);
-		assert.deepEqual(again.registered.map(({ name }) => name), ["read"], "once the project is no longer trusted, a reload leaves its tools out");
+		assert.deepEqual(again.registered, []);
+		assert.deepEqual(uiRenderers().map(({ name }) => name), ["read"]);
 	} finally {
 		process.chdir(previous);
 		writeConfig({ style: "compact" });
@@ -164,20 +147,21 @@ test("the claude style reuses an unchanged result instead of laying it out again
 	writeConfig({ style: "claude" });
 	const { registered, start } = await startExtension();
 	start();
-	const bash = registered.find(({ name }) => name === "bash")!;
-	const content = [{ type: "text", text: Array.from({ length: 5_000 }, (_, index) => `line ${index}`).join("\n") }];
+	assert.deepEqual(registered, []);
+	const bash = uiRenderers().find(({ name }) => name === "bash")!;
+	const content = [{ type: "text" as const, text: Array.from({ length: 5_000 }, (_, index) => `line ${index}`).join("\n") }];
 	const ctx = {
 		args: { command: "seq 5000" }, argsComplete: true, cwd: "/project", executionStarted: true, expanded: false,
 		invalidate() {}, isError: false, isPartial: false, lastComponent: undefined, showImages: false, state: {}, toolCallId: "reuse",
 	};
 	bash.renderCall!(ctx.args, plainTheme, ctx);
-	const first = bash.renderResult!({ content }, { expanded: false, isPartial: false }, plainTheme, ctx) as Component;
+	const first = bash.renderResult!({ content, details: undefined }, { expanded: false, isPartial: false }, plainTheme, ctx) as Component;
 	const lines = first.render(80).map(stripTerminalSequences);
 	assert.deepEqual(lines.slice(0, 3), ["   ⎿  line 0", "      line 1", "      line 2"]);
 	assert.equal(lines[3], "      … +4997 lines (ctrl+o to expand)");
-	const again = bash.renderResult!({ content }, { expanded: false, isPartial: false }, plainTheme, { ...ctx, lastComponent: first });
+	const again = bash.renderResult!({ content, details: undefined }, { expanded: false, isPartial: false }, plainTheme, { ...ctx, lastComponent: first });
 	assert.equal(again, first);
-	const changed = bash.renderResult!({ content: [...content] }, { expanded: false, isPartial: false }, plainTheme, { ...ctx, lastComponent: first });
+	const changed = bash.renderResult!({ content: [...content], details: undefined }, { expanded: false, isPartial: false }, plainTheme, { ...ctx, lastComponent: first });
 	assert.notEqual(changed, first, "new content is drawn anew");
 });
 
@@ -185,20 +169,21 @@ test("the codex style reuses an unchanged result and previews only its last line
 	writeConfig({ style: "codex" });
 	const { registered, start } = await startExtension();
 	start();
-	const bash = registered.find(({ name }) => name === "bash")!;
-	const content = [{ type: "text", text: Array.from({ length: 5_000 }, (_, index) => `line ${index}`).join("\n") }];
+	assert.deepEqual(registered, []);
+	const bash = uiRenderers().find(({ name }) => name === "bash")!;
+	const content = [{ type: "text" as const, text: Array.from({ length: 5_000 }, (_, index) => `line ${index}`).join("\n") }];
 	const ctx = {
 		args: { command: "seq 5000" }, argsComplete: true, cwd: "/project", executionStarted: true, expanded: false,
 		invalidate() {}, isError: false, isPartial: false, lastComponent: undefined, showImages: false, state: {}, toolCallId: "codex-reuse",
 	};
 	bash.renderCall!(ctx.args, plainTheme, ctx);
-	const first = bash.renderResult!({ content }, { expanded: false, isPartial: false }, plainTheme, ctx) as Component;
+	const first = bash.renderResult!({ content, details: undefined }, { expanded: false, isPartial: false }, plainTheme, ctx) as Component;
 	assert.deepEqual(first.render(80).map(stripTerminalSequences), [
 		"   └ line 4997", "     line 4998", "     line 4999", "     + 4997 lines (ctrl+o to expand)",
 	]);
-	const again = bash.renderResult!({ content }, { expanded: false, isPartial: false }, plainTheme, { ...ctx, lastComponent: first });
+	const again = bash.renderResult!({ content, details: undefined }, { expanded: false, isPartial: false }, plainTheme, { ...ctx, lastComponent: first });
 	assert.equal(again, first);
-	const changed = bash.renderResult!({ content: [...content] }, { expanded: false, isPartial: false }, plainTheme, { ...ctx, lastComponent: first });
+	const changed = bash.renderResult!({ content: [...content], details: undefined }, { expanded: false, isPartial: false }, plainTheme, { ...ctx, lastComponent: first });
 	assert.notEqual(changed, first, "new content is drawn anew");
 });
 

@@ -57,11 +57,19 @@ const nextId = (label: string) => `${label}-${++sequence}`;
 /** A built-in definition whose call renderer counts how often Pi rebuilds the row. */
 function counted(harness: Harness, name: string): { definition: object; calls: () => number } {
 	const definition = harness.definitions.get(name)! as Record<string, any>;
+	// Restore test instrumentation before disposing this extension instance.
 	let calls = 0;
-	return {
-		definition: { ...definition, renderCall: (...args: unknown[]) => { calls++; return definition.renderCall(...args); } },
-		calls: () => calls,
+	const key = Symbol.for("pi-compact-tools.custom.resolver.v2");
+	const holder = globalThis as unknown as Record<symbol, Function>;
+	const resolve = holder[key]!;
+	holder[key] = (row: { toolName: string }) => {
+		const renderers = resolve(row);
+		if (!renderers || row.toolName !== name) return renderers;
+		return { ...renderers, renderCall: (...args: unknown[]) => { calls++; return renderers.renderCall(...args); } };
 	};
+	const shutdown = harness.handlers.get("session_shutdown");
+	harness.handlers.set("session_shutdown", (...args: any[]) => { holder[key] = resolve; shutdown?.(args[0], args[1]); });
+	return { definition, calls: () => calls };
 }
 
 function tick(frames = 1): void {

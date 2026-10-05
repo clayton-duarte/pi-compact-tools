@@ -1,4 +1,5 @@
 import "./pinned-themes.ts";
+import { uiRenderers } from "./ui-renderers.ts";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -143,6 +144,7 @@ for (const style of ["compact", "claude", "codex"] as const) test(`existing real
 			registerTool: (definition: ToolDefinition<any, any, any>) => definitions.set(definition.name, definition),
 			registerMarkdownTransformer() {}, registerCommand() {}, registerShortcut() {},
 		} as unknown as ExtensionAPI);
+		for (const definition of uiRenderers()) definitions.set(definition.name, definition as unknown as ToolDefinition<any, any, any>);
 		const cases = [
 			{ name: "read", args: { path: "a.ts" }, result: { content: [{ type: "text" as const, text: "const a = 1;" }], details: undefined } },
 			{ name: "write", args: { path: "a.ts", content: "const a = 1;" }, result: { content: [{ type: "text" as const, text: "Written" }], details: undefined } },

@@ -12,7 +12,7 @@ pi install npm:pi-compact-tools
 
 Restart Pi or run `/reload`, then run `/compact-tools` to choose a style. To try it for one session without installing: `pi -e npm:pi-compact-tools`.
 
-Requires Node.js 22.19+ and Pi 0.85.1+. It changes only how tool calls are drawn, not what they run or what the model sees.
+Requires Node.js 22.19+ and Pi 0.85.1+. **Pi 1.0.2 or later is recommended** for native renderer integration and compact HTML exports. It changes only how tool calls are drawn, not what they run or what the model sees.
 
 ## Styles
 
@@ -87,6 +87,20 @@ Optional, in `~/.pi/agent/compact-tools.json` or `<project>/.pi/compact-tools.js
 - `tools`: built-ins drawn in the style. Also `grep`, `find`, `ls`, `powershell`.
 - `auto_compact`: `true` starts a Compact row collapsed; `false` shows up to `previewLines` rows. Custom tool names work too.
 - `custom_tools`: rows for tools from other packages. `exclude` keeps a tool's own look.
+
+## UI-only behavior
+
+This package never registers or activates agent tools and does not add model-facing
+messages, tool schemas, or prompt text. Host execution settings (including shell
+prefixes and image resizing) remain untouched. Renderer-bearing overrides of names
+such as `read` or `bash` follow `custom_tools`, including its exclusions.
+
+On Pi 1.0.2 and newer, the public renderer API also applies compact rendering to HTML
+exports. Older hosts use a terminal-only compatibility patch; HTML exports keep
+Pi's native renderers. Durations use the host's tool-execution event boundaries.
+When custom compact rendering is enabled, it intentionally takes precedence over
+fallback renderers supplied by earlier `next() ?? mine` resolvers for unknown tools.
+Disable `custom_tools` or exclude the tool to preserve those fallback renderers.
 
 ## Controls
 

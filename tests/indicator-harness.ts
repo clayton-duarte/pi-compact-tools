@@ -3,6 +3,7 @@
  * with the animation clock under the test's control.
  */
 import "./pinned-themes.ts";
+import { uiRenderers } from "./ui-renderers.ts";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -126,6 +127,7 @@ export async function loadExtension(
 		// Pi tells extensions as it changes the level.
 		handlers.get("thinking_level_select")?.({ type: "thinking_level_select", level: next, previousLevel });
 	};
+	for (const definition of uiRenderers()) definitions.set(definition.name, definition);
 	return { definitions, handlers, requestRenders: () => renders, chat, setThinkingLevel, commands, tui };
 }
 

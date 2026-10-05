@@ -45,7 +45,7 @@ test("style saves preserve unrelated settings, permissions and leave no temporar
 		writeFileSync(path, JSON.stringify({ mode: "silent", previewLines: 4, custom_tools: { exclude: ["special"] }, future: true }), { mode: 0o640 });
 		saveStyle(path, "claude");
 		assert.deepEqual(JSON.parse(readFileSync(path, "utf8")), { mode: "silent", previewLines: 4, custom_tools: { exclude: ["special"] }, future: true, style: "claude" });
-		assert.equal(statSync(path).mode & 0o777, 0o640);
+		if (process.platform !== "win32") assert.equal(statSync(path).mode & 0o777, 0o640);
 		assert.deepEqual(readdirSync(join(path, "..")), ["compact-tools.json"]);
 	} finally { h.cleanup(); }
 });
@@ -269,7 +269,7 @@ test("symlink-managed config updates target without replacing link", async () =>
 		await h.run("claude");
 		assert.equal(lstatSync(path).isSymbolicLink(), true);
 		assert.deepEqual(JSON.parse(readFileSync(target, "utf8")), { previewLines: 5, style: "claude" });
-		assert.equal(statSync(target).mode & 0o777, 0o640);
+		if (process.platform !== "win32") assert.equal(statSync(target).mode & 0o777, 0o640);
 		assert.equal(h.state.reloads, 1);
 	} finally { h.cleanup(); }
 });
@@ -301,7 +301,7 @@ test("chooser does not offer project storage to untrusted projects", async () =>
 	} finally { h.cleanup(); }
 });
 
-test("a restrictive umask does not narrow the saved file's permissions", () => {
+test("a restrictive umask does not narrow the saved file's permissions", { skip: process.platform === "win32" ? "Windows does not implement POSIX umask/chmod permission bits" : false }, () => {
 	const h = harness();
 	const previous = process.umask(0o077);
 	try {

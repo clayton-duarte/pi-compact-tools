@@ -7,21 +7,12 @@ import type {
 	ToolDefinition,
 	ToolRenderResultOptions,
 } from "@earendil-works/pi-coding-agent";
-import {
-	createBashToolDefinition,
-	createEditToolDefinition,
-	createFindToolDefinition,
-	createGrepToolDefinition,
-	createLsToolDefinition,
-	createPowerShellToolDefinition,
-	createReadToolDefinition,
-	createWriteToolDefinition,
-	ToolExecutionComponent,
-} from "@earendil-works/pi-coding-agent";
+import { ToolExecutionComponent } from "@earendil-works/pi-coding-agent";
 import type { Component } from "@earendil-works/pi-tui";
 import { classifyCallStatus, formatDurationMs, normalizeLineEndings, type RowStatus } from "./compact-tools-core.ts";
 import { loadConfig } from "./compact-tools-config.ts";
 import { paletteOf } from "./compact-tools-color.ts";
+import { hasAuthorRenderers, refreshRowShell } from "./compact-tools-rendering.ts";
 import { registerCompactToolsCommand } from "./compact-tools-command.ts";
 import { clearRowResolver, installToolRowPatch, setRowResolver, type RowRenderers, type ToolRow } from "./compact-tools-custom.ts";
 import {
@@ -68,7 +59,6 @@ import { ThinkingCycleController } from "./compact-tools-thinking.ts";
 import { ViewportKeeper } from "./compact-tools-viewport.ts";
 import {
 	SUPPORTED_TOOL_SET,
-	type BuiltInDefinition,
 	type CompactToolName,
 	type RenderContext,
 	type RowState,
@@ -80,7 +70,6 @@ const PREVIEW_DIFF_CONTEXT_LINES = 1;
 
 const runtime = new ToolRuntime();
 const RENDER_WIDGET_KEY = "compact-tools-render";
-const registeredTools = new Set<CompactToolName>();
 let registeredConfiguration: string | undefined;
 /**
  * Whether the last session found its directory trusted. A /reload rebuilds the
@@ -292,7 +281,7 @@ function renderRowBody(
 	author: AuthorResultRenderer | undefined,
 	rail?: string,
 ): Component | undefined {
-	if (rowKind(name) !== "custom") return renderFileBody(name, args, result, output, expanded, theme, isError, rail);
+	if (!author && rowKind(name) !== "custom") return renderFileBody(name, args, result, output, expanded, theme, isError, rail);
 	if (author) {
 		try {
 			const component = author(expanded);
@@ -333,6 +322,7 @@ function claudeBody(
 	theme: Theme,
 	author: AuthorResultRenderer | undefined,
 ): Component | undefined {
+	if (author && expanded) return renderRowBody(name, args, result, output, true, theme, false, author, CLAUDE_INDENT);
 	const path = pathArgument(args);
 	if (name === "edit") {
 		return renderCodeDiff(getEditPatch(result), getEditDiff(result), path, theme,
@@ -416,13 +406,13 @@ function renderRowResult(
 	runtime.syncExpansion(state, ctx.expanded, name);
 	if (canReuseResult(state, result, options, theme, ctx)) return ctx.lastComponent;
 	const kind = rowKind(name);
-	const output = kind === "file" ? getFileOutput(name, ctx.args, result, ctx.isError) : getTextResult(result);
+	const output = kind === "file" && !author ? getFileOutput(name, ctx.args, result, ctx.isError) : getTextResult(result);
 	const hasEditDiff = name === "edit" && getEditDiff(result).length > 0;
 	runtime.setResultAvailable(state, name, hasEditDiff || output.length > 0 || author !== undefined);
 	let component: Component;
 	if (isCodex()) {
 		component = renderCodexResult({
-			name, kind, args: ctx.args, result, output, theme, state, isError: ctx.isError,
+			name, kind: author ? "custom" : kind, args: ctx.args, result, output, theme, state, isError: ctx.isError,
 			isPartial: options.isPartial, expanded: state.expanded === true, toolCallId: ctx.toolCallId, author,
 		});
 	} else if (isClaude()) {
@@ -454,20 +444,25 @@ function renderRowResult(
  * author's result renderer still draws the expanded body; the row chrome, status,
  * and collapse behavior match the built-ins.
  */
+let authorStates = new WeakMap<object, { state: RowState; component?: Component }>();
 function createCustomRenderers(name: string, author: ToolDefinition<any, any, any> | undefined): RowRenderers {
 	// Pi hands both renderers the row's own state object, which belongs to the tool's
 	// author. Compact bookkeeping is kept here so neither side overwrites the other.
-	const state: RowState = {};
-	let authorResult: Component | undefined;
-	const own = (ctx: RenderContext<any>): RenderContext => ({ ...ctx, args: ctx.args ?? {}, state });
+	const slot = (ctx: RenderContext<any>) => {
+		let value = authorStates.get(ctx.state);
+		if (!value) authorStates.set(ctx.state, value = { state: {} });
+		return value;
+	};
+	const own = (ctx: RenderContext<any>): RenderContext => ({ ...ctx, args: ctx.args ?? {}, state: slot(ctx).state });
 	return {
 		renderCall: (args, theme, ctx) => renderRowCall(name, (args ?? {}) as ToolArgs, theme, own(ctx)),
 		renderResult: (result, options, theme, ctx) => {
 			const authorRenderer = author?.renderResult;
 			const renderAuthorResult = authorRenderer
 				? (expanded: boolean) => {
-					authorResult = authorRenderer(result, { ...options, expanded }, theme, { ...ctx, lastComponent: authorResult });
-					return authorResult;
+					const value = slot(ctx);
+					value.component = authorRenderer(result, { ...options, expanded }, theme, { ...ctx, lastComponent: value.component });
+					return value.component;
 				}
 				: undefined;
 			return renderRowResult(name, result, options, theme, own(ctx), renderAuthorResult);
@@ -475,63 +470,90 @@ function createCustomRenderers(name: string, author: ToolDefinition<any, any, an
 	};
 }
 
+// Renderer resolvers may run repeatedly for the same call, notably HTML export.
+let builtinStates = new WeakMap<object, RowState>();
+const compactRendererDefinitions = new WeakSet<object>();
+function builtinContext(ctx: RenderContext): RenderContext {
+	let state = builtinStates.get(ctx.state);
+	if (!state) builtinStates.set(ctx.state, state = {});
+	return { ...ctx, state };
+}
+
+/** UI-only routing: never register, activate, or replace model-facing tools. */
 function resolveCustomRow(row: ToolRow): RowRenderers | undefined {
+	if (runtime.config.style === "off") return undefined;
 	const customTools = runtime.config.custom_tools;
-	// Built-ins are governed by `tools`: ones left out keep Pi's own renderer.
-	if (runtime.config.style === "off" || !customTools.enabled || SUPPORTED_TOOL_SET.has(row.toolName)) return undefined;
-	if (customTools.exclude.includes(row.toolName)) return undefined;
+	if (SUPPORTED_TOOL_SET.has(row.toolName) && (!row.toolDefinition || compactRendererDefinitions.has(row.toolDefinition) || (row.toolDefinition.renderResult && compactRendererDefinitions.has(row.toolDefinition.renderResult)) || !hasAuthorRenderers(row.toolName, row.toolDefinition))) {
+		if (!runtime.config.tools.includes(row.toolName as CompactToolName)) return undefined;
+		const renderers: RowRenderers = {
+			renderCall: (args, theme, ctx) => renderRowCall(row.toolName, (args ?? {}) as ToolArgs, theme, builtinContext(ctx as RenderContext)),
+			renderResult: (result, options, theme, ctx) => renderRowResult(row.toolName, result, options, theme, builtinContext(ctx as RenderContext)),
+		};
+		compactRendererDefinitions.add(renderers);
+		compactRendererDefinitions.add(renderers.renderResult);
+		return renderers;
+	}
+	if (!customTools.enabled || customTools.exclude.includes(row.toolName)) return undefined;
 	return createCustomRenderers(row.toolName, row.toolDefinition);
 }
 
-const toolFactories: Record<CompactToolName, (cwd: string) => BuiltInDefinition> = {
-	read: createReadToolDefinition,
-	write: createWriteToolDefinition,
-	edit: createEditToolDefinition,
-	bash: createBashToolDefinition,
-	powershell: createPowerShellToolDefinition,
-	grep: createGrepToolDefinition,
-	find: createFindToolDefinition,
-	ls: createLsToolDefinition,
+type RendererAPI = ExtensionAPI & {
+	registerToolRenderer?: (resolver: (name: string, next: () => ToolDefinition<any, any, any> | undefined) => ToolDefinition<any, any, any> | undefined) => void;
 };
-
-function registerCompactTool(pi: ExtensionAPI, definition: BuiltInDefinition): void {
-	pi.registerTool({
-		...definition,
-		execute: runtime.createTimedExecute(definition),
-		renderShell: "self",
-		renderCall: (args: ToolArgs, theme: Theme, ctx: RenderContext) => renderRowCall(definition.name, args, theme, ctx),
-		renderResult: (result: AgentToolResult<unknown>, options: ToolRenderResultOptions, theme: Theme, ctx: RenderContext) =>
-			renderRowResult(definition.name, result, options, theme, ctx),
-	} as ToolDefinition<any, any, RowState>);
+let publicRendering = false;
+let sessionReady = false;
+let publicOwners = new WeakMap<object, { call?: unknown; result?: unknown }>();
+function publicRowDefinition(name: string, base: ToolDefinition<any, any, any> | undefined): ToolDefinition<any, any, any> | undefined {
+	// Preserve next()'s result exactly once the session's configuration is known.
+	let config: unknown;
+	let decision: RowRenderers | undefined;
+	const decide = () => {
+		if (config !== runtime.config) {
+			config = runtime.config;
+			decision = resolveCustomRow({ toolName: name, toolDefinition: base });
+		}
+		return decision;
+	};
+	if (!decide() && (sessionReady || !base)) return base;
+	const context = (ctx: RenderContext, kind: "call" | "result", render: unknown): RenderContext => {
+		let owner = publicOwners.get(ctx.state);
+		if (!owner) publicOwners.set(ctx.state, owner = {});
+		const changed = owner[kind] !== render;
+		owner[kind] = render;
+		return changed ? { ...ctx, lastComponent: undefined } : ctx;
+	};
+	const call: RowRenderers["renderCall"] = (args, theme, ctx) => {
+		const render = decide()?.renderCall ?? base?.renderCall;
+		return render!(args, theme, context(ctx as RenderContext, "call", render));
+	};
+	const result: RowRenderers["renderResult"] = (value, options, theme, ctx) => {
+		const render = decide()?.renderResult ?? base?.renderResult;
+		return render!(value, options, theme, context(ctx as RenderContext, "result", render));
+	};
+	return {
+		get renderShell() { return decide() ? "self" : base?.renderShell ?? "default"; },
+		get renderCall() { return decide()?.renderCall || base?.renderCall ? call : undefined; },
+		get renderResult() { return decide()?.renderResult || base?.renderResult ? result : undefined; },
+	} as ToolDefinition<any, any, any>;
 }
-
-/** Off leaves every tool with Pi's own renderer. */
-function compactedTools(): CompactToolName[] {
-	return runtime.config.style === "off" ? [] : runtime.config.tools;
-}
-
-function registerTools(pi: ExtensionAPI, cwd: string): void {
-	const enabledTools = new Set(compactedTools());
-	for (const name of registeredTools) {
-		// Pi exposes no unregister API, so restoring a disabled tool means re-registering
-		// the built-in definition to release this extension's renderers.
-		if (!enabledTools.has(name)) pi.registerTool(toolFactories[name](cwd));
+let legacyResolver: ((row: ToolRow) => RowRenderers | undefined) | undefined;
+let refreshTranscriptRows: (() => void) | undefined;
+function invalidateRowDecisions(): void {
+	if (!publicRendering) {
+		legacyResolver = (row) => resolveCustomRow(row);
+		setRowResolver(legacyResolver);
 	}
-	registeredTools.clear();
-	for (const name of compactedTools()) {
-		registerCompactTool(pi, toolFactories[name](cwd));
-		registeredTools.add(name);
-	}
+	refreshTranscriptRows?.();
 }
 
-function configure(pi: ExtensionAPI, cwd?: string, projectTrusted = false): void {
+function configure(_pi: ExtensionAPI, cwd?: string, projectTrusted = false): void {
 	const resolvedCwd = cwd ?? process.cwd();
 	const config = loadConfig(resolvedCwd, projectTrusted);
 	const signature = JSON.stringify([resolvedCwd, config]);
 	if (signature === registeredConfiguration) return;
 	runtime.configure(config);
-	registerTools(pi, resolvedCwd);
 	registeredConfiguration = signature;
+	invalidateRowDecisions();
 }
 
 /**
@@ -547,12 +569,7 @@ function applyStyle(cwd: string, trusted: boolean): boolean {
 	if (JSON.stringify({ ...config, style: current.style }) !== JSON.stringify(current)) return false;
 	runtime.configure(config);
 	registeredConfiguration = JSON.stringify([cwd, config]);
-	const chat = boundTui ? findChat(boundTui) : undefined;
-	for (const child of chat?.children ?? []) {
-		// Pi asks a row's renderers again whenever it redraws the row; this is that redraw.
-		if (isKind(child, ToolExecutionComponent)) (child as { updateDisplay?(): void }).updateDisplay?.();
-	}
-	boundTui?.requestRender();
+	invalidateRowDecisions();
 	return true;
 }
 
@@ -576,32 +593,41 @@ function madeByTool(event: object): boolean {
 	return typeof (event as { parentToolCallId?: unknown }).parentToolCallId === "string";
 }
 
-/** Pi's TUI while one is bound: where a style switched in place finds the rows to draw again. */
-let boundTui: { requestRender(): void } | undefined;
-
 /** Hand the animation Pi's frame request, reached through an invisible widget as the extension API allows. */
 function bindRenderer(ctx: ExtensionContext): void {
 	ctx.ui.setWidget(RENDER_WIDGET_KEY, (tui) => {
-		boundTui = tui;
 		runtime.bindRenderer(() => tui.requestRender());
+		refreshTranscriptRows = () => {
+			const visit = (parent: { children?: unknown[] }) => {
+				for (const child of parent.children ?? []) {
+					if (!child || typeof child !== "object") continue;
+					if (isKind(child, ToolExecutionComponent)) {
+						const row = child as ToolRow & { updateDisplay?(): void };
+						refreshRowShell(row);
+						row.updateDisplay?.();
+					} else visit(child as { children?: unknown[] });
+				}
+			};
+			const chat = findChat(tui);
+			if (chat && chat.children.length > 0) { visit(chat); tui.requestRender(); }
+		};
 		return { render: () => [], invalidate() {} };
 	}, { placement: "belowEditor" });
+	refreshTranscriptRows?.();
 }
 
 function unbindRenderer(ctx: ExtensionContext | undefined): void {
-	boundTui = undefined;
+	refreshTranscriptRows = undefined;
 	runtime.bindRenderer(undefined);
 	ctx?.ui.setWidget(RENDER_WIDGET_KEY, undefined, { placement: "belowEditor" });
 }
 
 export default function compactTools(pi: ExtensionAPI): void {
-	// Pi caches this factory and re-invokes it with a fresh `pi` for every session
-	// replacement (/resume, /new, /fork) as well as /reload, each time starting from
-	// an empty tool registry. The module itself survives those invocations, so the
-	// memo below has to be dropped here or configure() mistakes the previous
-	// instance's registration for this one and never installs the renderers.
+	// The cached factory is invoked again after session replacement and reload.
+	// Reset configuration memoization, but never change the host's tool registry.
 	registeredConfiguration = undefined;
-	registeredTools.clear();
+	sessionReady = false;
+	publicOwners = new WeakMap();
 
 	registerCompactToolsCommand(pi, () => runtime.config, applyStyle);
 	const thinkingCycle = new ThinkingCycleController(pi);
@@ -609,12 +635,22 @@ export default function compactTools(pi: ExtensionAPI): void {
 	const viewport = new ViewportKeeper();
 	const silent = new SilentModeController(pi, showReleaseNotice);
 	const groups = new ToolGroupController(runtime);
-	const customRowsAvailable = installToolRowPatch();
-	setRowResolver(resolveCustomRow);
+	builtinStates = new WeakMap();
+	authorStates = new WeakMap();
+	const rendererAPI = pi as RendererAPI;
+	publicRendering = typeof rendererAPI.registerToolRenderer === "function";
+	const customRowsAvailable = publicRendering || installToolRowPatch();
+	if (publicRendering) {
+		setRowResolver(undefined);
+		rendererAPI.registerToolRenderer!((name, next) => {
+			const base = next();
+			return publicRowDefinition(name, base as ToolDefinition<any, any, any> | undefined);
+		});
+	} else invalidateRowDecisions();
 	let customRowsWarned = false;
 	let renderContext: ExtensionContext | undefined;
-	// Register once while the extension runtime is being built. In particular, this
-	// makes the overrides available before Pi restores the active tool set on /reload.
+	// Configure UI routing before Pi rebuilds transcript rows. Tool declarations
+	// and the active loadout must remain exactly as the host selected them.
 	const cwd = process.cwd();
 	const lastTrust = (globalThis as TrustSlot)[TRUST_KEY];
 	configure(pi, cwd, lastTrust?.cwd === realDirectory(cwd) && lastTrust.trusted);
@@ -625,11 +661,13 @@ export default function compactTools(pi: ExtensionAPI): void {
 		const trusted = ctx.isProjectTrusted();
 		(globalThis as TrustSlot)[TRUST_KEY] = { cwd: realDirectory(ctx.cwd), trusted };
 		configure(pi, ctx.cwd, trusted);
+		sessionReady = true;
 		unbindRenderer(renderContext);
 		renderContext = undefined;
+		// Even off must reconcile rows built before trusted config was available.
+		if (ctx.mode === "tui") bindRenderer(ctx);
 		if (ctx.mode === "tui" && runtime.config.style !== "off") {
 			renderContext = ctx;
-			bindRenderer(ctx);
 			// First, so its input listener sees relayout keys before the thinking controller consumes them.
 			viewport.bind(ctx);
 			progress.bind(ctx);
@@ -637,11 +675,12 @@ export default function compactTools(pi: ExtensionAPI): void {
 			silent.bind(ctx, runtime.config.mode, event.reason === "reload");
 			groups.bind(ctx);
 			if (!silent.isEnabled()) showReleaseNotice(ctx);
-			if (runtime.config.custom_tools.enabled && !customRowsAvailable && !customRowsWarned) {
+			if ((runtime.config.custom_tools.enabled || runtime.config.tools.length > 0) && !customRowsAvailable && !customRowsWarned) {
 				customRowsWarned = true;
-				ctx.ui.notify("Compact rendering for custom tools is unavailable in this version of Pi", "warning");
+				ctx.ui.notify("Compact tool rendering is unavailable in this version of Pi", "warning");
 			}
 		} else {
+			if (ctx.mode === "tui") unbindRenderer(ctx);
 			viewport.dispose();
 			progress.dispose();
 			thinkingCycle.dispose();
@@ -673,6 +712,7 @@ export default function compactTools(pi: ExtensionAPI): void {
 		renderContext = undefined;
 		runtime.reset(event.reason !== "reload");
 		// A reload that keeps the extension sets it again before Pi rebuilds the transcript.
-		clearRowResolver(resolveCustomRow);
+		if (legacyResolver) clearRowResolver(legacyResolver);
+		refreshTranscriptRows = undefined;
 	});
 }
