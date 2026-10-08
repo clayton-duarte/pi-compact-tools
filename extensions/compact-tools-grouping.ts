@@ -26,6 +26,7 @@ import {
 import { formatDurationMs, type RowStatus } from "./compact-tools-core.ts";
 import { hookMethod } from "./compact-tools-hook.ts";
 import { getTextResult } from "./compact-tools-invocation.ts";
+import { outputPadLines } from "./compact-tools-layout.ts";
 import { chromePainter, paintIndicator } from "./compact-tools-palette.ts";
 import type { ToolRuntime } from "./compact-tools-runtime.ts";
 import { findChat, isKind, isSilent } from "./compact-tools-silent.ts";
@@ -52,6 +53,8 @@ export interface ToolRowLike {
 	result?: AgentToolResult<unknown> & { isError?: boolean };
 	isPartial: boolean;
 	expanded: boolean;
+	/** Present on Pi 1.1+ tool components, absent on legacy hosts. */
+	outputPad?: number;
 	render(width: number): string[];
 	handleMouse?(event: unknown): unknown;
 	invalidate(): void;
@@ -333,7 +336,10 @@ export class ToolGroupController {
 			this.states.set(key, state);
 		}
 		const groupState = state;
-		const draw = (group: readonly ToolRowLike[], width: number, expanded: boolean) => this.drawCached(group, width, expanded, groupState);
+		const draw = (group: readonly ToolRowLike[], width: number, expanded: boolean) => {
+			const pad = group[0]?.outputPad;
+			return outputPadLines(this.drawCached(group, width + (pad === 0 ? 1 : 0), expanded, groupState), width, pad);
+		};
 		if (this.runtime.config.style !== "codex") return new ToolGroupComponent(rows, members, state, draw, () => tui.requestRender());
 		// Codex opens a group to the whole of each call, and closes it from one "− Show less" beneath them.
 		const toggle = (expanded: boolean) => {
@@ -342,7 +348,9 @@ export class ToolGroupController {
 		};
 		const footer = (width: number) => {
 			const theme = this.paint?.theme ?? this.context?.ui.theme;
-			return theme ? [truncateToWidth(theme.fg("dim", codexDisclosure(width, true)), Math.max(1, width), "…")] : [];
+			const pad = rows[0]?.outputPad;
+			const available = width + (pad === 0 ? 1 : 0);
+			return theme ? outputPadLines([truncateToWidth(theme.fg("dim", codexDisclosure(available, true)), Math.max(1, available), "…")], width, pad) : [];
 		};
 		const group = new ToolGroupComponent(rows, members, state, draw, toggle, footer);
 		// Read once the group has followed Ctrl+O, which it does as it is made. A call that joins an

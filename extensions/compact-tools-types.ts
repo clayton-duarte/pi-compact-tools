@@ -41,6 +41,8 @@ export interface RowState {
 	finished?: boolean;
 	startedAt?: number;
 	endedAt?: number;
+	/** Host-recorded final duration, when available (Pi 1.1+). */
+	durationMs?: number;
 	resultLineSummary?: string;
 	resultLineSummaryComputed?: boolean;
 	lastResultContent?: unknown;
@@ -51,6 +53,8 @@ export interface RowState {
 	lastResultError?: boolean;
 	lastResultConfigRevision?: object;
 	lastResultPalette?: object;
+	lastResultDurationMs?: number;
+	lastResultOutputPad?: number;
 	/** What a Codex row's head reads from its result: a command's exit code, an edit's counts. */
 	codex?: {
 		exitCode?: number;
@@ -61,7 +65,10 @@ export interface RowState {
 }
 
 type BaseRenderContext = Parameters<NonNullable<BuiltInDefinition["renderCall"]>>[2];
-export type RenderContext<TArgs = ToolArgs> = Omit<BaseRenderContext, "args" | "state"> & {
+export type RenderContext<TArgs = ToolArgs> = Omit<BaseRenderContext, "args" | "state" | "durationMs" | "outputPad"> & {
 	args: TArgs;
 	state: RowState;
+	/** Optional across hosts: older Pi versions do not provide these fields. */
+	durationMs?: number;
+	outputPad?: number;
 };

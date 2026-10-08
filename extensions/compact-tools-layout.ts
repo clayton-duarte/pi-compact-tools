@@ -15,6 +15,45 @@ import { highlightMarkdown } from "./compact-tools-markdown.ts";
 import { paintChrome } from "./compact-tools-palette.ts";
 import type { ToolArgs } from "./compact-tools-types.ts";
 
+/**
+ * Styles include one outer margin column in their prefixes. Pi 1.1+ can request
+ * no outer padding; reclaim that column without changing tree/code indentation.
+ * Missing fields and outputPad=1 keep the legacy output byte-for-byte.
+ */
+export function outputPadLines(lines: string[], width: number, outputPad?: number): string[] {
+	if (outputPad !== 0) return lines;
+	return lines.map((line) => stripTerminalSequences(line).startsWith(" ")
+		? sliceByColumn(line, 1, Math.max(0, width), true)
+		: truncateToWidth(line, Math.max(0, width), "…"));
+}
+
+class UnpaddedComponent implements Component {
+	private source?: string[];
+	private width?: number;
+	private lines: string[] = [];
+
+	constructor(private readonly inner: Component) {}
+
+	render(width: number): string[] {
+		const source = this.inner.render(width + 1);
+		if (source !== this.source || width !== this.width) {
+			this.source = source;
+			this.width = width;
+			this.lines = outputPadLines(source, width, 0);
+		}
+		return this.lines;
+	}
+
+	invalidate(): void {
+		this.inner.invalidate();
+		this.source = undefined;
+	}
+}
+
+export function withOutputPad(component: Component, outputPad?: number): Component {
+	return outputPad === 0 ? new UnpaddedComponent(component) : component;
+}
+
 export class CachedComponent implements Component {
 	private cachedWidth?: number;
 	private cachedLines?: string[];

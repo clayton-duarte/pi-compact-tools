@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pi-version: ["0.85.1", "0.99.1", "1.0.2"]
+        pi-version: ["0.85.1", "0.99.1", "1.0.0", "1.0.2", "1.1.0"]
         node-version: ["22.19.0", 24]
     runs-on: ubuntu-latest
     steps:

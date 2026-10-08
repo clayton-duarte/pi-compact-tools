@@ -20,7 +20,12 @@ const INDICATOR_INTERVAL_MS = 45;
 const UNDRAWN_ROW_MS = 1_500;
 const EXECUTION_TIMINGS_KEY = Symbol.for("pi.compact-tools.execution-timings");
 
-type ExecutionTiming = { startedAt: number; endedAt?: number };
+type ExecutionTiming = { startedAt: number; endedAt?: number; durationMs?: number };
+
+/** Treat missing or malformed host durations like an older host; zero is valid. */
+export function validDurationMs(value: unknown): value is number {
+	return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
 type Indicator = { invalidate: () => void; drawnAt: number };
 type TimedExecute = (...args: any[]) => Promise<AgentToolResult<unknown>>;
 type SharedState = typeof globalThis & {
@@ -186,6 +191,7 @@ export class ToolRuntime {
 		// Pi can rebuild the transcript mid-run, making new rows for old calls; a call
 		// keeps the run its first row was made in.
 		this.restoreTiming(state, ctx.toolCallId);
+		if (validDurationMs(ctx.durationMs)) state.durationMs = ctx.durationMs;
 		// A row is timed from when it runs, as Pi times its own: the model writing the
 		// arguments is not the tool's time. A restored row never ran in front of the
 		// reader, so it has no time to measure unless this process timed it before a
@@ -210,9 +216,10 @@ export class ToolRuntime {
 		this.trimTimings();
 	}
 
-	noteExecutionEnd(toolCallId: string): void {
+	noteExecutionEnd(toolCallId: string, durationMs?: number): void {
 		const timing = this.executionTimings.get(toolCallId) ?? { startedAt: Date.now() };
 		timing.endedAt ??= Date.now();
+		if (validDurationMs(durationMs)) timing.durationMs = durationMs;
 		this.executionTimings.set(toolCallId, timing);
 		this.trimTimings();
 	}
@@ -290,6 +297,7 @@ export class ToolRuntime {
 		if (!timing) return;
 		state.startedAt = timing.startedAt;
 		state.endedAt = timing.endedAt;
+		if (validDurationMs(timing.durationMs)) state.durationMs = timing.durationMs;
 	}
 
 	private persistTiming(state: RowState, toolCallId: string): void {
@@ -297,6 +305,7 @@ export class ToolRuntime {
 		const timing = this.executionTimings.get(toolCallId) ?? { startedAt: state.startedAt };
 		timing.startedAt = state.startedAt;
 		if (state.endedAt !== undefined) timing.endedAt = state.endedAt;
+		if (validDurationMs(state.durationMs)) timing.durationMs = state.durationMs;
 		this.executionTimings.set(toolCallId, timing);
 		this.trimTimings();
 	}

@@ -1,4 +1,17 @@
 {
+  "0.14.2": {
+    "New": [
+      "Supports Pi 1.1 recorded execution durations and output padding when those fields are available"
+    ],
+    "Fix": [
+      "Restored Compact and expanded Codex rows retain their recorded execution time, including zero-duration calls",
+      "Final host-recorded durations stay accurate when the system clock changes",
+      "Tool rows and folded groups honor outputPad without changing their internal style indentation",
+      "Embedded third-party renderers do not receive a duplicate outer margin",
+      "Preserves existing timing and margins on older Pi versions; the minimum supported version remains Pi 0.85.1"
+    ],
+    "Deprecated": []
+  },
   "0.14.1": {
     "Fix": [
       "Fixed unintended input-token overhead: compact rendering no longer registers or activates tools that Pi would otherwise leave inactive",

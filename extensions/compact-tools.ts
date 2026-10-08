@@ -38,6 +38,7 @@ import {
 	prefixedSentence,
 	prefixedText,
 	railComponent,
+	withOutputPad,
 	renderArguments,
 	renderCodeDiff,
 	renderCodeView,
@@ -135,6 +136,7 @@ function liveIndicator(theme: Theme, ctx: RenderContext, state: RowState, glyph?
 }
 
 function formatDuration(state: RowState): string | undefined {
+	if (state.durationMs !== undefined) return formatDurationMs(state.durationMs);
 	if (state.startedAt === undefined) return undefined;
 	return formatDurationMs((state.endedAt ?? Date.now()) - state.startedAt);
 }
@@ -154,7 +156,9 @@ function canReuseResult<TArgs>(
 		&& state.lastResultPreview === state.preview
 		&& state.lastResultError === ctx.isError
 		&& state.lastResultConfigRevision === state.configRevision
-		&& state.lastResultPalette === paletteOf(theme);
+		&& state.lastResultPalette === paletteOf(theme)
+		&& state.lastResultDurationMs === state.durationMs
+		&& state.lastResultOutputPad === ctx.outputPad;
 }
 
 function rememberResult(state: RowState, result: AgentToolResult<unknown>, options: ToolRenderResultOptions, isError: boolean, theme: Theme): void {
@@ -203,6 +207,10 @@ function hasNestedArguments(args: ToolArgs): boolean {
 
 /** The call line: a status dot, the tool, and what it was asked, then any arguments the line leaves out. */
 function renderRowCall(name: string, args: ToolArgs, theme: Theme, ctx: RenderContext): Component {
+	return withOutputPad(renderRowCallContent(name, args, theme, ctx), ctx.outputPad);
+}
+
+function renderRowCallContent(name: string, args: ToolArgs, theme: Theme, ctx: RenderContext): Component {
 	const state = runtime.syncRow(ctx);
 	runtime.syncExpansion(state, ctx.expanded, name);
 	const kind = rowKind(name);
@@ -436,7 +444,9 @@ function renderRowResult(
 		component = new WithinWidth(container);
 	}
 	rememberResult(state, result, options, ctx.isError, theme);
-	return component;
+	state.lastResultDurationMs = state.durationMs;
+	state.lastResultOutputPad = ctx.outputPad;
+	return withOutputPad(component, ctx.outputPad);
 }
 
 /**
@@ -461,7 +471,12 @@ function createCustomRenderers(name: string, author: ToolDefinition<any, any, an
 			const renderAuthorResult = authorRenderer
 				? (expanded: boolean) => {
 					const value = slot(ctx);
-					value.component = authorRenderer(result, { ...options, expanded }, theme, { ...ctx, lastComponent: value.component });
+					// Compact owns the outer margin and the result rail. An author
+					// renderer is embedded content, not another host-padded shell.
+					// Leave the field absent on legacy hosts.
+					value.component = authorRenderer(result, { ...options, expanded }, theme, {
+						...ctx, lastComponent: value.component, ...((ctx as { outputPad?: number }).outputPad === undefined ? {} : { outputPad: 0 }),
+					});
 					return value.component;
 				}
 				: undefined;
@@ -515,7 +530,7 @@ function publicRowDefinition(name: string, base: ToolDefinition<any, any, any> |
 		return decision;
 	};
 	if (!decide() && (sessionReady || !base)) return base;
-	const context = (ctx: RenderContext, kind: "call" | "result", render: unknown): RenderContext => {
+	const context = (ctx: Parameters<RowRenderers["renderCall"]>[2], kind: "call" | "result", render: unknown): typeof ctx => {
 		let owner = publicOwners.get(ctx.state);
 		if (!owner) publicOwners.set(ctx.state, owner = {});
 		const changed = owner[kind] !== render;
@@ -524,11 +539,11 @@ function publicRowDefinition(name: string, base: ToolDefinition<any, any, any> |
 	};
 	const call: RowRenderers["renderCall"] = (args, theme, ctx) => {
 		const render = decide()?.renderCall ?? base?.renderCall;
-		return render!(args, theme, context(ctx as RenderContext, "call", render));
+		return render!(args, theme, context(ctx, "call", render));
 	};
 	const result: RowRenderers["renderResult"] = (value, options, theme, ctx) => {
 		const render = decide()?.renderResult ?? base?.renderResult;
-		return render!(value, options, theme, context(ctx as RenderContext, "result", render));
+		return render!(value, options, theme, context(ctx, "result", render));
 	};
 	return {
 		get renderShell() { return decide() ? "self" : base?.renderShell ?? "default"; },
@@ -700,7 +715,7 @@ export default function compactTools(pi: ExtensionAPI): void {
 	});
 	pi.on("tool_execution_end", (event) => {
 		if (madeByTool(event)) return runtime.noteNestedCall(event.toolCallId, false);
-		runtime.noteExecutionEnd(event.toolCallId);
+		runtime.noteExecutionEnd(event.toolCallId, (event as { durationMs?: number }).durationMs);
 	});
 	pi.on("session_shutdown", (event) => {
 		thinkingCycle.dispose();

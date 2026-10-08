@@ -145,6 +145,7 @@ function prefixedRows(lines: readonly Segment[][], first: string, rest: string, 
 }
 
 function durationOf(state: RowState): string | undefined {
+	if (state.durationMs !== undefined) return formatCodexDuration(state.durationMs);
 	return state.startedAt !== undefined && state.endedAt !== undefined ? formatCodexDuration(state.endedAt - state.startedAt) : undefined;
 }
 

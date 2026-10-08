@@ -97,7 +97,10 @@ such as `read` or `bash` follow `custom_tools`, including its exclusions.
 
 On Pi 1.0.2 and newer, the public renderer API also applies compact rendering to HTML
 exports. Older hosts use a terminal-only compatibility patch; HTML exports keep
-Pi's native renderers. Durations use the host's tool-execution event boundaries.
+Pi's native renderers. On Pi 1.1 and newer, final durations use the host's recorded
+`durationMs`, including restored sessions, and tool rows follow `outputPad` (0 or 1)
+without changing their internal style indentation. Older hosts keep event-based
+timing and the original margins; the minimum supported Pi version is unchanged.
 When custom compact rendering is enabled, it intentionally takes precedence over
 fallback renderers supplied by earlier `next() ?? mine` resolvers for unknown tools.
 Disable `custom_tools` or exclude the tool to preserve those fallback renderers.
@@ -115,7 +118,7 @@ npm run check
 pi -e .
 ```
 
-Development dependencies are pinned to Pi 1.0.0; the peer minimum remains Pi 0.85.1. CI checks Pi 0.85.1, 0.99.1, and 1.0.0 on Node 22.19.0 and 24. Schema validation and deterministic test clocks are development-only dependencies, not runtime dependencies. Development scripts and tests are not included in the published package. `npm test` runs the rendering tests first and the resource/packaging checks separately so their subprocesses do not disturb animation tests.
+Development dependencies are pinned to Pi 1.1.0; the peer minimum remains Pi 0.85.1. CI checks Pi 0.85.1, 0.99.1, 1.0.0, 1.0.2, and 1.1.0 on Node 22.19.0 and 24. Schema validation and deterministic test clocks are development-only dependencies, not runtime dependencies. Development scripts and tests are not included in the published package. `npm test` runs the rendering tests first and the resource/packaging checks separately so their subprocesses do not disturb animation tests.
 
 For a local before/after performance comparison, run `npx tsx tests/benchmark.ts <clean-baseline-directory>` with the same host dependencies in both directories. Measurements are informational, not timing-sensitive test assertions.
 

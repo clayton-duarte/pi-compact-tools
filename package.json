@@ -1,6 +1,6 @@
 {
   "name": "pi-compact-tools",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "description": "Tool rows for Pi in three styles: Claude, Codex, and Compact. Switch with /compact-tools; includes silent mode and a GitHub Dark theme.",
   "type": "module",
   "license": "MIT",
@@ -51,8 +51,8 @@
     "@earendil-works/pi-tui": ">=0.85.1"
   },
   "devDependencies": {
-    "@earendil-works/pi-coding-agent": "1.0.0",
-    "@earendil-works/pi-tui": "1.0.0",
+    "@earendil-works/pi-coding-agent": "1.1.0",
+    "@earendil-works/pi-tui": "1.1.0",
     "@sinonjs/fake-timers": "15.0.0",
     "@types/node": "^24.0.0",
     "@types/sinonjs__fake-timers": "15.0.1",
