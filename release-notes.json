@@ -1,4 +1,13 @@
 {
+  "0.15.0": {
+    "New": [
+      "Claude style now marks the changed words in an edit diff, like Claude Code 2.1.296: a removed line and the added line that replaces it get a brighter tint on the words that differ. Lines that are mostly rewritten are left alone",
+      "Codex style spells the expand key the way Codex 0.162 does: `⌃o` on macOS, `^o` on Linux, `ctrl+o` elsewhere"
+    ],
+    "Fix": [
+      "Line numbers in edit diffs and Write previews moved one column right and lost one trailing space, matching Claude Code 2.1.296. Code stays in the same column"
+    ]
+  },
   "0.14.2": {
     "New": [
       "Supports Pi 1.1 recorded execution durations and output padding when those fields are available"

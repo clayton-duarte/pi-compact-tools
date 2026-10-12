@@ -85,8 +85,8 @@ test("150,000-line file views do not exceed the argument limit and retain six-di
 	const component = renderCodeView(Array(150_000).fill("x").join("\n"), "large.ts", theme, { rail: "" })!;
 	const rows = component.render(80);
 	assert.equal(rows.length, 150_000);
-	assert.equal(rows[0], "     1  x");
-	assert.equal(rows.at(-1), "150000  x");
+	assert.equal(rows[0], "      1 x");
+	assert.equal(rows.at(-1), " 150000 x");
 	assert.equal(component.render(80), rows, "unchanged layout is cached");
 });
 

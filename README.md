@@ -30,7 +30,7 @@ Silent mode (`Ctrl+'` or `/silent`) works on top of any style. `/compact-tools o
 
 - Reads, searches, and listings fold into one line: `Searched for 2 patterns, read 3 files`.
 - `Bash`, `Update`, `Write`, and custom tools keep their own rows with `⎿` results and short previews.
-- Matched against Claude Code 2.1.288 in a live terminal.
+- Matched against Claude Code 2.1.296 in a live terminal.
 
 ### Codex
 
@@ -39,7 +39,7 @@ Silent mode (`Ctrl+'` or `/silent`) works on top of any style. `/compact-tools o
 - Reads, searches, and listings fold into `• Explored`: `Read a.ts, b.ts`, `Search TODO in src`.
 - Commands read `Ran` or `Failed (exit 2)` with their last three output lines; opened, `$ cmd`, all its output, and `✓ • 1.23s`.
 - Edits preview their changed lines; custom tools read `• Called name`.
-- Matched against Codex CLI 0.160.0 in a live terminal.
+- Matched against Codex CLI 0.162.1 in a live terminal.
 
 ### Compact
 

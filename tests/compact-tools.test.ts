@@ -695,11 +695,30 @@ test("renders an edit as a diff with a line-number gutter and tinted change rows
 	const rendered = renderCodeDiff(patch, "", "file.ts", diffTheme)?.render(60)
 		.map((line) => stripTerminalSequences(line).trimEnd());
 	assert.deepEqual(rendered, [
-		"<dim> │ </dim><toolDiffContext> 8   </toolDiffContext>const before = 1;",
-		"<dim> │ </dim><toolDiffRemoved> 9 - </toolDiffRemoved>const value = old();",
-		"<dim> │ </dim><toolDiffAdded> 9 + </toolDiffAdded>const value = next();",
-		"<dim> │ </dim><toolDiffContext>10   </toolDiffContext>return value;",
+		"<dim> │ </dim><toolDiffContext>  8  </toolDiffContext>const before = 1;",
+		"<dim> │ </dim><toolDiffRemoved>  9 -</toolDiffRemoved>const value = old();",
+		"<dim> │ </dim><toolDiffAdded>  9 +</toolDiffAdded>const value = next();",
+		"<dim> │ </dim><toolDiffContext> 10  </toolDiffContext>return value;",
 	]);
+});
+
+test("marks the changed words of a paired edit row and leaves a rewritten row alone", () => {
+	const patch = [
+		"--- file.ts",
+		"+++ file.ts",
+		"@@ -1,2 +1,2 @@",
+		"-const a = 1;",
+		"-return `Yo, ${name}!`;",
+		"+const a = 10;",
+		"+return 42;",
+	].join("\n");
+	const rows = renderCodeDiff(patch, "", "file.ts", diffTheme)!.render(60);
+	const fills = (row: string) => new Set(row.match(/\x1b\[48;[0-9;]+m/gu));
+	assert.equal(fills(rows[0]!).size, 2, "the changed number is brighter than the row around it");
+	assert.equal(fills(rows[1]!).size, 1, "a rewritten row keeps one tint");
+	assert.equal(fills(rows[2]!).size, 2);
+	assert.equal(fills(rows[3]!).size, 1);
+	assert.equal(stripTerminalSequences(rows[0]!).trimEnd().endsWith("const a = 1;"), true);
 });
 
 test("renders file contents with offset line numbers and a dim continuation notice", () => {
@@ -708,15 +727,15 @@ test("renders file contents with offset line numbers and a dim continuation noti
 		footer: "[Showing lines 99-100 of 300. Use offset=101 to continue.]",
 	})?.render(80).map((line) => stripTerminalSequences(line).trimEnd());
 	assert.deepEqual(rendered, [
-		"<dim> │ </dim><toolDiffContext> 99  </toolDiffContext>const a = 1;",
-		"<dim> │ </dim><toolDiffContext>100  </toolDiffContext>   return a;",
+		"<dim> │ </dim><toolDiffContext>  99 </toolDiffContext>const a = 1;",
+		"<dim> │ </dim><toolDiffContext> 100 </toolDiffContext>   return a;",
 		"<dim> │ </dim><dim>[Showing lines 99-100 of 300. Use offset=101 to continue.]</dim>",
 	]);
 });
 
 test("plain-text files keep the output color instead of guessing a language", () => {
 	const rendered = renderCodeView("hello", "NOTES", diffTheme)?.render(120).map(stripTerminalSequences);
-	assert.deepEqual(rendered, ["<dim> │ </dim><toolDiffContext>1  </toolDiffContext><toolOutput>hello</toolOutput>"]);
+	assert.deepEqual(rendered, ["<dim> │ </dim><toolDiffContext> 1 </toolDiffContext><toolOutput>hello</toolOutput>"]);
 });
 
 test("highlights Markdown prose and fenced code while keeping every source character", () => {

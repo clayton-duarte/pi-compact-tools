@@ -125,6 +125,10 @@ Opened, the header lists the JSON arguments and the whole result follows:
     − Show less
 ```
 
+## Changes seen in 0.162.1
+
+Checked live and against the `rust-v0.162.1` source (`exec_cell`, `history_cell`, `diff_render.rs`, `key_hint.rs`): the only difference in what a row draws is how a key is named. On macOS the hint reads `(⌃t to expand)`, on Linux `(^t to expand)`, and elsewhere `(ctrl+t to expand)`. Pi's version of that key is `ctrl+o`, so it reads `⌃o`, `^o` or `ctrl+o` by the same rule.
+
 ## Deliberate Pi differences
 
 Pi draws every row one column in, so each prefix moves right with it. Codex's `ctrl+t` hint becomes Pi's `ctrl+o`, which is what expands a row in Pi, and a click on any row toggles it as Pi always has. Colors come from Pi's theme: the accent for verbs, `bashMode` for `$`, `dim` for output and chrome, and the running bullet uses Pi's pulse in place of Codex's shimmer. Codex counts `xargs` and `tee` as formatting and reads `find -delete` as a listing; a group hides its commands, so here any command that can write or run something (`xargs`, `tee`, `find -delete`/`-exec`, `fd -x`, `sort -o`, a writing `sed` or `awk`) is a command it ran. Codex reads a quoted `;` as a connector, so `rg ';' src` shows as `Search rg ';' src`; here it reads `Search ; in src`. Pi's dedicated tools have no Codex command, so a lone `read`, `grep`, `find` or `ls` row uses its exploration verb (`• Read src/app.ts`), a `write` reads `• Wrote path (+N -0)` because Pi does not report whether the file existed, an edit or write in progress reads `Editing`/`Writing`, and a failed one names its file: `✘ Failed to edit src/app.ts`. Pi's custom tools have no server, so they read `• Called web_search`.

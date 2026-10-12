@@ -3,10 +3,12 @@
  * file, prints a duration, offers hidden lines, and tells a command that only looks
  * around from one that runs something. Cases marked "codex" are Codex's own tests.
  */
+import "./pinned-themes.ts";
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
 	codexDisclosure,
+	codexExpandKey,
 	exploreActions,
 	exploreFailure,
 	exploreLines,
@@ -41,6 +43,12 @@ test("a file is named by its last meaningful path segment (codex)", () => {
 	assert.equal(shortDisplayPath("src"), "src", "a path of nothing else keeps itself");
 	assert.equal(shortDisplayPath("C:\\work\\notes.md"), "notes.md");
 	assert.equal(shortDisplayPath("."), ".");
+});
+
+test("the expand key is spelled the way Codex spells a modifier on each platform", () => {
+	assert.equal(codexExpandKey("darwin"), "⌃o");
+	assert.equal(codexExpandKey("linux"), "^o");
+	assert.equal(codexExpandKey("win32"), "ctrl+o");
 });
 
 test("the disclosure control starts a quarter in, at most four, and drops a hint it cannot fit", () => {

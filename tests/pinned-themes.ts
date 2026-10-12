@@ -8,6 +8,9 @@
  */
 import "./pinned-themes.ts";
 import { join } from "node:path";
+
+// Codex spells its keys by platform; the suite records the spelling every other platform shares.
+process.env.PI_COMPACT_TOOLS_PLATFORM = "win32";
 import { loadThemeFromPath, setRegisteredThemes } from "../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/theme.js";
 
 setRegisteredThemes(["dark", "light"].map((name) =>

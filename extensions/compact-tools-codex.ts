@@ -20,8 +20,15 @@ export const CODEX_MARGIN = " ";
 export const CODEX_BULLET = "•";
 /** Codex draws a tab as four columns. */
 export const CODEX_TAB = "    ";
-/** Codex's key is ctrl+t; in Pi the key that opens a row is ctrl+o. */
-export const CODEX_EXPAND_KEY = "ctrl+o";
+/**
+ * Codex's key is ctrl+t; in Pi the key that opens a row is ctrl+o. Codex 0.161 spells
+ * a modifier by platform (`⌃t` on macOS, `^t` on Linux, `ctrl+t` elsewhere) and so does
+ * this. PI_COMPACT_TOOLS_PLATFORM stands in for the platform, so the suite draws the
+ * same rows wherever it runs.
+ */
+export function codexExpandKey(platform: string = process.env.PI_COMPACT_TOOLS_PLATFORM ?? process.platform): string {
+	return platform === "darwin" ? "⌃o" : platform === "linux" ? "^o" : "ctrl+o";
+}
 
 /** How Codex prints how long a call took: `250ms`, `1.50s`, `1m 15s`. */
 export function formatCodexDuration(milliseconds: number): string {
@@ -41,7 +48,7 @@ export function codexDisclosure(width: number, expanded: boolean, hiddenLines?: 
 	if (expanded) return `${indent}− Show less`;
 	if (hiddenLines === undefined) return `${indent}+ Show details`;
 	const label = `+ ${hiddenLines} ${hiddenLines === 1 ? "line" : "lines"}`;
-	const hint = ` (${CODEX_EXPAND_KEY} to expand)`;
+	const hint = ` (${codexExpandKey()} to expand)`;
 	return visibleWidth(indent + label + hint) <= width ? indent + label + hint : indent + label;
 }
 
