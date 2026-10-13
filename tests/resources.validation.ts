@@ -4,7 +4,10 @@ import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:f
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { DefaultResourceLoader, SettingsManager } from "@earendil-works/pi-coding-agent";
 
+const [hostMajor, hostMinor] = JSON.parse(readFileSync(new URL("../node_modules/@earendil-works/pi-coding-agent/package.json", import.meta.url), "utf8")).version.split(".").map(Number);
+const strictThemeHost = hostMajor > 1 || (hostMajor === 1 && hostMinor >= 2);
 const root = join(import.meta.dirname, "..");
 const script = join(root, "scripts", "check-resources.mjs");
 
@@ -20,13 +23,20 @@ test("resource validation rejects invalid examples, theme references, notes, and
 			["examples/compact-tools.json", (value: any) => { value.custom_tools = { exclude: [1] }; }],
 			["examples/compact-tools.json", (value: any) => { value.spinner = true; }],
 			["themes/github-dark-pro.json", (value: any) => { value.colors.text = "missing-reference"; }],
+			["themes/github-dark-pro.json", (value: any) => { value.$schema = "https://example.invalid/old-theme-schema.json"; }],
 			["package.json", (value: any) => { value.pi.extensions = ["./missing.ts"]; }],
 			["package.json", (value: any) => { value.dependencies = { "@earendil-works/pi-tui": "*" }; }],
 			["release-notes.json", (value: any) => { const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8")); value[manifest.version] = [""]; }],
 			["release-notes.json", (value: any) => { value["0.0.1"] = { New: ["ok"], Changed: ["not a section"] }; }],
 			["release-notes.json", (value: any) => { value["0.0.1"] = { Fix: [""] }; }],
 		] as const;
-		for (const [path, mutate] of cases) {
+		const strictCases = strictThemeHost ? [
+			["themes/github-dark-pro.json", (value: any) => { value.unsupportedMetadata = "rejected by Pi 1.2"; }],
+			["themes/github-dark-pro.json", (value: any) => { value.colors.customColor = "#123456"; }],
+			["themes/github-dark-pro.json", (value: any) => { value.export.customPanel = "#123456"; }],
+			["themes/github-dark-pro.json", (value: any) => { delete value.colors.syntaxKeyword; }],
+		] as const : [];
+		for (const [path, mutate] of [...cases, ...strictCases]) {
 			const target = join(directory, path);
 			const original = readFileSync(target, "utf8");
 			const value = JSON.parse(original);
@@ -37,6 +47,32 @@ test("resource validation rejects invalid examples, theme references, notes, and
 			writeFileSync(target, original);
 		}
 	} finally { rmSync(directory, { recursive: true, force: true }); }
+});
+
+test("Pi 1.2 strict resource loading accepts the shipped theme at startup and reload", { skip: !strictThemeHost }, async () => {
+	const themeAPI = await import(new URL("../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/theme.js", import.meta.url).href);
+	const { validateThemeJson } = await import(new URL("../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/theme-schema.js", import.meta.url).href);
+	assert.equal(typeof validateThemeJson, "function");
+	const directory = mkdtempSync(join(tmpdir(), "compact-tools-strict-theme-"));
+	themeAPI.setThemeJsonValidator(validateThemeJson);
+	try {
+		for (const name of ["theme-dark.json", "theme-light.json"]) {
+			assert.ok(themeAPI.loadThemeFromPath(join(root, "tests", "fixtures", name)), `strict fixture ${name}`);
+		}
+		const loader = new DefaultResourceLoader({ cwd: directory, agentDir: directory, settingsManager: SettingsManager.inMemory({ packages: [] }),
+			noExtensions: true, noSkills: true, noPromptTemplates: true, noContextFiles: true,
+			additionalThemePaths: [join(root, "themes", "github-dark-pro.json")],
+		});
+		for (const phase of ["startup", "reload"]) {
+			await loader.reload();
+			const { themes, diagnostics } = loader.getThemes();
+			assert.deepEqual(diagnostics, [], `no strict validation errors during ${phase}`);
+			assert.deepEqual(themes.map(theme => theme.name), ["github-dark-pro"], `${phase} discovers the shipped theme`);
+		}
+	} finally {
+		themeAPI.setThemeJsonValidator(undefined);
+		rmSync(directory, { recursive: true, force: true });
+	}
 });
 
 test("npm publish includes every local runtime import and no host or development dependency tree", () => {

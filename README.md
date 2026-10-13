@@ -12,7 +12,7 @@ pi install npm:pi-compact-tools
 
 Restart Pi or run `/reload`, then run `/compact-tools` to choose a style. To try it for one session without installing: `pi -e npm:pi-compact-tools`.
 
-Requires Node.js 22.19+ and Pi 0.85.1+. **Pi 1.0.2 or later is recommended** for native renderer integration and compact HTML exports. It changes only how tool calls are drawn, not what they run or what the model sees.
+Requires Node.js 22.19+ and Pi 0.85.1+. **Pi 1.2.0 or later is recommended** for native renderer integration and compact HTML exports. It changes only how tool calls are drawn, not what they run or what the model sees.
 
 ## Styles
 
@@ -88,6 +88,18 @@ Optional, in `~/.pi/agent/compact-tools.json` or `<project>/.pi/compact-tools.js
 - `auto_compact`: `true` starts a Compact row collapsed; `false` shows up to `previewLines` rows. Custom tool names work too.
 - `custom_tools`: rows for tools from other packages. `exclude` keeps a tool's own look.
 
+## Codemode summaries
+
+Completed `codemode` rows in **Compact, Claude, and Codex** list the outcomes of the tools the script actually called, beside the duration and output-line count:
+
+```text
+Done in 1.234s (42 lines) · ✓ read(3) ✗ bash(1) edit(3) [+10 -3|✗|+5 -7]
+```
+
+Most calls are grouped by tool and outcome, in first-call order. A script that catches a failed call can finish successfully while still showing `✗ bash(1)`. Edits instead use one ordered list with the total attempt count: each successful call shows its actual diff without a checkmark, each failed call shows `✗`, and an unfinished call shows `?`. A successful edit without a saved diff shows `ok`; it does not hide other calls’ known changes. Diff entries use a dim `|` separator with no surrounding whitespace; added and removed counts keep their diff colors. Collapsed rows show the first three edit attempts and `… +N more`; omitted failures or unfinished calls are counted beside that marker so the preview cannot hide them. Expanded rows show every recorded edit attempt. Incomplete records show `(partial)`. Long summaries wrap to the pane width. Previews and author-provided expanded views remain available. Claude and Codex place the `Done` / `Failed` summary after the output, without another branch marker and aligned with the output continuation rows. The disclosure stays last: Claude’s `… +N lines (ctrl+o to expand)` or Codex’s `+ Show details` / `− Show less`. Completion rows do not consume Claude’s output-preview limit.
+
+The summary uses the host’s nested-call events and saved records when available, without changing what the model sees. Exact per-call edit diffs survive an in-process `/reload`. After restarting or resuming, Pi’s saved nested records restore call counts, but do not contain edit result diffs, so edits show per-call statuses such as `edit(3) [ok|✗|ok]` rather than invented changes. `/tree` navigation restores the selected branch’s records. Hosts without nested-call data keep the previous row rendering.
+
 ## UI-only behavior
 
 This package never registers or activates agent tools and does not add model-facing
@@ -118,7 +130,7 @@ npm run check
 pi -e .
 ```
 
-Development dependencies are pinned to Pi 1.1.0; the peer minimum remains Pi 0.85.1. CI checks Pi 0.85.1, 0.99.1, 1.0.0, 1.0.2, and 1.1.0 on Node 22.19.0 and 24. Schema validation and deterministic test clocks are development-only dependencies, not runtime dependencies. Development scripts and tests are not included in the published package. `npm test` runs the rendering tests first and the resource/packaging checks separately so their subprocesses do not disturb animation tests.
+Development dependencies are pinned to Pi 1.2.0; the peer minimum remains Pi 0.85.1. CI checks Pi 0.85.1, 0.99.1, 1.0.0, 1.0.2, 1.1.0, and 1.2.0 on Node 22.19.0 and 24. Schema validation and deterministic test clocks are development-only dependencies, not runtime dependencies. Development scripts and tests are not included in the published package. `npm test` runs the rendering tests first and the resource/packaging checks separately so their subprocesses do not disturb animation tests.
 
 For a local before/after performance comparison, run `npx tsx tests/benchmark.ts <clean-baseline-directory>` with the same host dependencies in both directories. Measurements are informational, not timing-sensitive test assertions.
 

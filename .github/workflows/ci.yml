@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pi-version: ["0.85.1", "0.99.1", "1.0.0", "1.0.2", "1.1.0"]
+        pi-version: ["0.85.1", "0.99.1", "1.0.0", "1.0.2", "1.1.0", "1.2.0"]
         node-version: ["22.19.0", 24]
     runs-on: ubuntu-latest
     steps:
@@ -45,4 +45,9 @@ jobs:
           npm install --no-save --no-package-lock --ignore-scripts
           @earendil-works/pi-coding-agent@${{ matrix.pi-version }}
           @earendil-works/pi-tui@${{ matrix.pi-version }}
+      # Host releases use caret ranges for sibling packages. Pin that family as
+      # well, otherwise a Pi 1.1 test can accidentally load Pi 1.2 codemode APIs.
+      - run: |
+          packages=$(node -e 'const fs = require("node:fs"); const { dependencies } = JSON.parse(fs.readFileSync("node_modules/@earendil-works/pi-coding-agent/package.json", "utf8")); console.log(Object.keys(dependencies).filter(name => name.startsWith("@earendil-works/")).map(name => `${name}@${process.argv[1]}`).join(" "));' '${{ matrix.pi-version }}')
+          npm install --no-save --no-package-lock --ignore-scripts $packages
       - run: npm run check

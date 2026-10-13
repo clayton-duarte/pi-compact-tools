@@ -51,7 +51,8 @@ export class ToolRuntime {
 	private readonly currentCalls = new Set<string>();
 	/**
 	 * Calls a tool is making through `ctx.executeTool()`, as codemode scripts do. They
-	 * never get a row of their own, so nothing is timed or remembered for them.
+	 * never get a row of their own, so no execution timing is kept for them.
+	 * The independent nested-summary observer keeps only their outcome counts.
 	 */
 	private readonly nestedCalls = new Set<string>();
 
@@ -96,6 +97,11 @@ export class ToolRuntime {
 	 */
 	bindRenderer(requestRender: (() => void) | undefined): void {
 		this.requestRender = requestRender;
+	}
+
+	/** A late summary changes only a draw-time footer, not every row's layout. */
+	repaint(): void {
+		if (!isSilent()) this.requestRender?.();
 	}
 
 	/**

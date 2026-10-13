@@ -7,8 +7,8 @@ import test from "node:test";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import compactTools from "../extensions/compact-tools.ts";
 
-const UI_EVENTS = new Set(["session_start", "session_shutdown", "agent_start", "agent_end", "agent_settled", "message_update", "tool_execution_start", "tool_execution_end", "turn_start", "thinking_level_select"]);
-for (const style of ["compact", "claude", "off"] as const) {
+const UI_EVENTS = new Set(["session_start", "session_shutdown", "session_tree", "agent_start", "agent_end", "agent_settled", "message_update", "message_end", "tool_execution_start", "tool_execution_end", "turn_start", "thinking_level_select"]);
+for (const style of ["compact", "claude", "codex", "off"] as const) {
 	test(`UI calls only allowed rendering/observation APIs (${style})`, () => {
 		const previous = process.env.PI_CODING_AGENT_DIR;
 		const directory = mkdtempSync(join(tmpdir(), "compact-tools-token-neutral-"));
@@ -30,6 +30,12 @@ for (const style of ["compact", "claude", "off"] as const) {
 			writeFileSync(join(directory, "compact-tools.json"), JSON.stringify({ style }));
 			compactTools(pi);
 			handlers.get("session_start")!({ reason: "startup" }, ctx);
+			assert.equal(handlers.get("tool_execution_start")!({ toolCallId: "parent", toolName: "codemode" }), undefined);
+			assert.equal(handlers.get("tool_execution_start")!({ toolCallId: "parent/1", parentToolCallId: "parent", toolName: "read" }), undefined);
+			assert.equal(handlers.get("tool_execution_end")!({ toolCallId: "parent/1", parentToolCallId: "parent", toolName: "read", isError: true }), undefined);
+			const snapshot = Object.freeze({ role: "toolResult", toolCallId: "persisted", toolName: "codemode", nestedCalls: Object.freeze({ complete: true, calls: Object.freeze([Object.freeze({ id: "persisted/1", name: "read", status: "ok" })]) }) });
+			assert.equal(handlers.get("message_end")!({ message: snapshot }), undefined, "observer must not replace messages");
+			assert.equal(handlers.get("session_tree")!({}, { ...ctx, sessionManager: { getBranch: () => [{ message: snapshot }] } }), undefined);
 			for (const reason of ["reload", "new", "fork", "resume"]) {
 				handlers.get("session_shutdown")!({ reason }, ctx);
 				compactTools(pi);

@@ -1,0 +1,203 @@
+{
+	"compact/closed/120": [
+		"",
+		" ⦁ codemode await tools.read({path:'a.ts'})",
+		" └ Done in 1.234s (5 lines) · ✓ read(3) ✗ bash(1) edit(2) [+4 -9|+7 -14]"
+	],
+	"compact/closed/44": [
+		"",
+		" ⦁ codemode await tools.read({path:'a.ts'}",
+		" │ )",
+		" └ Done in 1.234s (5 lines) · ✓ read(3) ✗",
+		"   bash(1) edit(2) [+4 -9|+7 -14]"
+	],
+	"compact/open/120": [
+		"",
+		" ⦁ codemode await tools.read({path:'a.ts'})",
+		" │ {",
+		" │   \"code\": \"await tools.read({path:'a.ts'})\"",
+		" │ }",
+		" │ AUTHOR output",
+		" └ Done in 1.234s (5 lines) · ✓ read(3) ✗ bash(1) edit(2) [+4 -9|+7 -14]"
+	],
+	"compact/open/44": [
+		"",
+		" ⦁ codemode await tools.read({path:'a.ts'}",
+		" │ )",
+		" │ {",
+		" │   \"code\": \"await",
+		" │ tools.read({path:'a.ts'})\"",
+		" │ }",
+		" │ AUTHOR output",
+		" └ Done in 1.234s (5 lines) · ✓ read(3) ✗",
+		"   bash(1) edit(2) [+4 -9|+7 -14]"
+	],
+	"compact/many-closed/120": [
+		"",
+		" ⦁ codemode",
+		" └ Done in 0.000s (1 line) · edit(6) [+10 -3|✗|+5 -7|… +3 more (1 failed)]"
+	],
+	"compact/many-closed/44": [
+		"",
+		" ⦁ codemode",
+		" └ Done in 0.000s (1 line) · edit(6) [+10",
+		"   -3|✗|+5 -7|… +3 more (1 failed)]"
+	],
+	"compact/many-open/120": [
+		"",
+		" ⦁ codemode",
+		" │ edits done",
+		" └ Done in 0.000s (1 line) · edit(6) [+10 -3|✗|+5 -7|+0 -2|+2 -0|✗]"
+	],
+	"compact/many-open/44": [
+		"",
+		" ⦁ codemode",
+		" │ edits done",
+		" └ Done in 0.000s (1 line) · edit(6) [+10",
+		"   -3|✗|+5 -7|+0 -2|+2 -0|✗]"
+	],
+	"compact/legacy/100": [
+		"",
+		" ⦁ codemode",
+		" └ Done (1 line)"
+	],
+	"claude/closed/120": [
+		"",
+		" ⦁ codemode(code: \"await tools.read({path:'a.ts'})\")",
+		"   ⎿  first",
+		"      second",
+		"      third",
+		"      Done in 1.234s (5 lines) · ✓ read(3) ✗ bash(1) edit(2) [+4 -9|+7 -14]",
+		"      … +2 lines (ctrl+o to expand)"
+	],
+	"claude/closed/44": [
+		"",
+		" ⦁ codemode(code: \"await tools.read({path:",
+		"   'a.ts'})\")",
+		"   ⎿  first",
+		"      second",
+		"      third",
+		"      Done in 1.234s (5 lines) · ✓ read(3) ✗",
+		"      bash(1) edit(2) [+4 -9|+7 -14]",
+		"      … +2 lines (ctrl+o to expand)"
+	],
+	"claude/open/120": [
+		"",
+		" ⦁ codemode(code: \"await tools.read({path:'a.ts'})\")",
+		"   ⎿  5 lines",
+		"      AUTHOR output",
+		"      Done in 1.234s (5 lines) · ✓ read(3) ✗ bash(1) edit(2) [+4 -9|+7 -14]"
+	],
+	"claude/open/44": [
+		"",
+		" ⦁ codemode(code: \"await tools.read({path:",
+		"   'a.ts'})\")",
+		"   ⎿  5 lines",
+		"      AUTHOR output",
+		"      Done in 1.234s (5 lines) · ✓ read(3) ✗",
+		"      bash(1) edit(2) [+4 -9|+7 -14]"
+	],
+	"claude/many-closed/120": [
+		"",
+		" ⦁ codemode",
+		"   ⎿  edits done",
+		"      Done in 0.000s (1 line) · edit(6) [+10 -3|✗|+5 -7|… +3 more (1 failed)]"
+	],
+	"claude/many-closed/44": [
+		"",
+		" ⦁ codemode",
+		"   ⎿  edits done",
+		"      Done in 0.000s (1 line) · edit(6) [+10",
+		"      -3|✗|+5 -7|… +3 more (1 failed)]"
+	],
+	"claude/many-open/120": [
+		"",
+		" ⦁ codemode",
+		"   ⎿  edits done",
+		"      Done in 0.000s (1 line) · edit(6) [+10 -3|✗|+5 -7|+0 -2|+2 -0|✗]"
+	],
+	"claude/many-open/44": [
+		"",
+		" ⦁ codemode",
+		"   ⎿  edits done",
+		"      Done in 0.000s (1 line) · edit(6) [+10",
+		"      -3|✗|+5 -7|+0 -2|+2 -0|✗]"
+	],
+	"claude/legacy/100": [
+		"",
+		" ⦁ codemode",
+		"   ⎿  legacy output"
+	],
+	"codex/closed/120": [
+		"",
+		" • Called codemode",
+		"   └ third",
+		"     fourth",
+		"     fifth",
+		"     Done in 1.234s (5 lines) · ✓ read(3) ✗ bash(1) edit(2) [+4 -9|+7 -14]",
+		"     + Show details"
+	],
+	"codex/closed/44": [
+		"",
+		" • Called codemode",
+		"   └ third",
+		"     fourth",
+		"     fifth",
+		"     Done in 1.234s (5 lines) · ✓ read(3) ✗",
+		"     bash(1) edit(2) [+4 -9|+7 -14]",
+		"     + Show details"
+	],
+	"codex/open/120": [
+		"",
+		" • Called codemode({\"code\":\"await tools.read({path:'a.ts'})\"})",
+		"   └ AUTHOR output",
+		"     Done in 1.234s (5 lines) · ✓ read(3) ✗ bash(1) edit(2) [+4 -9|+7 -14]",
+		"     − Show less"
+	],
+	"codex/open/44": [
+		"",
+		" • Called",
+		"   └ codemode({\"code\":\"await",
+		"     tools.read({path:'a.ts'})\"})",
+		"     AUTHOR output",
+		"     Done in 1.234s (5 lines) · ✓ read(3) ✗",
+		"     bash(1) edit(2) [+4 -9|+7 -14]",
+		"     − Show less"
+	],
+	"codex/many-closed/120": [
+		"",
+		" • Called codemode",
+		"   └ edits done",
+		"     Done in 0.000s (1 line) · edit(6) [+10 -3|✗|+5 -7|… +3 more (1 failed)]",
+		"     + Show details"
+	],
+	"codex/many-closed/44": [
+		"",
+		" • Called codemode",
+		"   └ edits done",
+		"     Done in 0.000s (1 line) · edit(6) [+10",
+		"     -3|✗|+5 -7|… +3 more (1 failed)]",
+		"     + Show details"
+	],
+	"codex/many-open/120": [
+		"",
+		" • Called codemode()",
+		"   └ edits done",
+		"     Done in 0.000s (1 line) · edit(6) [+10 -3|✗|+5 -7|+0 -2|+2 -0|✗]",
+		"     − Show less"
+	],
+	"codex/many-open/44": [
+		"",
+		" • Called codemode()",
+		"   └ edits done",
+		"     Done in 0.000s (1 line) · edit(6) [+10",
+		"     -3|✗|+5 -7|+0 -2|+2 -0|✗]",
+		"     − Show less"
+	],
+	"codex/legacy/100": [
+		"",
+		" • Called codemode",
+		"   └ legacy output",
+		"     + Show details"
+	]
+}

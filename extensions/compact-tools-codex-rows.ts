@@ -272,6 +272,8 @@ type ResultInput = {
 	expanded: boolean;
 	toolCallId: string;
 	author?: (expanded: boolean) => Component | undefined;
+	/** A codemode completion summary, in this style's native indentation. */
+	completion?: Component;
 };
 
 /**
@@ -425,11 +427,11 @@ function customResult(input: ResultInput, width: number): string[] {
 			const start = lines.findIndex((line) => stripTerminalSequences(line).trim() !== "");
 			rows = (start < 0 ? [] : lines.slice(start)).map((line, index) => (index === 0 ? first : CODEX_INDENT) + line);
 		} else if (text || isError) rows = prefixedRows(textLines(outputLines(isError ? `Error: ${text}` : text).join("\n"), "dim"), first, CODEX_INDENT, width, theme);
-		return [...rows, dimDisclosure(theme, width, true)];
+		return [...rows, ...(input.completion?.render(width) ?? []), dimDisclosure(theme, width, true)];
 	}
 	let lines = text ? tailLines(text) : [];
 	if (isError && outputLines(text).length <= CODEX_PREVIEW_ROWS) lines = lines.length ? [`Error: ${lines[0]}`, ...lines.slice(1)] : ["Error: "];
-	return [...previewRows(lines, theme, width), dimDisclosure(theme, width, false)];
+	return [...previewRows(lines, theme, width), ...(input.completion?.render(width) ?? []), dimDisclosure(theme, width, false)];
 }
 
 /** Everything a Codex row draws beneath its head. */

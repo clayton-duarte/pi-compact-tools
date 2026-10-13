@@ -48,7 +48,8 @@ import {
 	WithinWidth,
 } from "./compact-tools-layout.ts";
 import { CLAUDE_DIFF_CONTEXT_LINES, CLAUDE_INDENT, CLAUDE_OUTPUT_ROWS, CLAUDE_RESULT_PREFIX, CLAUDE_TITLE_INDENT, CLAUDE_WRITE_ROWS, claudeFailure, claudeOutcome, claudeTitle } from "./compact-tools-claude.ts";
-import { CODEX_BULLET } from "./compact-tools-codex.ts";
+import { CODEX_BULLET, CODEX_INDENT } from "./compact-tools-codex.ts";
+import { NestedCallSummaries } from "./compact-tools-nested.ts";
 import { renderCodexCall, renderCodexResult } from "./compact-tools-codex-rows.ts";
 import { ToolGroupController } from "./compact-tools-grouping.ts";
 import { chromePainter, paintIndicator } from "./compact-tools-palette.ts";
@@ -70,6 +71,7 @@ import {
 const PREVIEW_DIFF_CONTEXT_LINES = 1;
 
 const runtime = new ToolRuntime();
+const nestedSummaries = new NestedCallSummaries();
 const RENDER_WIDGET_KEY = "compact-tools-render";
 let registeredConfiguration: string | undefined;
 /**
@@ -179,6 +181,9 @@ function renderControls(
 	isError: boolean,
 	failureReason?: string,
 	changes?: { added: number; removed: number },
+	nestedSummary?: string,
+	prefix = " └ ",
+	indent = "   ",
 ): Component {
 	const duration = running ? undefined : formatDuration(state);
 	const status = running
@@ -196,7 +201,8 @@ function renderControls(
 	}
 	// A failed call produced no result worth counting; "(0 lines)" would only mislead.
 	else if (state.resultLineSummary && !running && !isError) details += chrome(` (${state.resultLineSummary})`);
-	return prefixedText(details, chrome(" └ "), "   ");
+	if (nestedSummary && !running) details += chrome(" · ") + nestedSummary;
+	return nestedSummary ? prefixedSentence(details, chrome(prefix), indent, true) : prefixedText(details, chrome(prefix), indent);
 }
 
 /** Arguments a one-line summary cannot show: objects, or lists of them. */
@@ -306,14 +312,14 @@ function claudeMoreLines(theme: Theme, hidden: number): string {
 }
 
 /** Output previewed in rows the way Claude Code previews it, all of it once opened. */
-function claudeOutput(output: string, expanded: boolean, theme: Theme, isError: boolean, empty: string, firstPrefix: string): Component {
+function claudeOutput(output: string, expanded: boolean, theme: Theme, isError: boolean, empty: string, firstPrefix: string, completion?: Component): Component {
 	const normalized = normalizeLineEndings(output).trimEnd();
 	// Pi's bash reports an empty run as "(no output)"; Claude Code dims its own words for it.
 	const lines = !normalized || normalized === "(no output)"
 		? [chromePainter(theme)(empty)]
 		: normalized.split("\n").map((line) => theme.fg(isError ? "error" : "toolOutput", line));
 	return claudeRows(lines, firstPrefix, CLAUDE_INDENT, expanded ? undefined : CLAUDE_OUTPUT_ROWS,
-		(hidden) => claudeMoreLines(theme, hidden));
+		(hidden) => claudeMoreLines(theme, hidden), completion);
 }
 
 /**
@@ -363,6 +369,7 @@ function renderClaudeResult(
 	expanded: boolean,
 	output: string,
 	author: AuthorResultRenderer | undefined,
+	completion?: Component,
 ): Component {
 	const chrome = chromePainter(theme);
 	const container = new CachedContainer();
@@ -378,11 +385,12 @@ function renderClaudeResult(
 		// shortened to one line, and a click shows it whole in its place.
 		if (failure.detail) {
 			container.addChild(line(theme.fg("error", failure.headline)));
-			container.addChild(claudeOutput(failure.detail, expanded, theme, true, "", CLAUDE_INDENT));
+			container.addChild(claudeOutput(failure.detail, expanded, theme, true, "", CLAUDE_INDENT, completion));
 		} else if (expanded && output.trim()) {
-			container.addChild(claudeOutput(`Error: ${output.trim()}`, true, theme, true, "", chrome(CLAUDE_RESULT_PREFIX)));
+			container.addChild(claudeOutput(`Error: ${output.trim()}`, true, theme, true, "", chrome(CLAUDE_RESULT_PREFIX), completion));
 		} else {
 			container.addChild(line(theme.fg("error", failure.headline)));
+			if (completion) container.addChild(completion);
 		}
 		return container;
 	}
@@ -392,8 +400,9 @@ function renderClaudeResult(
 		? formatResultLineSummary(name, args, result, output) ?? "Done"
 		: claudeOutcome(name, args, result, output, (value) => theme.bold(value));
 	if (outcome !== undefined) container.addChild(line(theme.fg("toolOutput", outcome)));
-	else container.addChild(claudeOutput(output, expanded, theme, false, rowKind(name) === "shell" ? "(No output)" : "(No content)", chrome(CLAUDE_RESULT_PREFIX)));
+	else container.addChild(claudeOutput(output, expanded, theme, false, rowKind(name) === "shell" ? "(No output)" : "(No content)", chrome(CLAUDE_RESULT_PREFIX), completion));
 	if (body) container.addChild(body);
+	if (completion && outcome !== undefined) container.addChild(completion);
 	return container;
 }
 
@@ -409,6 +418,7 @@ function renderRowResult(
 	theme: Theme,
 	ctx: RenderContext,
 	author?: AuthorResultRenderer,
+	watchNested = true,
 ): Component {
 	const state = runtime.syncRow(ctx, !options.isPartial);
 	runtime.syncExpansion(state, ctx.expanded, name);
@@ -417,14 +427,23 @@ function renderRowResult(
 	const output = kind === "file" && !author ? getFileOutput(name, ctx.args, result, ctx.isError) : getTextResult(result);
 	const hasEditDiff = name === "edit" && getEditDiff(result).length > 0;
 	runtime.setResultAvailable(state, name, hasEditDiff || output.length > 0 || author !== undefined);
+	const nestedSummary = name === "codemode" && !options.isPartial ? nestedSummaries.format(ctx.toolCallId, theme, state.expanded === true) : undefined;
+	if (nestedSummary && !state.resultLineSummaryComputed) {
+		state.resultLineSummary = output ? formatResultLineSummary(name, ctx.args, result, output) : undefined;
+		state.resultLineSummaryComputed = true;
+	}
 	let component: Component;
 	if (isCodex()) {
 		component = renderCodexResult({
 			name, kind: author ? "custom" : kind, args: ctx.args, result, output, theme, state, isError: ctx.isError,
 			isPartial: options.isPartial, expanded: state.expanded === true, toolCallId: ctx.toolCallId, author,
+			completion: nestedSummary ? renderControls(theme, state, false, ctx.isError, undefined, undefined, nestedSummary, CODEX_INDENT, CODEX_INDENT) : undefined,
 		});
 	} else if (isClaude()) {
-		component = new WithinWidth(renderClaudeResult(name, ctx.args, result, options, theme, ctx.isError, state.expanded === true, output, author));
+		const container = new CachedContainer();
+		const completion = nestedSummary ? renderControls(theme, state, false, ctx.isError, undefined, undefined, nestedSummary, CLAUDE_INDENT, CLAUDE_INDENT) : undefined;
+		container.addChild(renderClaudeResult(name, ctx.args, result, options, theme, ctx.isError, state.expanded === true, output, author, completion));
+		component = new WithinWidth(container);
 	} else {
 		if (!options.isPartial && !state.resultLineSummaryComputed) {
 			// A custom tool with no text has nothing to count.
@@ -440,13 +459,28 @@ function renderRowResult(
 		// the output shows, it already says why, and repeating it only doubles the error.
 		const failureReason = ctx.isError && !state.expanded && !state.preview ? summarizeFailure(name, output) : undefined;
 		container.addChild(renderControls(theme, state, options.isPartial, ctx.isError, failureReason,
-			name === "edit" ? countEditChanges(result) : undefined));
+			name === "edit" ? countEditChanges(result) : undefined, nestedSummary));
 		component = new WithinWidth(container);
 	}
 	rememberResult(state, result, options, ctx.isError, theme);
 	state.lastResultDurationMs = state.durationMs;
 	state.lastResultOutputPad = ctx.outputPad;
-	return withOutputPad(component, ctx.outputPad);
+	let drawn = withOutputPad(component, ctx.outputPad);
+	if (name !== "codemode" || options.isPartial || !watchNested) return drawn;
+	// The host can deliver a final nested snapshot (or a cancelled child's end)
+	// after the parent's result. Read through at draw time, not only on updateResult.
+	let revision = nestedSummaries.revision(ctx.toolCallId);
+	return {
+		render(width) {
+			const next = nestedSummaries.revision(ctx.toolCallId);
+			if (next !== revision) {
+				revision = next;
+				drawn = renderRowResult(name, result, options, theme, { ...ctx, lastComponent: undefined }, author, false);
+			}
+			return drawn.render(width);
+		},
+		invalidate() { drawn.invalidate(); },
+	};
 }
 
 /**
@@ -670,7 +704,12 @@ export default function compactTools(pi: ExtensionAPI): void {
 	const lastTrust = (globalThis as TrustSlot)[TRUST_KEY];
 	configure(pi, cwd, lastTrust?.cwd === realDirectory(cwd) && lastTrust.trusted);
 	pi.on("session_start", (event, ctx) => {
-		if (event.reason !== "reload") runtime.clearTimings();
+		if (event.reason !== "reload") {
+			runtime.clearTimings();
+			nestedSummaries.clear();
+		}
+		const branch = ctx.sessionManager?.getBranch?.();
+		if (Array.isArray(branch)) nestedSummaries.restoreBranch(branch);
 		// Rows restored from the session are drawn next; while idle none of them is running.
 		if (typeof ctx.isIdle === "function") runtime.setBusy(!ctx.isIdle());
 		const trusted = ctx.isProjectTrusted();
@@ -703,18 +742,39 @@ export default function compactTools(pi: ExtensionAPI): void {
 			groups.dispose();
 		}
 	});
+	// /tree changes the branch without session_start. Fill sibling-branch records
+	// before Pi rebuilds its transcript, while retaining richer same-process deltas.
+	pi.on("session_tree", (_event, ctx) => {
+		const branch = ctx.sessionManager?.getBranch?.();
+		if (Array.isArray(branch)) nestedSummaries.restoreBranch(branch);
+		runtime.repaint();
+	});
 	pi.on("agent_start", () => runtime.setBusy(true));
 	pi.on("agent_end", () => runtime.setBusy(false));
 	// The calls of the run going on, read from each update as Pi reads them to make
 	// their rows, and told to extensions before Pi makes them.
 	pi.on("message_update", (event) => noteCalls(event.message));
+	// Notification-only: read the host's nested record without changing any message.
+	pi.on("message_end", (event) => {
+		if (nestedSummaries.restore(event.message)) runtime.repaint();
+	});
 	pi.on("tool_execution_start", (event) => {
-		if (madeByTool(event)) return runtime.noteNestedCall(event.toolCallId, true);
+		if (madeByTool(event)) {
+			runtime.noteNestedCall(event.toolCallId, true);
+			nestedSummaries.note(event, false);
+			return;
+		}
+		nestedSummaries.begin(event.toolCallId, event.toolName);
 		runtime.noteCall(event.toolCallId);
 		runtime.noteExecutionStart(event.toolCallId);
 	});
 	pi.on("tool_execution_end", (event) => {
-		if (madeByTool(event)) return runtime.noteNestedCall(event.toolCallId, false);
+		if (madeByTool(event)) {
+			runtime.noteNestedCall(event.toolCallId, false);
+			if (nestedSummaries.note(event, true)) runtime.repaint();
+			return;
+		}
+		nestedSummaries.finish(event.toolCallId);
 		runtime.noteExecutionEnd(event.toolCallId, (event as { durationMs?: number }).durationMs);
 	});
 	pi.on("session_shutdown", (event) => {
@@ -726,6 +786,7 @@ export default function compactTools(pi: ExtensionAPI): void {
 		unbindRenderer(renderContext);
 		renderContext = undefined;
 		runtime.reset(event.reason !== "reload");
+		if (event.reason !== "reload") nestedSummaries.clear();
 		// A reload that keeps the extension sets it again before Pi rebuilds the transcript.
 		if (legacyResolver) clearRowResolver(legacyResolver);
 		refreshTranscriptRows = undefined;

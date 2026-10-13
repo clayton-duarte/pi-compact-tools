@@ -123,10 +123,10 @@ test("a Claude group counts the time its running call has run, not how long it w
 
 /**
  * A codemode script runs tools through `ctx.executeTool()`. Pi marks those calls with
- * `parentToolCallId`; they never get a row, so nothing is timed or kept for them,
- * while the call that made them is timed as any other.
+ * `parentToolCallId`; they never get a row, so no execution timing is kept for them.
+ * Their outcome counts live separately; the calling tool is timed as any other.
  */
-test("calls another tool makes are neither timed nor remembered", async () => {
+test("calls another tool makes leave no execution timings behind", async () => {
 	const harness = await loadExtension({ style: "compact" }, { tui: true, idle: false });
 	const timings = (globalThis as Record<symbol, Map<string, unknown>>)[Symbol.for("pi.compact-tools.execution-timings")]!;
 	const parent = `codemode-${++sequence}`;

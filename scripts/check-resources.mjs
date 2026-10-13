@@ -4,7 +4,18 @@ import { resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
 // Dev-only: the public entry point does not export the theme file parser.
-import { loadThemeFromPath } from "../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/theme.js";
+import * as themeAPI from "../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/theme.js";
+
+// Pi 1.2 installs strict validation in its CLI, not in the lightweight palette
+// module. Opt in here too; otherwise direct parser calls silently skip schema checks.
+const hostManifest = JSON.parse(await readFile(new URL("../node_modules/@earendil-works/pi-coding-agent/package.json", import.meta.url), "utf8"));
+const [hostMajor, hostMinor] = hostManifest.version.split(".").map(Number);
+if (hostMajor > 1 || (hostMajor === 1 && hostMinor >= 2)) {
+  const { validateThemeJson } = await import(new URL("../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/theme-schema.js", import.meta.url).href);
+  assert.equal(typeof validateThemeJson, "function", "Pi 1.2+ must provide its strict theme validator");
+  assert.equal(typeof themeAPI.setThemeJsonValidator, "function");
+  themeAPI.setThemeJsonValidator(validateThemeJson);
+}
 
 const root = process.argv[2] ? pathToFileURL(resolve(process.argv[2]) + sep) : new URL("../", import.meta.url);
 const resources = [
@@ -20,6 +31,7 @@ const documents = Object.fromEntries(await Promise.all(resources.map(async (path
 const manifest = documents["package.json"];
 const schema = documents["schemas/compact-tools.schema.json"];
 const theme = documents["themes/github-dark-pro.json"];
+assert.equal(theme.$schema, "https://pi.dev/schemas/theme.schema.json", "theme must use Pi’s published schema URL");
 const validate = new Ajv2020({ allErrors: true }).compile(schema);
 for (const path of ["examples/compact-tools.json", "examples/compact-tools-2.json"]) {
   assert.ok(validate(documents[path]), `${path}: ${JSON.stringify(validate.errors)}`);
@@ -31,7 +43,7 @@ for (const key of ["durationIndicators", "spinner"]) {
   assert.ok(!Object.hasOwn(schema.properties, key), `schema must not expose removed ${key}`);
 }
 // Use the host's actual theme parser, including color references, rather than a partial schema copy.
-assert.equal(loadThemeFromPath(fileURLToPath(new URL("themes/github-dark-pro.json", root))).name, "github-dark-pro");
+assert.equal(themeAPI.loadThemeFromPath(fileURLToPath(new URL("themes/github-dark-pro.json", root))).name, "github-dark-pro");
 for (const key of ["border", "dim", "muted", "thinkingMax", "mdQuote", "mdCodeBlockBorder"]) {
   assert.ok(theme.colors?.[key], `github-dark-pro must define ${key}`);
 }

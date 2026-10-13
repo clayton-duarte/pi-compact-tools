@@ -203,12 +203,18 @@ export function prefixedLines(text: string, firstPrefix: string, continuationPre
  * A sentence under a tree prefix, wrapped at words as a terminal UI wraps prose:
  * a word moves to the next row whole, and only a word longer than a row is split.
  */
-export function prefixedSentence(text: string, firstPrefix: string, continuationPrefix: string): Component {
+export function prefixedSentence(text: string, firstPrefix: string, continuationPrefix: string, trimWrappedIndent = false): Component {
 	const prefixWidth = Math.max(visibleWidth(firstPrefix), visibleWidth(continuationPrefix));
 	const lines = text.replace(/\t/g, "   ").split("\n");
 	return new CachedComponent((width) => {
 		const available = Math.max(1, width - prefixWidth);
-		return lines.flatMap((line) => wrapTextWithAnsi(line, available).map((row) => truncateToWidth(row, available, "")))
+		return lines.flatMap((line) => wrapTextWithAnsi(line, available).map((row, index) => {
+			if (trimWrappedIndent && index > 0) {
+				const spaces = stripTerminalSequences(row).match(/^ +/u)?.[0].length ?? 0;
+				if (spaces) row = sliceByColumn(row, spaces, visibleWidth(row) - spaces, true);
+			}
+			return truncateToWidth(row, available, "");
+		}))
 			.map((row, index) => `${index === 0 ? firstPrefix : continuationPrefix}${row}`);
 	});
 }
@@ -216,8 +222,9 @@ export function prefixedSentence(text: string, firstPrefix: string, continuation
 /**
  * Output as Claude Code previews it. Each line is wrapped to the width, and rows
  * rather than lines are counted: collapsed, `maxRows` show, all of them when only
- * one more would be hidden, and then `more(hidden)`. Claude Code wraps ten
- * columns short of the terminal, so previews break where its own do.
+ * one more would be hidden, then an optional completion and `more(hidden)`.
+ * Claude Code wraps ten columns short of the terminal, so previews break where
+ * its own do. Completion rows never count toward the output-preview limit.
  */
 export function claudeRows(
 	lines: readonly string[],
@@ -225,17 +232,20 @@ export function claudeRows(
 	continuationPrefix: string,
 	maxRows: number | undefined,
 	more: (hidden: number) => string,
+	completion?: Component,
 ): Component {
 	const prefixWidth = Math.max(visibleWidth(firstPrefix), visibleWidth(continuationPrefix));
 	return new CachedComponent((width) => {
 		const available = Math.max(1, width - prefixWidth);
 		const wrapWidth = maxRows === undefined ? available : Math.min(available, Math.max(width - 10, 10));
 		let rows = lines.flatMap((line) => hardWrapTextWithAnsi(line, wrapWidth).map((row) => row.trimEnd()));
-		if (maxRows !== undefined && rows.length > maxRows + 1) {
-			rows = [...rows.slice(0, maxRows), truncateToWidth(more(rows.length - maxRows), available, "…")];
-		}
-		return rows.map((row, index) => `${index === 0 ? firstPrefix : continuationPrefix}${row}`);
-	});
+		const hidden = maxRows !== undefined && rows.length > maxRows + 1 ? rows.length - maxRows : 0;
+		if (hidden) rows = rows.slice(0, maxRows);
+		const rendered = rows.map((row, index) => `${index === 0 ? firstPrefix : continuationPrefix}${row}`);
+		if (completion) rendered.push(...completion.render(width));
+		if (hidden) rendered.push((rendered.length ? continuationPrefix : firstPrefix) + truncateToWidth(more(hidden), available, "…"));
+		return rendered;
+	}, () => completion?.invalidate());
 }
 
 export function hardWrapTextWithAnsi(text: string, width: number): string[] {

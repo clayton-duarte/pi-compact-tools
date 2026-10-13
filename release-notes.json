@@ -1,4 +1,22 @@
 {
+  "0.16.0": {
+    "New": [
+      "Completed codemode rows summarize nested tool successes and failures beside their duration and output-line count without changing model input",
+      "Reloads retain exact live edit diffs; resumed sessions and /tree branches restore saved per-call outcomes without guessing changes",
+      "Codemode summaries show every edit attempt in order: edit(3) [+10 -3|✗|+5 -7], with no checkmark on successful changes",
+      "Compact, Claude, and Codex show the first three edit attempts when collapsed and every recorded attempt when expanded",
+      "Diff separators are dim and have no surrounding whitespace; additions and removals retain their diff colors"
+    ],
+    "Fix": [
+      "Updated the GitHub Dark theme and theme fixtures to Pi 1.2's published schema; validated both startup and reload resource loading",
+      "Verified on Pi 1.2.0 while preserving the Pi 0.85.1 minimum and the existing 0.15.0 word-diff and platform key-label features",
+      "Per-call edit diffs keep first-call order even when nested calls finish out of order",
+      "Claude and Codex keep codemode output, an indented completion summary without a separate branch marker, and the disclosure in that order",
+      "Failed and unfinished edit attempts remain visible in previews, including omitted-attempt status counts",
+      "A missing successful edit diff shows ok for that call without hiding other calls’ known changes or guessing totals"
+    ],
+    "Deprecated": []
+  },
   "0.15.0": {
     "New": [
       "Claude style now marks the changed words in an edit diff, like Claude Code 2.1.296: a removed line and the added line that replaces it get a brighter tint on the words that differ. Lines that are mostly rewritten are left alone",
