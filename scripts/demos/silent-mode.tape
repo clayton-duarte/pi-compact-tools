@@ -1,22 +1,25 @@
-# Prompt submitted off screen. Silent mode switched on mid-run: the rows fold away while the
-# agent works, the answer stays, and every row comes back once it is switched off.
+# Toggle silent mode while a real command is running, then restore its rows.
 Output scripts/demos/out/silent-mode/
 Source scripts/demos/common.tape
 Hide
-Type "cd $DEMO_DIR && clear && PI_SKIP_VERSION_CHECK=1 pi --approve --tools read,bash,edit,write,grep,find,ls" Enter
-Sleep 6s
-Type "Use only these tool calls, in order, with no text between them: read extensions/compact-tools-silent.ts, grep for SilentModeController in extensions, bash `npx tsx --test --test-reporter=dot tests/activity-behavior.test.ts`, then edit extensions/compact-tools-silent.ts to add a one-line comment above SilentModeController. Then answer in one short sentence what silent mode hides, followed by a last line with just the word ready in capitals."
-Enter
-Show
-# Once the first rows have settled, silence them while the rest still run.
-Wait+Screen@120s /Done in/
-Sleep 2s
-Type "/silent on"
-Sleep 1s
-Enter
-Wait+Screen@300s /READY/
+Type@0ms "cd $DEMO_DIR && clear && pi --approve --no-extensions -e ./extensions/compact-tools.ts -e builtin:codemode --no-mcp --no-skills --no-prompt-templates --no-context-files --theme ./themes/github-dark-pro.json --use-theme github-dark-pro --tools read,bash,edit,write,codemode --append-system-prompt $DEMO_PROMPTS/silent.md" Enter
 Sleep 4s
-Type "/silent off"
-Sleep 1s
+Type@0ms "Test the greeting helper and change Hello to Welcome." Enter
+# Skip prompt entry and model startup; capture only once the first tool row exists.
+Wait+Screen@180s /read demo\/greet.ts/
+Show
+Wait+Screen@180s /Run sleep/
+Wait+Screen@180s /Running command/
+Sleep 500ms
+# Instant command entry, then wait for completion to settle without cutting activity frames.
+Type@0ms "/silent on"
+Sleep 500ms
 Enter
-Sleep 7s
+Sleep 200ms
+Wait+Screen@180s /READY/
+Sleep 1.5s
+Type@0ms "/silent off"
+Sleep 500ms
+Enter
+Sleep 200ms
+Sleep 2s

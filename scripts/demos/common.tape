@@ -1,12 +1,10 @@
-# Shared settings for every demo: the size and theme the README's GIFs are drawn at.
+# All recordings use the real Pi TUI and the package's GitHub Dark Pro theme.
 Set Shell zsh
 Set FontSize 14
-# JetBrainsMono Nerd Font has no "⦁"; macOS terminals draw it from Apple SD Gothic Neo,
-# so the recording falls back to the same font and the dot keeps the size it has on screen.
 Set FontFamily "JetBrainsMono Nerd Font, Apple SD Gothic Neo"
-Set Width 960
-Set Height 546
+Set Width 1040
+Set Height 720
 Set Padding 16
 Set Theme "GitHub Dark"
-Set TypingSpeed 35ms
+Set TypingSpeed 25ms
 Set Framerate 24

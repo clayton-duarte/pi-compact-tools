@@ -1,27 +1,27 @@
-# Prompt submitted off screen. One short run of tool calls, then /compact-tools redraws the same rows
-# in each style: Compact first, then Claude, then Codex, and
-# /silent at the end leaves only the prompt and the answer. The answer is one word, so every row stays on screen.
+# Re-render the same real calls in all three styles, then hide them.
 Output scripts/demos/out/overview/
 Source scripts/demos/common.tape
-Set Height 720
 Hide
-Type "cd $DEMO_DIR && clear && PI_SKIP_VERSION_CHECK=1 pi --approve --tools read,bash,edit,write,grep,find,ls" Enter
-Sleep 6s
-Type "Use only these tool calls, in order, with no text between them: read extensions/compact-tools-config.ts, read package.json, grep for DEFAULT_CONFIG in extensions, bash `npx tsx --test --test-reporter=dot tests/codex-parse.test.ts`, then edit extensions/compact-tools-config.ts to add a one-line comment above DEFAULT_CONFIG. Do not explain anything; your whole reply is the word ready in capitals."
-Enter
-Show
-Wait+Screen@300s /READY/
+Type@0ms "cd $DEMO_DIR && clear && pi --approve --no-extensions -e ./extensions/compact-tools.ts -e builtin:codemode --no-mcp --no-skills --no-prompt-templates --no-context-files --theme ./themes/github-dark-pro.json --use-theme github-dark-pro --tools read,bash,edit,write,codemode --append-system-prompt $DEMO_PROMPTS/workflow.md" Enter
 Sleep 4s
-Type "/compact-tools claude project"
-Sleep 1s
+Type@0ms "Inspect the greeting helper, test it, and change Hello to Welcome." Enter
+# Skip prompt entry and model startup; capture only once the first tool row exists.
+Wait+Screen@180s /bash/
+Show
+Wait+Screen@180s /READY/
+Sleep 2s
+Type@0ms "/compact-tools claude project"
+# Let completion settle; typing is instantaneous and animation keeps recording.
+Sleep 500ms
 Enter
-Sleep 8s
-Type "/compact-tools codex project"
-Sleep 1s
+Sleep 2s
+Type@0ms "/compact-tools codex project"
+# Let completion settle; typing is instantaneous and animation keeps recording.
+Sleep 500ms
 Enter
-Sleep 8s
-# Typed in full, the command offers no completion, so Enter runs it.
-Type "/silent on"
-Sleep 1s
+Sleep 2s
+Type@0ms "/silent on"
+# Let completion settle; typing is instantaneous and animation keeps recording.
+Sleep 500ms
 Enter
-Sleep 6s
+Sleep 2s

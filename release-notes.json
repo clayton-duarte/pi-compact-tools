@@ -1,4 +1,12 @@
 {
+  "0.16.2": {
+    "New": [
+      "A concise README and a separate development guide",
+      "Seven refreshed real-time demos, including silent mode during work and in resumed sessions"
+    ],
+    "Fix": [],
+    "Deprecated": []
+  },
   "0.16.1": {
     "New": [
       "Minimal codemode summaries show each tool once: read 3 · bash 1 · edit 3 2; non-edit tools keep first-call order and edit always comes last",
