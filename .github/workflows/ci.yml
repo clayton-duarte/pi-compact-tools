@@ -41,13 +41,64 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: >-
-          npm install --no-save --no-package-lock --ignore-scripts
-          @earendil-works/pi-coding-agent@${{ matrix.pi-version }}
-          @earendil-works/pi-tui@${{ matrix.pi-version }}
-      # Host releases use caret ranges for sibling packages. Pin that family as
-      # well, otherwise a Pi 1.1 test can accidentally load Pi 1.2 codemode APIs.
-      - run: |
-          packages=$(node -e 'const fs = require("node:fs"); const { dependencies } = JSON.parse(fs.readFileSync("node_modules/@earendil-works/pi-coding-agent/package.json", "utf8")); console.log(Object.keys(dependencies).filter(name => name.startsWith("@earendil-works/")).map(name => `${name}@${process.argv[1]}`).join(" "));' '${{ matrix.pi-version }}')
-          npm install --no-save --no-package-lock --ignore-scripts $packages
+      # Install the host, TUI, and every @earendil-works sibling the host depends
+      # on in ONE npm call. Separate --no-save installs can reset earlier ones to
+      # the devDependencies version (1.2.0) or leave nested duplicate copies, which
+      # makes the type checks mix Pi versions. Host releases use caret ranges for
+      # siblings, so pin that family too; otherwise a Pi 1.1 test can load Pi 1.2.
+      - name: Install Pi ${{ matrix.pi-version }} family
+        env:
+          PI_VERSION: ${{ matrix.pi-version }}
+        run: |
+          family=$(npm view "@earendil-works/pi-coding-agent@$PI_VERSION" dependencies --json | node -e '
+            const deps = JSON.parse(require("node:fs").readFileSync(0, "utf8"));
+            const names = new Set(["@earendil-works/pi-coding-agent", "@earendil-works/pi-tui"]);
+            for (const name of Object.keys(deps)) if (name.startsWith("@earendil-works/")) names.add(name);
+            console.log([...names].map(name => `${name}@${process.env.PI_VERSION}`).join(" "));
+          ')
+          echo "Installing: $family"
+          npm install --no-save --no-package-lock --ignore-scripts $family
+      # Fail before type checking if any copy of a family package, including
+      # nested ones, is not the matrix version, so a silent fallback to 1.2.0
+      # cannot pass as an old host.
+      - name: Verify Pi ${{ matrix.pi-version }} family
+        env:
+          PI_VERSION: ${{ matrix.pi-version }}
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const path = require("node:path");
+            const scope = "@earendil-works";
+            const expected = process.env.PI_VERSION;
+            const host = JSON.parse(fs.readFileSync(`node_modules/${scope}/pi-coding-agent/package.json`, "utf8"));
+            const family = new Set(["pi-coding-agent", "pi-tui"]);
+            for (const name of Object.keys(host.dependencies)) {
+              if (name.startsWith(`${scope}/`)) family.add(name.slice(scope.length + 1));
+            }
+            const bad = [];
+            const seen = new Map();
+            const walk = (dir) => {
+              for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                if (!entry.isDirectory() || entry.name === ".bin") continue;
+                const full = path.join(dir, entry.name);
+                const manifest = path.join(full, "package.json");
+                if (path.basename(dir) === scope && family.has(entry.name) && fs.existsSync(manifest)) {
+                  const { version } = JSON.parse(fs.readFileSync(manifest, "utf8"));
+                  seen.set(entry.name, (seen.get(entry.name) ?? 0) + 1);
+                  if (version !== expected) bad.push(`${full}: ${version}`);
+                }
+                walk(full);
+              }
+            };
+            walk("node_modules");
+            for (const name of family) {
+              const count = seen.get(name) ?? 0;
+              if (count === 0) bad.push(`${scope}/${name}: not installed`);
+            }
+            if (bad.length) {
+              console.error(`Pi family is not all ${expected}:\n${bad.join("\n")}`);
+              process.exit(1);
+            }
+            console.log(`Pi family at ${expected}: ${[...family].sort().join(", ")}`);
+          '
       - run: npm run check
