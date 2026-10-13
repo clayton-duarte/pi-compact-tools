@@ -38,10 +38,11 @@ type ContrastBand = { color: ThemeColor; keepHue: number; minimum: number; maxim
 type ContrastRange = { minimum: number; maximum: number };
 
 /**
- * One tone for the whole frame — rails, the result connector, and the status line it leads
- * to — so the frame reads as a single quiet object rather than competing with the output.
+ * A quiet frame tone for rails, connectors, and separators. Completion metadata
+ * sits one small brightness step above it so duration and line counts remain legible.
  */
 const CHROME: ContrastBand = { color: "dim", keepHue: 0.35, minimum: 0.22, maximum: 0.28 };
+const COMPLETION: ContrastBand = { ...CHROME, minimum: 0.26, maximum: 0.32 };
 /** The indicator breathes either side of the chrome tone, dipping below it and peaking above. */
 const PULSE_LOW: ContrastBand = { color: "dim", keepHue: 0.4, minimum: 0.18, maximum: 0.3 };
 const PULSE_HIGH: ContrastBand = { color: "muted", keepHue: 0.4, minimum: 0.4, maximum: 0.6 };
@@ -105,7 +106,34 @@ export function chromePainter(theme: Theme): (text: string) => string {
 	});
 }
 
-/** Paint one rail, connector, or status line in the chrome tone. */
+/** Duration and line-count metadata is slightly brighter than rails and separators. */
+export function completionPainter(theme: Theme): (text: string) => string {
+	return perPalette(theme, "completion-metadata", () => {
+		const color = bandedRgb(theme, COMPLETION);
+		return color ? rgbPainter(theme, color) : (text: string) => theme.fg("dim", text);
+	});
+}
+
+/** Nested names keep the title hue, slightly darker than ordinary titles, without bold. */
+export function nestedTitlePainter(theme: Theme): (text: string) => string {
+	return perPalette(theme, "nested-title", () => {
+		const title = themeColorRgb(theme, "toolTitle");
+		const paint = title ? rgbPainter(theme, interpolateRgb(title, { r: 0, g: 0, b: 0 }, 0.25))
+			: (text: string) => theme.fg("toolTitle", text);
+		return paint;
+	});
+}
+
+/** Quiet summary numbers retain outcome hues at 80% brightness. */
+export function nestedCountPainter(theme: Theme, color: "success" | "error" | "warning"): (text: string) => string {
+	return perPalette(theme, `nested-count:${color}`, () => {
+		const rgb = themeColorRgb(theme, color);
+		return rgb ? rgbPainter(theme, interpolateRgb(rgb, { r: 0, g: 0, b: 0 }, 0.20))
+			: (text: string) => theme.fg(color, text);
+	});
+}
+
+/** Paint frame rails, connectors, separators, or running status in the quiet chrome tone. */
 export function paintChrome(theme: Theme, text: string): string {
 	return chromePainter(theme)(text);
 }

@@ -141,7 +141,7 @@ export function paletteOf(theme: Theme): object {
 
 /** Every token the derived colors are made from. */
 const PALETTE_TOKENS: readonly ThemeColor[] = [
-	"text", "dim", "muted", "toolDiffAdded", "toolDiffRemoved",
+	"text", "dim", "muted", "toolTitle", "success", "error", "warning", "toolDiffAdded", "toolDiffRemoved",
 	"thinkingOff", "thinkingMinimal", "thinkingLow", "thinkingMedium", "thinkingHigh", "thinkingXhigh",
 ];
 /** One object per palette seen; a session switches among a handful of themes at most. */

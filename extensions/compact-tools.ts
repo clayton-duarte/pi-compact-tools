@@ -52,7 +52,7 @@ import { CODEX_BULLET, CODEX_INDENT } from "./compact-tools-codex.ts";
 import { NestedCallSummaries } from "./compact-tools-nested.ts";
 import { renderCodexCall, renderCodexResult } from "./compact-tools-codex-rows.ts";
 import { ToolGroupController } from "./compact-tools-grouping.ts";
-import { chromePainter, paintIndicator } from "./compact-tools-palette.ts";
+import { chromePainter, completionPainter, paintIndicator } from "./compact-tools-palette.ts";
 import { ProgressController } from "./compact-tools-progress.ts";
 import { showReleaseNotice } from "./compact-tools-release.ts";
 import { ToolRuntime } from "./compact-tools-runtime.ts";
@@ -190,9 +190,10 @@ function renderControls(
 		? (duration ?? "Running")
 		: `${isError ? "Failed" : "Done"}${duration ? ` in ${duration}` : ""}`;
 	// A failed row already reads as an error through its output color and Pi's row
-	// background, so the status word stays chrome rather than repeating that signal.
+	// background, so completion metadata stays neutral rather than repeating that signal.
 	const chrome = chromePainter(theme);
-	let details = chrome(status);
+	const metadata = running ? chrome : completionPainter(theme);
+	let details = metadata(status);
 	if (failureReason && isError && !running) details += chrome(" · ") + theme.fg("error", failureReason);
 	// An edit reports what it changed the way a diff does: lines added and removed.
 	else if (changes && !running && !isError) {
@@ -200,7 +201,7 @@ function renderControls(
 			+ theme.fg("toolDiffRemoved", `-${changes.removed}`) + chrome(")");
 	}
 	// A failed call produced no result worth counting; "(0 lines)" would only mislead.
-	else if (state.resultLineSummary && !running && !isError) details += chrome(` (${state.resultLineSummary})`);
+	else if (state.resultLineSummary && !running && !isError) details += metadata(` (${state.resultLineSummary})`);
 	if (nestedSummary && !running) details += chrome(" · ") + nestedSummary;
 	return nestedSummary ? prefixedSentence(details, chrome(prefix), indent, true) : prefixedText(details, chrome(prefix), indent);
 }

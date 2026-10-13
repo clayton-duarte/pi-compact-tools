@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import test from "node:test";
 import { stripTerminalSequences, visibleWidth } from "@earendil-works/pi-tui";
 import { NestedCallSummaries } from "../extensions/compact-tools-nested.ts";
+import { chromePainter, completionPainter, nestedCountPainter, nestedTitlePainter } from "../extensions/compact-tools-palette.ts";
 import { advance, announce, loadExtension, makeRow, restoreClocks, shutdown, text } from "./indicator-harness.ts";
 import { theme } from "../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/theme.js";
 
@@ -57,7 +58,7 @@ for (const style of ["compact", "claude", "codex"] as const) {
 				assert.equal(harness.handlers.get("tool_execution_end")!({ toolCallId: `${id}/${index + 1}`, parentToolCallId: id, toolName, result, isError }), undefined);
 			}
 			row.updateResult({ ...text("first\nsecond\nthird\nfourth\nfifth"), isError: false } as never, true);
-			assert.doesNotMatch(plain(row.render(100)).join("\n"), /✓ read|✗ bash|edit\(\d/u, "no completed tally on partial output");
+			assert.doesNotMatch(plain(row.render(100)).join("\n"), /Done.*(?:read|bash|edit)\(/u, "no completed tally on partial output");
 			advance(1234);
 			harness.handlers.get("tool_execution_end")!({ toolCallId: id, toolName: "codemode", isError: false });
 			const result = text("first\nsecond\nthird\nfourth\nfifth");
@@ -70,7 +71,9 @@ for (const style of ["compact", "claude", "codex"] as const) {
 					assert.ok(lines.every(line => visibleWidth(line) <= width), `fits ${width}`);
 					if (width === 120) {
 						const output = plain(lines).join("\n");
-						assert.match(output, /Done in 1\.234s \(5 lines\) · ✓ read\(3\) ✗ bash\(1\) edit\(2\) \[\+4 -9\|\+7 -14\]/u);
+						assert.ok(lines.join("\n").includes(completionPainter(theme)("Done in 1.234s")), "duration uses brighter completion metadata paint");
+						assert.ok(lines.join("\n").includes(completionPainter(theme)(" (5 lines)")), "line count shares the brighter metadata tone");
+						assert.match(output, /Done in 1\.234s \(5 lines\) · read 3 · bash 1 · edit 2/u);
 						assert.doesNotMatch(output, /Failed in/u, "caught child error does not fail the script");
 						if (expanded) {
 							assert.match(output, /AUTHOR output/u, "author still owns expanded body");
@@ -85,11 +88,11 @@ for (const style of ["compact", "claude", "codex"] as const) {
 			}
 			assert.equal(JSON.stringify(result), before, "model-visible result stays untouched");
 			assert.equal(harness.handlers.get("message_end")!({ message: message(id, [{ id: `${id}/1`, name: "read", status: "ok" }], false) }), undefined);
-			assert.match(plain(row.render(120)).join("\n"), /edit\(2\) \[\+4 -9\|\+7 -14\]/u, "bounded snapshot cannot overwrite richer live summary");
+			assert.match(plain(row.render(120)).join("\n"), /edit 2/u, "bounded snapshot cannot overwrite richer live summary");
 		} finally { shutdown(harness); }
 	});
 
-	test(`${style}: edit lists preview three calls, expand fully, and return to the preview`, async () => {
+	test(`${style}: edits show only attempt counts, collapsed or expanded`, async () => {
 		const harness = await loadExtension({ style }, { tui: true, idle: false });
 		try {
 			const id = `many-edits-${++sequence}`;
@@ -110,10 +113,9 @@ for (const style of ["compact", "claude", "codex"] as const) {
 				row.setExpanded(expanded);
 				const lines = plain(row.render(120));
 				const output = lines.join("\n");
-				assert.match(output, expanded ? /edit\(6\) \[\+10 -3\|✗\|\+5 -7\|\+0 -2\|\+2 -0\|✗\]/u
-					: /edit\(6\) \[\+10 -3\|✗\|\+5 -7\|… \+3 more \(1 failed\)\]/u);
-				assert.doesNotMatch(output, /✓|✗ edit/u, "edit statuses are per call; successes need no checkmark");
-				assert.doesNotMatch(output, / \||\| |\|\]/u, "no whitespace around separators or trailing pipe");
+				assert.match(output, /edit 4 2/u);
+				assert.doesNotMatch(output, /more/u, "no hidden attempts");
+				assert.equal(output.match(/\bedit(?= )/gu)?.length, 1, "one edit title");
 				if (style !== "compact") assertCompletionLayout(lines, style, expanded);
 				golden[`${style}/many-${expanded ? "open" : "closed"}/120`] = lines;
 				for (const width of [44, 20, 8, 3, 1]) {
@@ -142,7 +144,7 @@ for (const style of ["compact", "claude", "codex"] as const) {
 				for (const expanded of [false, true, false]) {
 					row.setExpanded(expanded);
 					const lines = plain(row.render(120));
-					assert.match(lines.join("\n"), isError ? /Failed.*✓ read\(1\) \? bash\(1\) \(partial\)/u : /Done.*✓ read\(1\) \? bash\(1\) \(partial\)/u);
+					assert.match(lines.join("\n"), isError ? /Failed.*read 1 · bash 1 \(partial\)/u : /Done.*read 1 · bash 1 \(partial\)/u);
 					if (style !== "compact") assertCompletionLayout(lines, style, expanded);
 				}
 			}
@@ -159,15 +161,16 @@ for (const style of ["compact", "claude", "codex"] as const) {
 			const row = makeRow("codemode", id, {}, undefined);
 			row.updateResult({ ...text("result"), isError: false } as never);
 			harness.chat.children = [row];
-			assert.match(plain(row.render(100)).join("\n"), /\? read\(1\) \(partial\)/u);
+			assert.match(plain(row.render(100)).join("\n"), /read 1 \(partial\)/u);
 			harness.handlers.get("tool_execution_end")!({ toolCallId: `${id}/1`, parentToolCallId: id, toolName: "read", isError: false, result: text("a") });
 			const drawn = plain(row.render(100)).join("\n");
-			assert.match(drawn, /✓ read\(1\)/u);
-			assert.doesNotMatch(drawn, /\? read|partial/u);
+			assert.match(drawn, /read 1/u);
+			assert.doesNotMatch(drawn, /partial/u);
+			assert.ok(row.render(100).join("\n").includes(nestedCountPainter(theme, "success")("1")), "late success removes the unfinished warning");
 		} finally { shutdown(harness); }
 	});
 
-	test(`${style}: a late edit failure replaces only that attempt, retaining earlier successful diffs`, async () => {
+	test(`${style}: a late edit failure updates status without changing the attempt count`, async () => {
 		const harness = await loadExtension({ style }, { tui: true, idle: false });
 		try {
 			const id = `late-edit-${++sequence}`;
@@ -179,14 +182,38 @@ for (const style of ["compact", "claude", "codex"] as const) {
 			row.updateResult({ ...text("output"), isError: false } as never);
 			for (const expanded of [false, true]) {
 				row.setExpanded(expanded);
-				assert.match(plain(row.render(120)).join("\n"), /edit\(2\) \[\+5 -7\|\?\] \(partial\)/u);
+				assert.match(plain(row.render(120)).join("\n"), /edit 1 1 unfinished \(partial\)/u);
 			}
 			harness.handlers.get("tool_execution_end")!({ toolCallId: `${id}/2`, parentToolCallId: id, toolName: "edit", isError: true, result: diff(100, 100) });
 			for (const expanded of [false, true]) {
 				row.setExpanded(expanded);
 				const output = plain(row.render(120)).join("\n");
-				assert.match(output, /edit\(2\) \[\+5 -7\|✗\]/u);
-				assert.doesNotMatch(output, /partial|\+100|✓ edit/u);
+				assert.match(output, /edit 1 1/u);
+				assert.doesNotMatch(output, /partial|\+100/u);
+			}
+		} finally { shutdown(harness); }
+	});
+
+	test(`${style}: mixed calls tally tools across interleaving and put the edit list last`, async () => {
+		const harness = await loadExtension({ style }, { tui: true, idle: false });
+		try {
+			const id = `mixed-${++sequence}`;
+			const calls = ["edit", "edit", "read", "read", "read", "bash", "bash", "bash", "bash", "edit", "read", "bash", "read"];
+			harness.handlers.get("tool_execution_start")!({ toolCallId: id, toolName: "codemode" });
+			calls.forEach((toolName, index) => harness.handlers.get("tool_execution_start")!({ toolCallId: `${id}/${index + 1}`, parentToolCallId: id, toolName }));
+			// Completion order must not move a later call ahead of an earlier one.
+			for (let index = calls.length - 1; index >= 0; index--) {
+				harness.handlers.get("tool_execution_end")!({ toolCallId: `${id}/${index + 1}`, parentToolCallId: id, toolName: calls[index], isError: index === 1,
+					result: index === 0 ? diff(11, 1) : index === 9 ? diff(5, 43) : text("done") });
+			}
+			harness.handlers.get("tool_execution_end")!({ toolCallId: id, toolName: "codemode", isError: false });
+			const row = makeRow("codemode", id, {}, undefined);
+			row.updateResult({ ...text("done"), isError: false } as never);
+			for (const expanded of [false, true, false]) {
+				row.setExpanded(expanded);
+				assert.match(plain(row.render(200)).join("\n"), /read 5 · bash 5 · edit 2 1/u);
+				assert.doesNotMatch(plain(row.render(200)).join("\n"), /\(1\)/u);
+				for (const width of [44, 20, 8, 1]) assert.ok(row.render(width).every(line => visibleWidth(line) <= width));
 			}
 		} finally { shutdown(harness); }
 	});
@@ -230,6 +257,45 @@ test("claude: completion is outside the preview limit and precedes the wrapped-o
 	} finally { shutdown(harness); }
 });
 
+test("tool summaries split green successes and red failures using only spaces", () => {
+	const cache = new NestedCallSummaries(); cache.clear(); cache.begin("outcomes", "codemode");
+	for (let index = 1; index <= 8; index++) record(cache, "outcomes", index, "edit", index > 4);
+	cache.note({ toolCallId: "outcomes/9", parentToolCallId: "outcomes", toolName: "edit" }, false);
+	const formatted = cache.format("outcomes", theme)!;
+	assert.equal(stripTerminalSequences(formatted), "edit 4 4 1 unfinished (partial)");
+	assert.ok(formatted.startsWith(nestedTitlePainter(theme)("edit") + chromePainter(theme)(" ") + nestedCountPainter(theme, "success")("4")));
+	for (const [color, value] of [["success", "4"], ["error", "4"], ["warning", "1 unfinished"]] as const) assert.ok(formatted.includes(nestedCountPainter(theme, color)(value)));
+	assert.doesNotMatch(stripTerminalSequences(formatted).replace(" (partial)", ""), /[()|]/u, "counts have no parentheses or pipe");
+	assert.ok(formatted.includes(chromePainter(theme)(" ")), "count spacing uses completion chrome");
+	assert.ok(!formatted.includes("•") && !formatted.includes("\x1b[4m") && !formatted.includes("\x1b[58;"), "no circles or underlines");
+	cache.clear();
+});
+
+test("single-outcome counts omit zeros and use only their outcome color", () => {
+	const cache = new NestedCallSummaries(); cache.clear();
+	for (const [status, color] of [["ok", "success"], ["error", "error"], ["unfinished", "warning"]] as const) {
+		cache.restore(message(status, [1, 2].map(index => ({ id: `${status}/${index}`, name: "bash", status }))));
+		const formatted = cache.format(status, theme)!;
+		assert.equal(stripTerminalSequences(formatted), `bash 2${status === "unfinished" ? " (partial)" : ""}`);
+		assert.ok(formatted.includes(chromePainter(theme)(" ") + nestedCountPainter(theme, color)("2")));
+		assert.doesNotMatch(stripTerminalSequences(formatted), /0|\||unfinished/u, "no zero placeholders, pipes, or redundant pending notes");
+	}
+	cache.clear();
+});
+
+test("all tools tally interleaved calls by outcome without concatenating group labels", () => {
+	const cache = new NestedCallSummaries(); cache.clear(); cache.begin("tallies", "codemode");
+	const calls = [["read", false], ["bash", false], ["read", false], ["read", true], ["write", false],
+		["bash", false], ["read", true], ["write", false], ["custom", false], ["bash", true], ["custom", false], ["grep", false]] as const;
+	calls.forEach(([name, failed], index) => record(cache, "tallies", index, name, failed));
+	const formatted = cache.format("tallies", theme)!;
+	assert.equal(stripTerminalSequences(formatted), "read 2 2 · bash 2 1 · write 2 · custom 2 · grep 1");
+	assert.ok(formatted.includes(nestedCountPainter(theme, "success")("2")) && formatted.includes(nestedCountPainter(theme, "error")("2")), "counts are colored by outcome");
+	assert.ok(stripTerminalSequences(formatted).includes("grep 1"), "singleton counts remain explicit");
+	assert.ok(formatted.includes(chromePainter(theme)(" · ")), "tool groups use a quiet separator");
+	cache.clear();
+});
+
 test("nested reducer deduplicates events, separates outcomes, and does not retain tool results", () => {
 	const cache = new NestedCallSummaries(); cache.clear(); cache.begin("root", "codemode");
 	const event = record(cache, "root", 1, "edit", false, diff(3, 2));
@@ -238,15 +304,15 @@ test("nested reducer deduplicates events, separates outcomes, and does not retai
 	assert.equal(cache.revision("root"), revision, "identical events are idempotent");
 	record(cache, "root", 2, "edit", true, diff(50, 50));
 	record(cache, "root", 3, "bash", false); record(cache, "root", 4, "bash", true);
-	assert.equal(stripTerminalSequences(cache.format("root", theme)!), "edit(2) [+3 -2|✗] ✓ bash(1) ✗ bash(1)");
-	// Missing diff numbers affect only that call; other known changes stay visible.
+	assert.equal(stripTerminalSequences(cache.format("root", theme)!), "bash 1 1 · edit 1 1");
+	// Successful calls count equally, whether or not their result contains a diff.
 	record(cache, "root", 5, "edit", false, text("applied"));
-	assert.equal(stripTerminalSequences(cache.format("root", theme)!), "edit(3) [+3 -2|✗|ok] ✓ bash(1) ✗ bash(1)");
+	assert.equal(stripTerminalSequences(cache.format("root", theme)!), "bash 1 1 · edit 2 1");
 	cache.note({ ...event, isError: true }, true);
-	assert.equal(stripTerminalSequences(cache.format("root", theme)!), "edit(3) [✗|✗|ok] ✓ bash(1) ✗ bash(1)", "last settled outcome replaces, never double counts");
+	assert.equal(stripTerminalSequences(cache.format("root", theme)!), "bash 1 1 · edit 1 2", "last settled outcome replaces, never double counts");
 	const storage = (globalThis as Record<symbol, Map<string, unknown>>)[Symbol.for("pi-compact-tools.nested-summaries.v1")]!;
 	const stored = storage.get("root") as { calls: Map<string, unknown> };
-	assert.ok([...stored.calls.values()].every(call => !Object.hasOwn(call as object, "result") && !Object.hasOwn(call as object, "args")));
+	assert.ok([...stored.calls.values()].every(call => !Object.hasOwn(call as object, "result") && !Object.hasOwn(call as object, "args") && !Object.hasOwn(call as object, "changes")));
 	cache.clear();
 });
 
@@ -255,38 +321,38 @@ test("nested reducer follows deep descendants, including roots containing slashe
 	record(cache, "provider/root", 1, "orchestrator");
 	record(cache, "provider/root/1", 1, "read");
 	record(cache, "provider/root/1/1", 1, "edit", false, diff(2, 1));
-	assert.equal(stripTerminalSequences(cache.format("provider/root", theme)!), "✓ orchestrator(1) ✓ read(1) edit(1) [+2 -1]");
+	assert.equal(stripTerminalSequences(cache.format("provider/root", theme)!), "orchestrator 1 · read 1 · edit 1");
 	assert.equal(cache.format("provider", theme), undefined);
 	cache.clear();
 });
 
-test("per-call edit formatting preserves zero changes and paints only the pipe dim", () => {
+test("edit formatting shows only counts and ignores diff totals, including zero changes", () => {
 	const cache = new NestedCallSummaries(); cache.clear(); cache.begin("colored", "codemode");
 	record(cache, "colored", 1, "edit", false, diff(10, 3));
 	record(cache, "colored", 2, "edit", false, text("No changes", { diff: "   1 unchanged" }));
 	const formatted = cache.format("colored", theme)!;
-	assert.equal(stripTerminalSequences(formatted), "edit(2) [+10 -3|+0 -0]");
-	assert.ok(formatted.includes(theme.fg("dim", "|")), "separator uses dim theme color");
-	assert.ok(formatted.includes(theme.fg("toolDiffAdded", "+10")));
-	assert.ok(formatted.includes(theme.fg("toolDiffRemoved", "-3")));
+	assert.equal(stripTerminalSequences(formatted), "edit 2");
+	assert.ok(formatted.includes(nestedTitlePainter(theme)("edit")), "tool names retain title hue without bold at slightly reduced brightness");
+	assert.ok(formatted.includes(nestedCountPainter(theme, "success")("2")), "successful edit counts use success color");
+	assert.doesNotMatch(stripTerminalSequences(formatted), /[+|]|-3|ok/u, "no per-call diffs, separators, or result labels");
 	cache.clear();
 });
 
-test("edit calls retain failures and unfinished states individually, including hidden preview statuses", () => {
+test("edit counts retain every attempt and aggregate failure and unfinished states", () => {
 	const cache = new NestedCallSummaries(); cache.clear(); cache.begin("statuses", "codemode");
 	record(cache, "statuses", 1, "edit", true, diff(100, 100));
 	record(cache, "statuses", 2, "edit", false, diff(5, 7));
 	record(cache, "statuses", 3, "edit", false, text("applied"));
 	record(cache, "statuses", 4, "edit", true);
 	cache.note({ toolCallId: "statuses/5", parentToolCallId: "statuses", toolName: "edit" }, false);
-	assert.equal(stripTerminalSequences(cache.format("statuses", theme)!), "edit(5) [✗|+5 -7|ok|… +2 more (1 failed, 1 unfinished)] (partial)");
-	assert.equal(stripTerminalSequences(cache.format("statuses", theme, true)!), "edit(5) [✗|+5 -7|ok|✗|?] (partial)");
+	assert.equal(stripTerminalSequences(cache.format("statuses", theme)!), "edit 2 2 1 unfinished (partial)");
+	assert.equal(stripTerminalSequences(cache.format("statuses", theme, true)!), "edit 2 2 1 unfinished (partial)");
 	const failed = cache.format("statuses", theme)!;
-	assert.ok(failed.includes(theme.fg("error", "✗")));
+	assert.ok(failed.includes(nestedCountPainter(theme, "error")("2")));
 	assert.ok(!failed.includes("+100"), "failed results never show claimed changes");
 	cache.restore(message("persisted-errors", [{ id: "persisted-errors/1", name: "edit", status: "error" }, { id: "persisted-errors/2", name: "edit", status: "ok" },
 		{ id: "persisted-errors/3", name: "edit", status: "error" }]));
-	assert.equal(stripTerminalSequences(cache.format("persisted-errors", theme)!), "edit(3) [✗|ok|✗]");
+	assert.equal(stripTerminalSequences(cache.format("persisted-errors", theme)!), "edit 1 2");
 	cache.clear();
 });
 
@@ -295,7 +361,7 @@ test("persisted nested records restore counts, not guessed edit totals, and reje
 	cache.restoreBranch([{ message: message("restored", [{ id: "restored/1", name: "edit", status: "ok", arguments: { oldText: "old", newText: "new" } },
 		{ id: "restored/2", name: "read", status: "error" }, { id: "restored/3", name: "bash", status: "unfinished" }], false) },
 		{ message: { role: "assistant" } }]);
-	assert.equal(stripTerminalSequences(cache.format("restored", theme)!), "edit(1) [ok] ✗ read(1) ? bash(1) (partial)");
+	assert.equal(stripTerminalSequences(cache.format("restored", theme)!), "read 1 · bash 1 · edit 1 (partial)");
 	assert.equal(cache.restore(null), false);
 	assert.equal(cache.restore(message("bad", [null, { id: 1, name: "read", status: "ok" }, { id: "bad/2", name: "read", status: "invalid" }], true)), true);
 	assert.equal(stripTerminalSequences(cache.format("bad", theme)!), "(partial)");
@@ -305,11 +371,11 @@ test("persisted nested records restore counts, not guessed edit totals, and reje
 test("reducer caps calls and parents, keeps active siblings, and sanitizes tool names", () => {
 	const cache = new NestedCallSummaries(); cache.clear(); cache.begin("many", "codemode");
 	for (let i = 1; i <= 300; i++) record(cache, "many", i, "read");
-	assert.equal(stripTerminalSequences(cache.format("many", theme)!), "✓ read(256) (partial)");
+	assert.equal(stripTerminalSequences(cache.format("many", theme)!), "read 256 (partial)");
 	cache.begin("unsafe", "codemode"); record(cache, "unsafe", 1, "\x1b[31mread\nforged\x07");
-	assert.equal(stripTerminalSequences(cache.format("unsafe", theme)!), "✓ read forged(1)");
+	assert.equal(stripTerminalSequences(cache.format("unsafe", theme)!), "read forged 1");
 	record(cache, "unsafe", 2, "\u202e\u200bedit");
-	assert.match(stripTerminalSequences(cache.format("unsafe", theme)!), /✓ edit\(1\)/u);
+	assert.match(stripTerminalSequences(cache.format("unsafe", theme)!), /edit 1/u);
 	record(cache, "unsafe", 3, "x".repeat(10000));
 	assert.match(stripTerminalSequences(cache.format("unsafe", theme)!), /\(partial\)$/u, "oversized names are omitted, never kept in memory");
 	cache.finish("unsafe");
@@ -319,7 +385,7 @@ test("reducer caps calls and parents, keeps active siblings, and sanitizes tool 
 	cache.clear();
 });
 
-test("reload retains exact live diffs; a non-reload session clears cross-session ids", async () => {
+test("reload retains live counts; a non-reload session clears cross-session ids", async () => {
 	const harness = await loadExtension({ style: "compact" }, { idle: false });
 	const id = `reload-${++sequence}`;
 	harness.handlers.get("tool_execution_start")!({ toolCallId: id, toolName: "codemode" });
@@ -329,13 +395,13 @@ test("reload retains exact live diffs; a non-reload session clears cross-session
 	const reloaded = await loadExtension({ style: "compact" }, { reason: "reload", idle: true });
 	const row = makeRow("codemode", id, {}, undefined);
 	row.updateResult({ ...text("output"), isError: false } as never);
-	assert.match(plain(row.render(100)).join("\n"), /edit\(1\) \[\+2 -1\]/u);
+	assert.match(plain(row.render(100)).join("\n"), /edit 1/u);
 	shutdown(reloaded);
 	const next = await loadExtension({ style: "compact" }, { reason: "new", idle: true });
 	try {
 		const other = makeRow("codemode", id, {}, undefined);
 		other.updateResult({ ...text("output"), isError: false } as never);
-		assert.doesNotMatch(plain(other.render(100)).join("\n"), /edit\(\d/u);
+		assert.doesNotMatch(plain(other.render(100)).join("\n"), /edit 1/u);
 	} finally { shutdown(next); }
 });
 
@@ -346,12 +412,12 @@ test("late persisted snapshot fills an already rendered legacy row without chang
 		const row = makeRow("codemode", id, {}, undefined);
 		row.updateResult({ ...text("output"), isError: false } as never);
 		harness.chat.children = [row];
-		assert.doesNotMatch(plain(row.render(100)).join("\n"), /✓ read/u);
+		assert.doesNotMatch(plain(row.render(100)).join("\n"), /read 1/u);
 		const snapshot = message(id, [{ id: `${id}/1`, name: "read", status: "ok" }]);
 		const before = JSON.stringify(snapshot);
 		assert.equal(harness.handlers.get("message_end")!({ message: snapshot }), undefined);
 		assert.equal(JSON.stringify(snapshot), before);
-		assert.match(plain(row.render(100)).join("\n"), /Done \(1 line\) · ✓ read\(1\)/u);
+		assert.match(plain(row.render(100)).join("\n"), /Done \(1 line\) · read 1/u);
 	} finally { shutdown(harness); }
 });
 

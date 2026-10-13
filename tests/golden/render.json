@@ -17,11 +17,11 @@
 	],
 	"compact/read/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (25 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (25 lines){/}"
 	],
 	"compact/read/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (25 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (25 lines){/}"
 	],
 	"compact/read/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
@@ -51,7 +51,7 @@
 		"{174;210;123} │ {/}{toolDiffContext} 24 {/}line {181;206;168}24{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 25 {/}line {181;206;168}25{/}",
 		"{174;210;123} │ {/}{dim}[Showing lines 1-25 of 80. Use offset=26 to continue.]{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (25 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (25 lines){/}"
 	],
 	"compact/read/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
@@ -82,27 +82,27 @@
 		"{174;210;123} │ {/}{toolDiffContext} 25 {/}line {181;206;168}25{/}",
 		"{174;210;123} │ {/}{dim}[Showing lines 1-25 of 80. Use offset=26{/}",
 		"{174;210;123} │ {/}{dim}to continue.]{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (25 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (25 lines){/}"
 	],
 	"compact/read/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}ENOENT: no such file or directory, access 'src/app.ts'{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}ENOENT: no such file or directory, access 'src/app.ts'{/}"
 	],
 	"compact/read/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}ENOENT: no such file",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}ENOENT: no such file",
 		"   {error}or directory, access 'src/app.ts'{/}"
 	],
 	"compact/read/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}ENOENT: no such file or directory, access 'src/app.ts'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/read/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}ENOENT: no such file or directory, access",
 		"{174;210;123} │ {/}{error}'src/app.ts'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/read@offset/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
@@ -122,45 +122,45 @@
 	],
 	"compact/read@offset/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/read@offset/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/read@offset/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 40 {/}{86;156;214}const{/} a = {181;206;168}1{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 41 {/}{86;156;214}const{/} b = {181;206;168}2{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 42 {/}{86;156;214}export{/} { a, b };",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/read@offset/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 40 {/}{86;156;214}const{/} a = {181;206;168}1{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 41 {/}{86;156;214}const{/} b = {181;206;168}2{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 42 {/}{86;156;214}export{/} { a, b };",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/read@offset/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Offset 40 is beyond end of file (12 lines total){/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Offset 40 is beyond end of file (12 lines total){/}"
 	],
 	"compact/read@offset/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Offset 40 is beyond",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Offset 40 is beyond",
 		"   {error}end of file (12 lines total){/}"
 	],
 	"compact/read@offset/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}Offset 40 is beyond end of file (12 lines total){/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/read@offset/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}Offset 40 is beyond end of file (12 lines",
 		"{174;210;123} │ {/}{error}total){/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/write/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
@@ -210,11 +210,11 @@
 	],
 	"compact/write/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (15 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (15 lines){/}"
 	],
 	"compact/write/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (15 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (15 lines){/}"
 	],
 	"compact/write/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
@@ -233,7 +233,7 @@
 		"{174;210;123} │ {/}{toolDiffContext} 13 {/}{toolOutput}line 13{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 14 {/}{toolOutput}line 14{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 15 {/}{toolOutput}line 15{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (15 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (15 lines){/}"
 	],
 	"compact/write/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
@@ -252,27 +252,27 @@
 		"{174;210;123} │ {/}{toolDiffContext} 13 {/}{toolOutput}line 13{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 14 {/}{toolOutput}line 14{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 15 {/}{toolOutput}line 15{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (15 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (15 lines){/}"
 	],
 	"compact/write/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}EACCES: permission denied, open 'notes.md'{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}EACCES: permission denied, open 'notes.md'{/}"
 	],
 	"compact/write/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}EACCES: permission",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}EACCES: permission",
 		"   {error}denied, open 'notes.md'{/}"
 	],
 	"compact/write/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
 		"{174;210;123} │ {/}{error}EACCES: permission denied, open 'notes.md'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/write/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
 		"{174;210;123} │ {/}{error}EACCES: permission denied, open",
 		"{174;210;123} │ {/}{error}'notes.md'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/edit/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
@@ -302,7 +302,7 @@
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 20 +{/}changed {181;206;168}20{/}                                                                                  {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 21 +{/}added 20b                                                                                   {/bg}",
 		"{174;210;123} │ {/}{toolDiffContext} 22  {/}line {181;206;168}21{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
 	],
 	"compact/edit/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
@@ -316,7 +316,7 @@
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 20 +{/}changed {181;206;168}20{/}                          {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 21 +{/}added 20b                           {/bg}",
 		"{174;210;123} │ {/}{toolDiffContext} 22  {/}line {181;206;168}21{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
 	],
 	"compact/edit/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
@@ -342,7 +342,7 @@
 		"{174;210;123} │ {/}{toolDiffContext} 23  {/}line {181;206;168}22{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 24  {/}line {181;206;168}23{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 25  {/}line {181;206;168}24{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
 	],
 	"compact/edit/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
@@ -368,33 +368,33 @@
 		"{174;210;123} │ {/}{toolDiffContext} 23  {/}line {181;206;168}22{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 24  {/}line {181;206;168}23{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 25  {/}line {181;206;168}24{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
 	],
 	"compact/edit/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{error}Could not find the exact text in app.ts. The old text must match exactly including all whitespace",
 		"{174;210;123} │ {/}{error}and newlines.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/edit/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{error}Could not find the exact text in app.ts.",
 		"{174;210;123} │ {/}{error}The old text must match exactly including",
 		"{174;210;123} │ {/}{error}all whitespace and newlines.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/edit/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{error}Could not find the exact text in app.ts. The old text must match exactly including all whitespace",
 		"{174;210;123} │ {/}{error}and newlines.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/edit/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{error}Could not find the exact text in app.ts.",
 		"{174;210;123} │ {/}{error}The old text must match exactly including",
 		"{174;210;123} │ {/}{error}all whitespace and newlines.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/edit@large/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
@@ -425,7 +425,7 @@
 		"{174;210;123} │ {/}{bg:241;250;243}{toolDiffRemoved}  9 -{/}{toolOutput}old 9{/}                                                                                       {/bg}",
 		"{174;210;123} │ {/}{bg:241;250;243}{toolDiffRemoved} 10 -{/}{toolOutput}old 10{/}                                                                                      {/bg}",
 		"{174;210;123} │ {/}{toolOutput}… 30 more lines{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
 	],
 	"compact/edit@large/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
@@ -440,7 +440,7 @@
 		"{174;210;123} │ {/}{bg:241;250;243}{toolDiffRemoved}  9 -{/}{toolOutput}old 9{/}                               {/bg}",
 		"{174;210;123} │ {/}{bg:241;250;243}{toolDiffRemoved} 10 -{/}{toolOutput}old 10{/}                              {/bg}",
 		"{174;210;123} │ {/}{toolOutput}… 30 more lines{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
 	],
 	"compact/edit@large/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
@@ -484,7 +484,7 @@
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 18 +{/}{toolOutput}new 18{/}                                                                                      {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 19 +{/}{toolOutput}new 19{/}                                                                                      {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 20 +{/}{toolOutput}new 20{/}                                                                                      {/bg}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
 	],
 	"compact/edit@large/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
@@ -528,29 +528,29 @@
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 18 +{/}{toolOutput}new 18{/}                              {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 19 +{/}{toolOutput}new 19{/}                              {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 20 +{/}{toolOutput}new 20{/}                              {/bg}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
 	],
 	"compact/edit@large/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
 		"{174;210;123} │ {/}{error}Found 20 occurrences of the text in big.txt. The text must be unique.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/edit@large/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
 		"{174;210;123} │ {/}{error}Found 20 occurrences of the text in",
 		"{174;210;123} │ {/}{error}big.txt. The text must be unique.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/edit@large/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
 		"{174;210;123} │ {/}{error}Found 20 occurrences of the text in big.txt. The text must be unique.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/edit@large/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
 		"{174;210;123} │ {/}{error}Found 20 occurrences of the text in",
 		"{174;210;123} │ {/}{error}big.txt. The text must be unique.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/bash/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run tests{/}",
@@ -576,11 +576,11 @@
 	],
 	"compact/bash/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run tests{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (26 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (26 lines){/}"
 	],
 	"compact/bash/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run tests{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (26 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (26 lines){/}"
 	],
 	"compact/bash/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}npm test{/}",
@@ -610,7 +610,7 @@
 		"{174;210;123} │ {/}{toolOutput}ok 22{/}",
 		"{174;210;123} │ {/}{toolOutput}ok 23{/}",
 		"{174;210;123} │ {/}{toolOutput}ok 24{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (26 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (26 lines){/}"
 	],
 	"compact/bash/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}npm test{/}",
@@ -640,15 +640,15 @@
 		"{174;210;123} │ {/}{toolOutput}ok 22{/}",
 		"{174;210;123} │ {/}{toolOutput}ok 23{/}",
 		"{174;210;123} │ {/}{toolOutput}ok 24{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (26 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (26 lines){/}"
 	],
 	"compact/bash/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run tests{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with code 1{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with code 1{/}"
 	],
 	"compact/bash/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run tests{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with",
 		"   {error}code 1{/}"
 	],
 	"compact/bash/failed/open/100": [
@@ -657,7 +657,7 @@
 		"{174;210;123} │ {/}{error}npm ERR! A complete log is in ~/.npm/_logs{/}",
 		"{174;210;123} │ {/}{error}{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/bash/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}npm test{/}",
@@ -666,7 +666,7 @@
 		"{174;210;123} │ {/}{error}~/.npm/_logs{/}",
 		"{174;210;123} │ {/}{error}{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/bash@quiet/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run true{/}",
@@ -686,40 +686,40 @@
 	],
 	"compact/bash@quiet/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run true{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (1 line){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (1 line){/}"
 	],
 	"compact/bash@quiet/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run true{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (1 line){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (1 line){/}"
 	],
 	"compact/bash@quiet/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}true{/}",
 		"{174;210;123} │ {/}{toolOutput}(no output){/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (1 line){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (1 line){/}"
 	],
 	"compact/bash@quiet/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}true{/}",
 		"{174;210;123} │ {/}{toolOutput}(no output){/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (1 line){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (1 line){/}"
 	],
 	"compact/bash@quiet/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run true{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command timed out after 5 seconds{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command timed out after 5 seconds{/}"
 	],
 	"compact/bash@quiet/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run true{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command timed out",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command timed out",
 		"   {error}after 5 seconds{/}"
 	],
 	"compact/bash@quiet/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}true{/}",
 		"{174;210;123} │ {/}{error}Command timed out after 5 seconds{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/bash@quiet/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}true{/}",
 		"{174;210;123} │ {/}{error}Command timed out after 5 seconds{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/bash@wide/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Read file \"package.json\" + 2 more steps{/}",
@@ -744,12 +744,12 @@
 	],
 	"compact/bash@wide/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Read file \"package.json\" + 2 more steps{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/bash@wide/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Read file \"package.json\" + 2 more ",
 		"{174;210;123} │ {/}{success}{/}{toolTitle}{b}{/b}{/}{toolOutput}steps{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/bash@wide/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}cat package.json | jq '.scripts' && echo 'a very long command that keeps going well past t",
@@ -758,7 +758,7 @@
 		"{174;210;123} │ {/}{toolOutput}xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{/}",
 		"{174;210;123} │ {/}{toolOutput}      70 /opt/homebrew/lib/node_modules/@earendil-works/pi-coding-agent/README.md{/}",
 		"{174;210;123} │ {/}{toolOutput}last{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/bash@wide/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}cat package.json | jq '.scripts' &",
@@ -773,17 +773,17 @@
 		"{174;210;123} │ {/}{toolOutput}/opt/homebrew/lib/node_modules/@earendil-",
 		"{174;210;123} │ {/}{toolOutput}works/pi-coding-agent/README.md{/}",
 		"{174;210;123} │ {/}{toolOutput}last{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/bash@wide/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Read file \"package.json\" + 2 more steps{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}jq: error (at <stdin>:1): Cannot index string with \"scripts\" (Command exited",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}jq: error (at <stdin>:1): Cannot index string with \"scripts\" (Command exited",
 		"   {error}with code 5){/}"
 	],
 	"compact/bash@wide/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Read file \"package.json\" + 2 more ",
 		"{174;210;123} │ {/}{error}{/}{toolTitle}{b}{/b}{/}{toolOutput}steps{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}jq: error (at",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}jq: error (at",
 		"   {error}<stdin>:1): Cannot index string with",
 		"   {error}\"scripts\" (Command exited with code 5){/}"
 	],
@@ -792,7 +792,7 @@
 		"{174;210;123} │ {/}{error}{/}{toolTitle}{b}{/b}{/}{toolOutput}he edge of a narrow terminal'{/}",
 		"{174;210;123} │ {/}{error}jq: error (at <stdin>:1): Cannot index string with \"scripts\"{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 5{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/bash@wide/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}cat package.json | jq '.scripts' &",
@@ -802,7 +802,7 @@
 		"{174;210;123} │ {/}{error}jq: error (at <stdin>:1): Cannot index",
 		"{174;210;123} │ {/}{error}string with \"scripts\"{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 5{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/bash@four/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run seq{/}",
@@ -822,11 +822,11 @@
 	],
 	"compact/bash@four/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run seq{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"compact/bash@four/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run seq{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"compact/bash@four/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}seq 1 4{/}",
@@ -834,7 +834,7 @@
 		"{174;210;123} │ {/}{toolOutput}2{/}",
 		"{174;210;123} │ {/}{toolOutput}3{/}",
 		"{174;210;123} │ {/}{toolOutput}4{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"compact/bash@four/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}seq 1 4{/}",
@@ -842,28 +842,28 @@
 		"{174;210;123} │ {/}{toolOutput}2{/}",
 		"{174;210;123} │ {/}{toolOutput}3{/}",
 		"{174;210;123} │ {/}{toolOutput}4{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"compact/bash@four/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run seq{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with code 1{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with code 1{/}"
 	],
 	"compact/bash@four/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run seq{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with",
 		"   {error}code 1{/}"
 	],
 	"compact/bash@four/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}seq 1 4{/}",
 		"{174;210;123} │ {/}{error}seq: invalid argument{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/bash@four/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}seq 1 4{/}",
 		"{174;210;123} │ {/}{error}seq: invalid argument{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/powershell/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}List files \"src\" + 1 more step{/}",
@@ -885,12 +885,12 @@
 	],
 	"compact/powershell/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}List files \"src\" + 1 more step{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"compact/powershell/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}List files \"src\" + 1 more st",
 		"{174;210;123} │ {/}{success}{/}{toolTitle}{b}{/b}{/}{toolOutput}ep{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"compact/powershell/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}Get-ChildItem -Path src | Select-Object Name{/}",
@@ -898,7 +898,7 @@
 		"{174;210;123} │ {/}{toolOutput}----{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"compact/powershell/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}Get-ChildItem -Path src | Se",
@@ -907,30 +907,30 @@
 		"{174;210;123} │ {/}{toolOutput}----{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"compact/powershell/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}List files \"src\" + 1 more step{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with code 1{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with code 1{/}"
 	],
 	"compact/powershell/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}List files \"src\" + 1 more st",
 		"{174;210;123} │ {/}{error}{/}{toolTitle}{b}{/b}{/}{toolOutput}ep{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Command exited with",
 		"   {error}code 1{/}"
 	],
 	"compact/powershell/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}Get-ChildItem -Path src | Select-Object Name{/}",
 		"{174;210;123} │ {/}{error}Get-ChildItem: Cannot find path 'src'{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/powershell/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}Get-ChildItem -Path src | Se",
 		"{174;210;123} │ {/}{error}{/}{toolTitle}{b}{/b}{/}{toolOutput}lect-Object Name{/}",
 		"{174;210;123} │ {/}{error}Get-ChildItem: Cannot find path 'src'{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/grep/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
@@ -950,42 +950,42 @@
 	],
 	"compact/grep/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"compact/grep/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"compact/grep/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts:2: // TODO: rename{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts:9: // TODO: split{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"compact/grep/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts:2: // TODO: rename{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts:9: // TODO: split{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"compact/grep/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}rg: src: No such file or directory{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}rg: src: No such file or directory{/}"
 	],
 	"compact/grep/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}rg: src: No such file",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}rg: src: No such file",
 		"   {error}or directory{/}"
 	],
 	"compact/grep/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{error}rg: src: No such file or directory{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/grep/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{error}rg: src: No such file or directory{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/find/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
@@ -1005,43 +1005,43 @@
 	],
 	"compact/find/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/find/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/find/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/deep/x.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/find/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/deep/x.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/find/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fd: invalid pattern{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fd: invalid pattern{/}"
 	],
 	"compact/find/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fd: invalid pattern{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fd: invalid pattern{/}"
 	],
 	"compact/find/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{error}fd: invalid pattern{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/find/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{error}fd: invalid pattern{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/ls/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
@@ -1061,43 +1061,43 @@
 	],
 	"compact/ls/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/ls/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/ls/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}deep/{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/ls/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}deep/{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"compact/ls/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Path not found: src{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Path not found: src{/}"
 	],
 	"compact/ls/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Path not found: src{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Path not found: src{/}"
 	],
 	"compact/ls/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{error}Path not found: src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/ls/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{error}Path not found: src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/custom:web_search/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
@@ -1125,11 +1125,11 @@
 	],
 	"compact/custom:web_search/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (6 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (6 lines){/}"
 	],
 	"compact/custom:web_search/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (6 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (6 lines){/}"
 	],
 	"compact/custom:web_search/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
@@ -1143,7 +1143,7 @@
 		"{174;210;123} │ {/}{toolOutput}result 4{/}",
 		"{174;210;123} │ {/}{toolOutput}result 5{/}",
 		"{174;210;123} │ {/}{toolOutput}result 6{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (6 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (6 lines){/}"
 	],
 	"compact/custom:web_search/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
@@ -1157,15 +1157,15 @@
 		"{174;210;123} │ {/}{toolOutput}result 4{/}",
 		"{174;210;123} │ {/}{toolOutput}result 5{/}",
 		"{174;210;123} │ {/}{toolOutput}result 6{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (6 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (6 lines){/}"
 	],
 	"compact/custom:web_search/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Search provider unavailable{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Search provider unavailable{/}"
 	],
 	"compact/custom:web_search/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Search provider",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Search provider",
 		"   {error}unavailable{/}"
 	],
 	"compact/custom:web_search/failed/open/100": [
@@ -1176,7 +1176,7 @@
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}{error}Search provider unavailable{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 7{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/custom:web_search/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
@@ -1186,7 +1186,7 @@
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}{error}Search provider unavailable{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 7{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/custom:fetch@author/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.example{/}",
@@ -1228,12 +1228,12 @@
 	],
 	"compact/custom:fetch@author/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.example{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"compact/custom:fetch@author/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.exam",
 		"{174;210;123} │ {/}{success}{/}{toolTitle}{b}{/b}{/}{toolOutput}ple{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"compact/custom:fetch@author/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.example{/}",
@@ -1247,7 +1247,7 @@
 		"{174;210;123} │ {/}{toolOutput}  }{/}",
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}AUTHOR full: # Fetched",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"compact/custom:fetch@author/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.exam",
@@ -1262,16 +1262,16 @@
 		"{174;210;123} │ {/}{toolOutput}  }{/}",
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}AUTHOR full: # Fetched",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"compact/custom:fetch@author/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.example{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fetch failed: 503{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fetch failed: 503{/}"
 	],
 	"compact/custom:fetch@author/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.exam",
 		"{174;210;123} │ {/}{error}{/}{toolTitle}{b}{/b}{/}{toolOutput}ple{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fetch failed: 503{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fetch failed: 503{/}"
 	],
 	"compact/custom:fetch@author/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.example{/}",
@@ -1285,7 +1285,7 @@
 		"{174;210;123} │ {/}{toolOutput}  }{/}",
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}AUTHOR full: fetch failed: 503",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"compact/custom:fetch@author/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.exam",
@@ -1300,7 +1300,7 @@
 		"{174;210;123} │ {/}{toolOutput}  }{/}",
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}AUTHOR full: fetch failed: 503",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/read/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
@@ -1331,7 +1331,7 @@
 		"{174;210;123} │ {/}{toolDiffContext}  9 {/}line {181;206;168}9{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 10 {/}line {181;206;168}10{/}",
 		"{174;210;123} │ {/}{toolOutput}… 16 more lines{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (25 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (25 lines){/}"
 	],
 	"preview/read/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
@@ -1346,7 +1346,7 @@
 		"{174;210;123} │ {/}{toolDiffContext}  9 {/}line {181;206;168}9{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 10 {/}line {181;206;168}10{/}",
 		"{174;210;123} │ {/}{toolOutput}… 17 more lines{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (25 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (25 lines){/}"
 	],
 	"preview/read/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
@@ -1376,7 +1376,7 @@
 		"{174;210;123} │ {/}{toolDiffContext} 24 {/}line {181;206;168}24{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 25 {/}line {181;206;168}25{/}",
 		"{174;210;123} │ {/}{dim}[Showing lines 1-25 of 80. Use offset=26 to continue.]{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (25 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (25 lines){/}"
 	],
 	"preview/read/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
@@ -1407,29 +1407,29 @@
 		"{174;210;123} │ {/}{toolDiffContext} 25 {/}line {181;206;168}25{/}",
 		"{174;210;123} │ {/}{dim}[Showing lines 1-25 of 80. Use offset=26{/}",
 		"{174;210;123} │ {/}{dim}to continue.]{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (25 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (25 lines){/}"
 	],
 	"preview/read/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}ENOENT: no such file or directory, access 'src/app.ts'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/read/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}ENOENT: no such file or directory, access",
 		"{174;210;123} │ {/}{error}'src/app.ts'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/read/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}ENOENT: no such file or directory, access 'src/app.ts'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/read/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}ENOENT: no such file or directory, access",
 		"{174;210;123} │ {/}{error}'src/app.ts'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/read@offset/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
@@ -1452,50 +1452,50 @@
 		"{174;210;123} │ {/}{toolDiffContext} 40 {/}{86;156;214}const{/} a = {181;206;168}1{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 41 {/}{86;156;214}const{/} b = {181;206;168}2{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 42 {/}{86;156;214}export{/} { a, b };",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/read@offset/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 40 {/}{86;156;214}const{/} a = {181;206;168}1{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 41 {/}{86;156;214}const{/} b = {181;206;168}2{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 42 {/}{86;156;214}export{/} { a, b };",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/read@offset/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 40 {/}{86;156;214}const{/} a = {181;206;168}1{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 41 {/}{86;156;214}const{/} b = {181;206;168}2{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 42 {/}{86;156;214}export{/} { a, b };",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/read@offset/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 40 {/}{86;156;214}const{/} a = {181;206;168}1{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 41 {/}{86;156;214}const{/} b = {181;206;168}2{/};",
 		"{174;210;123} │ {/}{toolDiffContext} 42 {/}{86;156;214}export{/} { a, b };",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/read@offset/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}Offset 40 is beyond end of file (12 lines total){/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/read@offset/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}Offset 40 is beyond end of file (12 lines",
 		"{174;210;123} │ {/}{error}total){/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/read@offset/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}Offset 40 is beyond end of file (12 lines total){/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/read@offset/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}read{/b}{/} {toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{error}Offset 40 is beyond end of file (12 lines",
 		"{174;210;123} │ {/}{error}total){/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/write/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
@@ -1578,7 +1578,7 @@
 		"{174;210;123} │ {/}{toolDiffContext}  9 {/}{toolOutput}line 9{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 10 {/}{toolOutput}line 10{/}",
 		"{174;210;123} │ {/}{toolOutput}… 5 more lines{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (15 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (15 lines){/}"
 	],
 	"preview/write/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
@@ -1593,7 +1593,7 @@
 		"{174;210;123} │ {/}{toolDiffContext}  9 {/}{toolOutput}line 9{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 10 {/}{toolOutput}line 10{/}",
 		"{174;210;123} │ {/}{toolOutput}… 5 more lines{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (15 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (15 lines){/}"
 	],
 	"preview/write/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
@@ -1612,7 +1612,7 @@
 		"{174;210;123} │ {/}{toolDiffContext} 13 {/}{toolOutput}line 13{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 14 {/}{toolOutput}line 14{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 15 {/}{toolOutput}line 15{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (15 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (15 lines){/}"
 	],
 	"preview/write/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
@@ -1631,29 +1631,29 @@
 		"{174;210;123} │ {/}{toolDiffContext} 13 {/}{toolOutput}line 13{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 14 {/}{toolOutput}line 14{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 15 {/}{toolOutput}line 15{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (15 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (15 lines){/}"
 	],
 	"preview/write/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
 		"{174;210;123} │ {/}{error}EACCES: permission denied, open 'notes.md'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/write/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
 		"{174;210;123} │ {/}{error}EACCES: permission denied, open",
 		"{174;210;123} │ {/}{error}'notes.md'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/write/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
 		"{174;210;123} │ {/}{error}EACCES: permission denied, open 'notes.md'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/write/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}write{/b}{/} {toolOutput}notes.md{/}",
 		"{174;210;123} │ {/}{error}EACCES: permission denied, open",
 		"{174;210;123} │ {/}{error}'notes.md'{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/edit/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
@@ -1683,7 +1683,7 @@
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 20 +{/}changed {181;206;168}20{/}                                                                                  {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 21 +{/}added 20b                                                                                   {/bg}",
 		"{174;210;123} │ {/}{toolDiffContext} 22  {/}line {181;206;168}21{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
 	],
 	"preview/edit/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
@@ -1697,7 +1697,7 @@
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 20 +{/}changed {181;206;168}20{/}                          {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 21 +{/}added 20b                           {/bg}",
 		"{174;210;123} │ {/}{toolDiffContext} 22  {/}line {181;206;168}21{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
 	],
 	"preview/edit/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
@@ -1723,7 +1723,7 @@
 		"{174;210;123} │ {/}{toolDiffContext} 23  {/}line {181;206;168}22{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 24  {/}line {181;206;168}23{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 25  {/}line {181;206;168}24{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
 	],
 	"preview/edit/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
@@ -1749,33 +1749,33 @@
 		"{174;210;123} │ {/}{toolDiffContext} 23  {/}line {181;206;168}22{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 24  {/}line {181;206;168}23{/}",
 		"{174;210;123} │ {/}{toolDiffContext} 25  {/}line {181;206;168}24{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+3{/}{174;210;123} {/}{toolDiffRemoved}-2{/}{174;210;123}){/}"
 	],
 	"preview/edit/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{error}Could not find the exact text in app.ts. The old text must match exactly including all whitespace",
 		"{174;210;123} │ {/}{error}and newlines.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/edit/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{error}Could not find the exact text in app.ts.",
 		"{174;210;123} │ {/}{error}The old text must match exactly including",
 		"{174;210;123} │ {/}{error}all whitespace and newlines.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/edit/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{error}Could not find the exact text in app.ts. The old text must match exactly including all whitespace",
 		"{174;210;123} │ {/}{error}and newlines.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/edit/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{error}Could not find the exact text in app.ts.",
 		"{174;210;123} │ {/}{error}The old text must match exactly including",
 		"{174;210;123} │ {/}{error}all whitespace and newlines.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/edit@large/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
@@ -1806,7 +1806,7 @@
 		"{174;210;123} │ {/}{bg:241;250;243}{toolDiffRemoved}  9 -{/}{toolOutput}old 9{/}                                                                                       {/bg}",
 		"{174;210;123} │ {/}{bg:241;250;243}{toolDiffRemoved} 10 -{/}{toolOutput}old 10{/}                                                                                      {/bg}",
 		"{174;210;123} │ {/}{toolOutput}… 30 more lines{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
 	],
 	"preview/edit@large/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
@@ -1821,7 +1821,7 @@
 		"{174;210;123} │ {/}{bg:241;250;243}{toolDiffRemoved}  9 -{/}{toolOutput}old 9{/}                               {/bg}",
 		"{174;210;123} │ {/}{bg:241;250;243}{toolDiffRemoved} 10 -{/}{toolOutput}old 10{/}                              {/bg}",
 		"{174;210;123} │ {/}{toolOutput}… 30 more lines{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
 	],
 	"preview/edit@large/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
@@ -1865,7 +1865,7 @@
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 18 +{/}{toolOutput}new 18{/}                                                                                      {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 19 +{/}{toolOutput}new 19{/}                                                                                      {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 20 +{/}{toolOutput}new 20{/}                                                                                      {/bg}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
 	],
 	"preview/edit@large/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
@@ -1909,29 +1909,29 @@
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 18 +{/}{toolOutput}new 18{/}                              {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 19 +{/}{toolOutput}new 19{/}                              {/bg}",
 		"{174;210;123} │ {/}{bg:241;212;235}{toolDiffAdded} 20 +{/}{toolOutput}new 20{/}                              {/bg}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{174;210;123} ({/}{toolDiffAdded}+20{/}{174;210;123} {/}{toolDiffRemoved}-20{/}{174;210;123}){/}"
 	],
 	"preview/edit@large/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
 		"{174;210;123} │ {/}{error}Found 20 occurrences of the text in big.txt. The text must be unique.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/edit@large/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
 		"{174;210;123} │ {/}{error}Found 20 occurrences of the text in",
 		"{174;210;123} │ {/}{error}big.txt. The text must be unique.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/edit@large/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
 		"{174;210;123} │ {/}{error}Found 20 occurrences of the text in big.txt. The text must be unique.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/edit@large/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}edit{/b}{/} {toolOutput}big.txt{/}",
 		"{174;210;123} │ {/}{error}Found 20 occurrences of the text in",
 		"{174;210;123} │ {/}{error}big.txt. The text must be unique.{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run tests{/}",
@@ -1974,7 +1974,7 @@
 		"{174;210;123} │ {/}{toolOutput}ok 7{/}",
 		"{174;210;123} │ {/}{toolOutput}ok 8{/}",
 		"{174;210;123} │ {/}{toolOutput}… 16 more lines{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (26 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (26 lines){/}"
 	],
 	"preview/bash/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run tests{/}",
@@ -1989,7 +1989,7 @@
 		"{174;210;123} │ {/}{toolOutput}ok 7{/}",
 		"{174;210;123} │ {/}{toolOutput}ok 8{/}",
 		"{174;210;123} │ {/}{toolOutput}… 16 more lines{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (26 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (26 lines){/}"
 	],
 	"preview/bash/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}npm test{/}",
@@ -2019,7 +2019,7 @@
 		"{174;210;123} │ {/}{toolOutput}ok 22{/}",
 		"{174;210;123} │ {/}{toolOutput}ok 23{/}",
 		"{174;210;123} │ {/}{toolOutput}ok 24{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (26 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (26 lines){/}"
 	],
 	"preview/bash/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}npm test{/}",
@@ -2049,7 +2049,7 @@
 		"{174;210;123} │ {/}{toolOutput}ok 22{/}",
 		"{174;210;123} │ {/}{toolOutput}ok 23{/}",
 		"{174;210;123} │ {/}{toolOutput}ok 24{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (26 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (26 lines){/}"
 	],
 	"preview/bash/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run tests{/}",
@@ -2057,7 +2057,7 @@
 		"{174;210;123} │ {/}{error}npm ERR! A complete log is in ~/.npm/_logs{/}",
 		"{174;210;123} │ {/}{error}{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run tests{/}",
@@ -2066,7 +2066,7 @@
 		"{174;210;123} │ {/}{error}~/.npm/_logs{/}",
 		"{174;210;123} │ {/}{error}{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}npm test{/}",
@@ -2074,7 +2074,7 @@
 		"{174;210;123} │ {/}{error}npm ERR! A complete log is in ~/.npm/_logs{/}",
 		"{174;210;123} │ {/}{error}{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}npm test{/}",
@@ -2083,7 +2083,7 @@
 		"{174;210;123} │ {/}{error}~/.npm/_logs{/}",
 		"{174;210;123} │ {/}{error}{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@quiet/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run true{/}",
@@ -2104,42 +2104,42 @@
 	"preview/bash@quiet/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run true{/}",
 		"{174;210;123} │ {/}{toolOutput}(no output){/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (1 line){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (1 line){/}"
 	],
 	"preview/bash@quiet/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run true{/}",
 		"{174;210;123} │ {/}{toolOutput}(no output){/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (1 line){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (1 line){/}"
 	],
 	"preview/bash@quiet/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}true{/}",
 		"{174;210;123} │ {/}{toolOutput}(no output){/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (1 line){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (1 line){/}"
 	],
 	"preview/bash@quiet/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}true{/}",
 		"{174;210;123} │ {/}{toolOutput}(no output){/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (1 line){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (1 line){/}"
 	],
 	"preview/bash@quiet/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run true{/}",
 		"{174;210;123} │ {/}{error}Command timed out after 5 seconds{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@quiet/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run true{/}",
 		"{174;210;123} │ {/}{error}Command timed out after 5 seconds{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@quiet/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}true{/}",
 		"{174;210;123} │ {/}{error}Command timed out after 5 seconds{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@quiet/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}true{/}",
 		"{174;210;123} │ {/}{error}Command timed out after 5 seconds{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@wide/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Read file \"package.json\" + 2 more steps{/}",
@@ -2168,7 +2168,7 @@
 		"{174;210;123} │ {/}{toolOutput}xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{/}",
 		"{174;210;123} │ {/}{toolOutput}      70 /opt/homebrew/lib/node_modules/@earendil-works/pi-coding-agent/README.md{/}",
 		"{174;210;123} │ {/}{toolOutput}last{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/bash@wide/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Read file \"package.json\" + 2 more ",
@@ -2181,7 +2181,7 @@
 		"{174;210;123} │ {/}{toolOutput}/opt/homebrew/lib/node_modules/@earendil-",
 		"{174;210;123} │ {/}{toolOutput}works/pi-coding-agent/README.md{/}",
 		"{174;210;123} │ {/}{toolOutput}last{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/bash@wide/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}cat package.json | jq '.scripts' && echo 'a very long command that keeps going well past t",
@@ -2190,7 +2190,7 @@
 		"{174;210;123} │ {/}{toolOutput}xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{/}",
 		"{174;210;123} │ {/}{toolOutput}      70 /opt/homebrew/lib/node_modules/@earendil-works/pi-coding-agent/README.md{/}",
 		"{174;210;123} │ {/}{toolOutput}last{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/bash@wide/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}cat package.json | jq '.scripts' &",
@@ -2205,13 +2205,13 @@
 		"{174;210;123} │ {/}{toolOutput}/opt/homebrew/lib/node_modules/@earendil-",
 		"{174;210;123} │ {/}{toolOutput}works/pi-coding-agent/README.md{/}",
 		"{174;210;123} │ {/}{toolOutput}last{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/bash@wide/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Read file \"package.json\" + 2 more steps{/}",
 		"{174;210;123} │ {/}{error}jq: error (at <stdin>:1): Cannot index string with \"scripts\"{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 5{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@wide/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Read file \"package.json\" + 2 more ",
@@ -2219,14 +2219,14 @@
 		"{174;210;123} │ {/}{error}jq: error (at <stdin>:1): Cannot index",
 		"{174;210;123} │ {/}{error}string with \"scripts\"{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 5{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@wide/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}cat package.json | jq '.scripts' && echo 'a very long command that keeps going well past t",
 		"{174;210;123} │ {/}{error}{/}{toolTitle}{b}{/b}{/}{toolOutput}he edge of a narrow terminal'{/}",
 		"{174;210;123} │ {/}{error}jq: error (at <stdin>:1): Cannot index string with \"scripts\"{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 5{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@wide/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}cat package.json | jq '.scripts' &",
@@ -2236,7 +2236,7 @@
 		"{174;210;123} │ {/}{error}jq: error (at <stdin>:1): Cannot index",
 		"{174;210;123} │ {/}{error}string with \"scripts\"{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 5{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@four/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run seq{/}",
@@ -2260,7 +2260,7 @@
 		"{174;210;123} │ {/}{toolOutput}2{/}",
 		"{174;210;123} │ {/}{toolOutput}3{/}",
 		"{174;210;123} │ {/}{toolOutput}4{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"preview/bash@four/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run seq{/}",
@@ -2268,7 +2268,7 @@
 		"{174;210;123} │ {/}{toolOutput}2{/}",
 		"{174;210;123} │ {/}{toolOutput}3{/}",
 		"{174;210;123} │ {/}{toolOutput}4{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"preview/bash@four/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}seq 1 4{/}",
@@ -2276,7 +2276,7 @@
 		"{174;210;123} │ {/}{toolOutput}2{/}",
 		"{174;210;123} │ {/}{toolOutput}3{/}",
 		"{174;210;123} │ {/}{toolOutput}4{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"preview/bash@four/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}seq 1 4{/}",
@@ -2284,31 +2284,31 @@
 		"{174;210;123} │ {/}{toolOutput}2{/}",
 		"{174;210;123} │ {/}{toolOutput}3{/}",
 		"{174;210;123} │ {/}{toolOutput}4{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"preview/bash@four/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run seq{/}",
 		"{174;210;123} │ {/}{error}seq: invalid argument{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@four/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}Run seq{/}",
 		"{174;210;123} │ {/}{error}seq: invalid argument{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@four/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}seq 1 4{/}",
 		"{174;210;123} │ {/}{error}seq: invalid argument{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/bash@four/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}bash{/b}{/} {toolOutput}seq 1 4{/}",
 		"{174;210;123} │ {/}{error}seq: invalid argument{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/powershell/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}List files \"src\" + 1 more step{/}",
@@ -2334,7 +2334,7 @@
 		"{174;210;123} │ {/}{toolOutput}----{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"preview/powershell/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}List files \"src\" + 1 more st",
@@ -2343,7 +2343,7 @@
 		"{174;210;123} │ {/}{toolOutput}----{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"preview/powershell/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}Get-ChildItem -Path src | Select-Object Name{/}",
@@ -2351,7 +2351,7 @@
 		"{174;210;123} │ {/}{toolOutput}----{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"preview/powershell/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}Get-ChildItem -Path src | Se",
@@ -2360,33 +2360,33 @@
 		"{174;210;123} │ {/}{toolOutput}----{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (4 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (4 lines){/}"
 	],
 	"preview/powershell/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}List files \"src\" + 1 more step{/}",
 		"{174;210;123} │ {/}{error}Get-ChildItem: Cannot find path 'src'{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/powershell/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}List files \"src\" + 1 more st",
 		"{174;210;123} │ {/}{error}{/}{toolTitle}{b}{/b}{/}{toolOutput}ep{/}",
 		"{174;210;123} │ {/}{error}Get-ChildItem: Cannot find path 'src'{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/powershell/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}Get-ChildItem -Path src | Select-Object Name{/}",
 		"{174;210;123} │ {/}{error}Get-ChildItem: Cannot find path 'src'{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/powershell/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}powershell{/b}{/} {toolOutput}Get-ChildItem -Path src | Se",
 		"{174;210;123} │ {/}{error}{/}{toolTitle}{b}{/b}{/}{toolOutput}lect-Object Name{/}",
 		"{174;210;123} │ {/}{error}Get-ChildItem: Cannot find path 'src'{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 1{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/grep/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
@@ -2408,45 +2408,45 @@
 		" {success}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts:2: // TODO: rename{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts:9: // TODO: split{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"preview/grep/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts:2: // TODO: rename{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts:9: // TODO: split{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"preview/grep/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts:2: // TODO: rename{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts:9: // TODO: split{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"preview/grep/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts:2: // TODO: rename{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts:9: // TODO: split{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"preview/grep/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{error}rg: src: No such file or directory{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/grep/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{error}rg: src: No such file or directory{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/grep/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{error}rg: src: No such file or directory{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/grep/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}grep{/b}{/} {toolOutput}/TODO/ in src{/}",
 		"{174;210;123} │ {/}{error}rg: src: No such file or directory{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/find/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
@@ -2469,48 +2469,48 @@
 		"{174;210;123} │ {/}{toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/deep/x.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/find/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/deep/x.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/find/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/deep/x.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/find/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{toolOutput}src/app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}src/deep/x.ts{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/find/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{error}fd: invalid pattern{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/find/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{error}fd: invalid pattern{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/find/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{error}fd: invalid pattern{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/find/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}find{/b}{/} {toolOutput}*.ts in src{/}",
 		"{174;210;123} │ {/}{error}fd: invalid pattern{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/ls/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
@@ -2533,48 +2533,48 @@
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}deep/{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/ls/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}deep/{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/ls/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}deep/{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/ls/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{toolOutput}app.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}util.ts{/}",
 		"{174;210;123} │ {/}{toolOutput}deep/{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (3 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (3 lines){/}"
 	],
 	"preview/ls/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{error}Path not found: src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/ls/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{error}Path not found: src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/ls/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{error}Path not found: src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/ls/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}ls{/b}{/} {toolOutput}src{/}",
 		"{174;210;123} │ {/}{error}Path not found: src{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/custom:web_search/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
@@ -2602,11 +2602,11 @@
 	],
 	"preview/custom:web_search/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (6 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (6 lines){/}"
 	],
 	"preview/custom:web_search/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (6 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (6 lines){/}"
 	],
 	"preview/custom:web_search/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
@@ -2620,7 +2620,7 @@
 		"{174;210;123} │ {/}{toolOutput}result 4{/}",
 		"{174;210;123} │ {/}{toolOutput}result 5{/}",
 		"{174;210;123} │ {/}{toolOutput}result 6{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (6 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (6 lines){/}"
 	],
 	"preview/custom:web_search/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
@@ -2634,15 +2634,15 @@
 		"{174;210;123} │ {/}{toolOutput}result 4{/}",
 		"{174;210;123} │ {/}{toolOutput}result 5{/}",
 		"{174;210;123} │ {/}{toolOutput}result 6{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (6 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (6 lines){/}"
 	],
 	"preview/custom:web_search/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Search provider unavailable{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Search provider unavailable{/}"
 	],
 	"preview/custom:web_search/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Search provider",
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}Search provider",
 		"   {error}unavailable{/}"
 	],
 	"preview/custom:web_search/failed/open/100": [
@@ -2653,7 +2653,7 @@
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}{error}Search provider unavailable{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 7{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/custom:web_search/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}web_search{/b}{/} {toolOutput}pi tui{/}",
@@ -2663,7 +2663,7 @@
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}{error}Search provider unavailable{/}",
 		"{174;210;123} │ {/}{error}Command exited with code 7{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/custom:fetch@author/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.example{/}",
@@ -2705,12 +2705,12 @@
 	],
 	"preview/custom:fetch@author/done/closed/100": [
 		" {success}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.example{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"preview/custom:fetch@author/done/closed/44": [
 		" {success}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.exam",
 		"{174;210;123} │ {/}{success}{/}{toolTitle}{b}{/b}{/}{toolOutput}ple{/}",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"preview/custom:fetch@author/done/open/100": [
 		" {success}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.example{/}",
@@ -2724,7 +2724,7 @@
 		"{174;210;123} │ {/}{toolOutput}  }{/}",
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}AUTHOR full: # Fetched",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"preview/custom:fetch@author/done/open/44": [
 		" {success}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.exam",
@@ -2739,16 +2739,16 @@
 		"{174;210;123} │ {/}{toolOutput}  }{/}",
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}AUTHOR full: # Fetched",
-		"{174;210;123} └ {/}{174;210;123}Done in 1.234s{/}{174;210;123} (2 lines){/}"
+		"{174;210;123} └ {/}{173;209;123}Done in 1.234s{/}{173;209;123} (2 lines){/}"
 	],
 	"preview/custom:fetch@author/failed/closed/100": [
 		" {error}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.example{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fetch failed: 503{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fetch failed: 503{/}"
 	],
 	"preview/custom:fetch@author/failed/closed/44": [
 		" {error}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.exam",
 		"{174;210;123} │ {/}{error}{/}{toolTitle}{b}{/b}{/}{toolOutput}ple{/}",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fetch failed: 503{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}{174;210;123} · {/}{error}fetch failed: 503{/}"
 	],
 	"preview/custom:fetch@author/failed/open/100": [
 		" {error}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.example{/}",
@@ -2762,7 +2762,7 @@
 		"{174;210;123} │ {/}{toolOutput}  }{/}",
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}AUTHOR full: fetch failed: 503",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"preview/custom:fetch@author/failed/open/44": [
 		" {error}⦁{/} {toolTitle}{b}fetch{/b}{/} {toolOutput}https://a.example, https://b.exam",
@@ -2777,7 +2777,7 @@
 		"{174;210;123} │ {/}{toolOutput}  }{/}",
 		"{174;210;123} │ {/}{toolOutput}}{/}",
 		"{174;210;123} │ {/}AUTHOR full: fetch failed: 503",
-		"{174;210;123} └ {/}{174;210;123}Failed in 1.234s{/}"
+		"{174;210;123} └ {/}{173;209;123}Failed in 1.234s{/}"
 	],
 	"claude/read/running/closed/100": [
 		" {134;73;167}⦁{/} {toolTitle}{b}Read{/b}{/}{toolOutput}(src/app.ts){/}",

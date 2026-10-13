@@ -57,7 +57,7 @@ import {
 	trimDiffContext,
 } from "../extensions/compact-tools-layout.ts";
 import { highlightMarkdown } from "../extensions/compact-tools-markdown.ts";
-import { paintChrome } from "../extensions/compact-tools-palette.ts";
+import { completionPainter, paintChrome } from "../extensions/compact-tools-palette.ts";
 import { formatToolProgress, glowProgressMessage, ProgressController } from "../extensions/compact-tools-progress.ts";
 import { ToolRuntime } from "../extensions/compact-tools-runtime.ts";
 import {
@@ -1131,7 +1131,7 @@ test("animates every built-in, restores reload renderers, and reuses unchanged l
 	);
 	assert.notEqual(changedResult, firstResult);
 
-	// The status line belongs to the frame, so it carries the chrome tone and nothing else.
+	// The connector keeps quiet chrome; completed duration/count metadata is one step brighter.
 	const finished = renderResult(
 		{ content },
 		{ expanded: true, isPartial: false },
@@ -1142,6 +1142,7 @@ test("animates every built-in, restores reload renderers, and reuses unchanged l
 	assert.match(stripTerminalSequences(controls), /└ Done/u);
 	assert.deepEqual([...new Set([...controls.matchAll(/38;2;\d+;\d+;\d+/gu)].map((match) => match[0]))], [
 		paintChrome(renderTheme, "x").match(/38;2;\d+;\d+;\d+/u)![0],
+		completionPainter(renderTheme)("x").match(/38;2;\d+;\d+;\d+/u)![0],
 	]);
 
 	const failedResult = renderResult(

@@ -1,15 +1,14 @@
-import type { AgentToolResult, Theme } from "@earendil-works/pi-coding-agent";
+import type { Theme } from "@earendil-works/pi-coding-agent";
 import { stripTerminalSequences } from "@earendil-works/pi-tui";
-import { countEditChanges } from "./compact-tools-invocation.ts";
+import { chromePainter, nestedCountPainter, nestedTitlePainter } from "./compact-tools-palette.ts";
 
 const SUMMARY_KEY = Symbol.for("pi-compact-tools.nested-summaries.v1");
 const MAX_PARENTS = 2_000;
 const MAX_CALLS = 256;
-const EDIT_PREVIEW_CALLS = 3;
 const MAX_NAME_LENGTH = 256;
 const MAX_ID_LENGTH = 1_024;
 type Status = "ok" | "error" | "unfinished";
-type Call = { name: string; status: Status; changes?: { added: number; removed: number } };
+type Call = { name: string; status: Status };
 type Summary = { calls: Map<string, Call>; partial: boolean; finished: boolean; live: boolean; revision: object };
 type Shared = typeof globalThis & { [SUMMARY_KEY]?: Map<string, Summary> };
 type NestedEvent = { toolCallId: string; toolName: string; parentToolCallId?: string; isError?: boolean; result?: unknown };
@@ -78,12 +77,8 @@ export class NestedCallSummaries {
 			return summary.finished;
 		}
 		const status = ended ? event.isError ? "error" : "ok" : "unfinished";
-		const result = event.result;
-		const changes = status === "ok" && event.toolName === "edit" && result && typeof result === "object"
-			? countEditChanges(result as AgentToolResult<unknown>) : undefined;
-		if (previous?.name === event.toolName && previous.status === status
-			&& previous.changes?.added === changes?.added && previous.changes?.removed === changes?.removed) return false;
-		summary.calls.set(event.toolCallId, { name: event.toolName, status, ...(changes ? { changes } : {}) });
+		if (previous?.name === event.toolName && previous.status === status) return false;
+		summary.calls.set(event.toolCallId, { name: event.toolName, status });
 		summary.live = true;
 		summary.revision = {};
 		return summary.finished;
@@ -95,7 +90,7 @@ export class NestedCallSummaries {
 		const value = message as { role?: string; toolName?: string; toolCallId?: string; nestedCalls?: { calls?: unknown; complete?: unknown } };
 		if (value.role !== "toolResult" || value.toolName !== "codemode" || typeof value.toolCallId !== "string"
 			|| value.toolCallId.length > MAX_ID_LENGTH || !Array.isArray(value.nestedCalls?.calls)) return false;
-		// A bounded persisted snapshot must not overwrite exact live edit totals or drop observed calls.
+		// A bounded persisted snapshot must not drop observed live calls.
 		const existing = this.summaries.get(value.toolCallId);
 		if (existing?.live && existing.calls.size > 0) return false;
 		const summary: Summary = { calls: new Map(), partial: value.nestedCalls.complete !== true, finished: true, live: false, revision: {} };
@@ -122,48 +117,45 @@ export class NestedCallSummaries {
 		}
 	}
 
-	/** Most tools group by outcome; edits keep every call's status and diff in start order. */
-	format(id: string, theme: Theme, expanded = false): string | undefined {
+	/** Other tool groups keep first-occurrence order; edit counts always come last. */
+	format(id: string, theme: Theme, _expanded = false): string | undefined {
 		const summary = this.summaries.get(id);
 		if (!summary || (summary.calls.size === 0 && !summary.partial)) return undefined;
-		const groups = new Map<string, { name: string; status: Status; calls: Call[] }>();
+		type Group = { name: string; calls: Call[] };
+		const groups: Group[] = [];
+		const byTool = new Map<string, Group>();
 		for (const call of summary.calls.values()) {
-			const key = JSON.stringify([call.name, call.name === "edit" ? "all" : call.status]);
-			let group = groups.get(key);
-			if (!group) groups.set(key, group = { name: call.name, status: call.status, calls: [] });
+			const key = call.name;
+			let group = byTool.get(key);
+			if (!group) {
+				group = { name: call.name, calls: [] };
+				byTool.set(key, group);
+				groups.push(group);
+			}
 			group.calls.push(call);
 		}
-		const parts: string[] = [];
-		for (const group of groups.values()) {
-			const color = group.status === "ok" ? "success" : group.status === "error" ? "error" : "warning";
-			const glyph = group.status === "ok" ? "✓" : group.status === "error" ? "✗" : "?";
+		const editIndex = groups.findIndex((group) => group.name === "edit");
+		if (editIndex >= 0) groups.push(...groups.splice(editIndex, 1));
+		const title = nestedTitlePainter(theme);
+		const chrome = chromePainter(theme);
+		const success = nestedCountPainter(theme, "success");
+		const error = nestedCountPainter(theme, "error");
+		const warning = nestedCountPainter(theme, "warning");
+		const parts = groups.map((group) => {
 			const name = stripTerminalSequences(group.name).replace(/[\x00-\x20\x7f-\x9f]/gu, " ").replace(/[\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]/gu, "").trim() || "tool";
-			if (group.name === "edit") {
-				// Include failures and unfinished calls in the same ordered list. A
-				// missing successful diff loses only its numbers, not other calls' diffs.
-				const shown = expanded ? group.calls : group.calls.slice(0, EDIT_PREVIEW_CALLS);
-				const entries = shown.map((call) => {
-					if (call.status === "error") return theme.fg("error", "✗");
-					if (call.status === "unfinished") return theme.fg("warning", "?");
-					return call.changes
-						? theme.fg("toolDiffAdded", `+${call.changes.added}`) + " " + theme.fg("toolDiffRemoved", `-${call.changes.removed}`)
-						: theme.fg("dim", "ok");
-				});
-				const hidden = group.calls.slice(shown.length);
-				if (hidden.length > 0) {
-					// The preview must not hide that an omitted edit failed or is unfinished.
-					const failed = hidden.filter((call) => call.status === "error").length;
-					const unfinished = hidden.filter((call) => call.status === "unfinished").length;
-					let more = theme.fg("dim", `… +${hidden.length} more`);
-					const statuses = [failed ? theme.fg("error", `${failed} failed`) : "", unfinished ? theme.fg("warning", `${unfinished} unfinished`) : ""].filter(Boolean);
-					if (statuses.length > 0) more += " (" + statuses.join(", ") + ")";
-					entries.push(more);
-				}
-				parts.push(`${name}(${group.calls.length}) [` + entries.join(theme.fg("dim", "|")) + "]");
-			} else parts.push(theme.fg(color, glyph) + ` ${name}(${group.calls.length})`);
-		}
-		if (summary.partial || [...summary.calls.values()].some((call) => call.status === "unfinished")) parts.push(theme.fg("warning", "(partial)"));
-		return parts.join(" ");
+
+			const successes = group.calls.filter((call) => call.status === "ok").length;
+			const failures = group.calls.filter((call) => call.status === "error").length;
+			const unfinished = group.calls.filter((call) => call.status === "unfinished").length;
+			const counts = [successes ? success(String(successes)) : "",
+				failures ? error(String(failures)) : ""].filter(Boolean);
+			const settled = counts.length > 0;
+			if (!settled) counts.push(warning(String(unfinished)));
+			return title(name) + chrome(" ") + counts.join(chrome(" "))
+				+ (settled && unfinished ? chrome(" ") + warning(`${unfinished} unfinished`) : "");
+		});
+		const partial = summary.partial || [...summary.calls.values()].some((call) => call.status === "unfinished");
+		return parts.join(chrome(" · ")) + (partial ? (parts.length ? " " : "") + warning("(partial)") : "");
 	}
 
 	private trim(): void {

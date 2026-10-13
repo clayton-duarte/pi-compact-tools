@@ -16,7 +16,7 @@ const [major, minor] = JSON.parse(readFileSync(new URL("../node_modules/@earendi
 const supportsPersistedCalls = major > 1 || (major === 1 && minor >= 2);
 if (supportsPersistedCalls) assert.ok(existsSync(nativeExtension), "Pi 1.2+ must expose its native codemode extension; host coverage must not silently skip");
 // Dev-only event driver: run the real sandbox and nested pipeline, without calling a model/provider.
-for (const style of ["compact", "claude", "codex"]) test(`${style}: real host codemode reports actual read, bash failure, edit diff and restored counts`, { skip: !supportsPersistedCalls }, async () => {
+for (const style of ["compact", "claude", "codex"]) test(`${style}: real host codemode reports actual read, bash failure and edit counts without patch details`, { skip: !supportsPersistedCalls }, async () => {
 	const previous = process.env.PI_CODING_AGENT_DIR;
 	const directory = mkdtempSync(join(tmpdir(), "compact-tools-real-codemode-"));
 	process.env.PI_CODING_AGENT_DIR = directory;
@@ -63,24 +63,24 @@ for (const style of ["compact", "claude", "codex"]) test(`${style}: real host co
 				row.updateResult(finalResult as never);
 				return row.render(180).map(stripTerminalSequences).join("\n");
 			};
-			assert.match(draw(), /Done in 1\.234s.*✓ read\(3\) ✗ bash\(1\) edit\(2\) \[\+2 -1\|✗\]/u);
+			assert.match(draw(), /Done in 1\.234s.*read 3 · bash 1 · edit 1 1/u);
 			assert.equal(declaration(), before, "rendering must preserve native codemode reachesTools and all metadata");
 			await session.reload();
-			assert.match(draw(), /edit\(2\) \[\+2 -1\|✗\]/u, "same-process reload keeps real edit deltas and errors");
+			assert.match(draw(), /edit 1 1/u, "same-process reload keeps edit counts and errors");
 			// Simulate a fresh process: only the host's persisted nested record survives.
 			(globalThis as Record<symbol, Map<string, unknown>>)[Symbol.for("pi-compact-tools.nested-summaries.v1")]!.clear();
 			await session.reload();
-			assert.match(draw(), /Done in 1\.234s.*✓ read\(3\) ✗ bash\(1\) edit\(2\) \[ok\|✗\]/u);
+			assert.match(draw(), /Done in 1\.234s.*read 3 · bash 1 · edit 1 1/u);
 			assert.doesNotMatch(draw(), /\+2 -1/u, "saved arguments are never mistaken for actual edit results");
 			const originalLeaf = sessionManager.getLeafId()!;
 			sessionManager.branch(assistantEntry);
 			const sibling = { ...message, toolCallId: `${id}-sibling`, nestedCalls: { complete: true, calls: [{ id: `${id}-sibling/1`, name: "grep", status: "ok" }] } };
 			const siblingLeaf = sessionManager.appendMessage(sibling as never);
 			sessionManager.branch(originalLeaf);
-			assert.doesNotMatch(draw(sibling.toolCallId, sibling), /✓ grep/u, "sibling has not been restored yet");
+			assert.doesNotMatch(draw(sibling.toolCallId, sibling), /grep 1/u, "sibling has not been restored yet");
 			const navigated = await session.navigateTree(siblingLeaf);
 			assert.equal(navigated.cancelled, false);
-			assert.match(draw(sibling.toolCallId, sibling), /✓ grep\(1\)/u, "/tree restores the new branch without a session_start");
+			assert.match(draw(sibling.toolCallId, sibling), /grep 1/u, "/tree restores the new branch without a session_start");
 		} finally { session.dispose(); }
 	} finally {
 		if (previous === undefined) delete process.env.PI_CODING_AGENT_DIR;

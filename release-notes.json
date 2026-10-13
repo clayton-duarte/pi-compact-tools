@@ -1,4 +1,18 @@
 {
+  "0.16.1": {
+    "New": [
+      "Minimal codemode summaries show each tool once: read 3 · bash 1 · edit 3 2; non-edit tools keep first-call order and edit always comes last",
+      "Plain counts use green for success, red for failure, and yellow for unfinished calls, without zero placeholders, count parentheses, status icons, pipes, or edit diff lists",
+      "Summary names retain their theme title hue at 75% brightness without bold; outcome counts retain their hues at 80% brightness",
+      "Completion duration and output-line metadata is one step brighter; rails, connectors, separators, main tool titles, and code previews are unchanged"
+    ],
+    "Fix": [
+      "Interleaved nested calls aggregate into one group per tool, with success counts before failure counts",
+      "Reloads, resumed sessions, and /tree navigation preserve or restore nested counts and outcomes without retaining tool arguments, results, or edit diff bookkeeping",
+      "Unfinished calls and incomplete records remain visible, including when mixed with settled outcomes"
+    ],
+    "Deprecated": []
+  },
   "0.16.0": {
     "New": [
       "Completed codemode rows summarize nested tool successes and failures beside their duration and output-line count without changing model input",
