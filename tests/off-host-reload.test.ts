@@ -8,6 +8,12 @@ import test from "node:test";
 import { createAgentSession, createBashToolDefinition, DefaultResourceLoader, initTheme, SessionManager, SettingsManager, ToolExecutionComponent } from "@earendil-works/pi-coding-agent";
 import { hostToolSnapshot } from "./host-tool-snapshot.ts";
 
+const hostVersion = JSON.parse(readFileSync(new URL("../node_modules/@earendil-works/pi-coding-agent/package.json", import.meta.url), "utf8")).version as string;
+const [hostMajor, hostMinor] = hostVersion.split(".").map(Number);
+// The renderer file predates its elapsed timer: file existence alone does not
+// establish that Pi 0.99–1.1 provides the native timer contract tested below.
+const supportsNativeCodemodeTimer = hostMajor! > 1 || (hostMajor === 1 && hostMinor! >= 2);
+
 test("real SDK busy command dispatch switches off/on without reload, abort, model request or loadout change", async () => {
 	const previous = process.env.PI_CODING_AGENT_DIR;
 	const directory = mkdtempSync(join(tmpdir(), "compact-off-host-"));
@@ -29,7 +35,8 @@ test("real SDK busy command dispatch switches off/on without reload, abort, mode
 			// Verify optional native renderer fingerprinting also works through Pi's
 			// actual extension loader (including a globally installed package).
 			const nativeURL = new URL("../node_modules/@earendil-works/pi-coding-agent/dist/extensions/codemode/renderer.js", import.meta.url);
-			if (existsSync(nativeURL)) {
+			if (supportsNativeCodemodeTimer) {
+				assert.ok(existsSync(nativeURL), `Pi ${hostVersion} must provide its timed native codemode renderer`);
 				await session.prompt("/compact-tools compact");
 				initTheme("dark", false);
 				const { codemodeRenderers: native } = await import(nativeURL.href);

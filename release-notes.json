@@ -1,4 +1,12 @@
 {
+  "0.16.6": {
+    "New": [],
+    "Fix": [
+      "Correct the SDK smoke test on Pi 0.99–1.1 by checking native codemode timer behavior only on hosts that provide it while retaining live off/on coverage on every supported version.",
+      "Require the complete supported Pi and Node compatibility matrix to pass before npm publication."
+    ],
+    "Deprecated": []
+  },
   "0.16.5": {
     "New": [],
     "Fix": [

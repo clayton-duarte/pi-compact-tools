@@ -85,4 +85,4 @@ The published npm package excludes development scripts, tests, these developer d
 
 Add an entry for the new version in `release-notes.json` (`[]` for no in-app notice), bump both package manifests, and run `npm run check`.
 
-Push the matching `vX.Y.Z` tag after the commit reaches `main`. The [release workflow](../.github/workflows/release.yml) validates the version, runs checks, publishes to npm with provenance through Trusted Publishing, then creates the GitHub release. No local npm token is needed.
+Push the matching `vX.Y.Z` tag after the commit reaches `main`. The [release workflow](../.github/workflows/release.yml) first calls the reusable CI workflow and waits for every supported Pi/Node combination, then validates the version, runs the package checks, publishes to npm with provenance through Trusted Publishing, and creates the GitHub release. No local npm token is needed.
