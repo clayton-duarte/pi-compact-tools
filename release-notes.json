@@ -1,4 +1,38 @@
 {
+  "0.16.5": {
+    "New": [],
+    "Fix": [
+      "Remove duplicate transcript updates so each tool row refreshes once during session UI binding.",
+      "Reduce median UI rebind time from 8.89 ms to 4.87 ms in a 200-row component benchmark, without implying full reload or general rendering speedups.",
+      "Isolate row refresh failures so other rows and controller cleanup continue, with fallback diagnostics if warning delivery fails.",
+      "Detach controller state despite host cleanup errors to prevent compact animation from restarting while off.",
+      "Centralize UI cleanup and separate transcript reconciliation from extension setup.",
+      "Remove unused execution wrappers and state while preserving timing, codemode summaries, and live off/on switching."
+    ],
+    "Deprecated": []
+  },
+  "0.16.4": {
+    "New": [
+      "The off command restores native Pi UI immediately, including during streaming or tool execution, without reload, abort, or restart",
+      "Re-enable Compact, Claude, or Codex live from off; existing rows and calls created while off follow the selected style"
+    ],
+    "Fix": [
+      "Native and custom renderer shells and component caches reconcile across repeated off/on transitions without replacing author state",
+      "Working labels and silent activity resume the current streaming phase; native shell elapsed timers pause when returning to compact rendering"
+    ],
+    "Deprecated": []
+  },
+  "0.16.3": {
+    "New": [
+      "Verified on Pi 1.3.0 with its version added to CI; the Pi 0.85.1 minimum is unchanged",
+      "Tool indicators, the working label, and silent activity share one animation timer, reducing redundant paint boundaries without changing their average animation rates"
+    ],
+    "Fix": [
+      "Replayed read calls with numeric-string offsets retain their correct code line numbers",
+      "The off command restores Pi's native thinking display as well as tool rows, working indicator, keyboard behavior, and visibility; active themes and session history are unchanged"
+    ],
+    "Deprecated": []
+  },
   "0.16.2": {
     "New": [
       "A concise README and a separate development guide",

@@ -201,15 +201,18 @@ function getInitialThinkingPhase(): ThinkingPhase {
 }
 
 export class ThinkingCycleController {
+	private context: ExtensionContext | undefined;
 	private phase: ThinkingPhase = "summary";
 	private unsubscribe: (() => void) | undefined;
 	private theme: Theme | undefined;
 	private hasToggleableThinking = false;
 	private refreshThinking: (() => void) | undefined;
 
-	constructor(pi: ExtensionAPI) {
+	constructor(pi: ExtensionAPI, enabled: () => boolean = () => true) {
 		pi.registerMarkdownTransformer((markdown, context) => {
-			if (context.messageType !== "assistant-thinking") return markdown;
+			// Off also applies before session_start, during transcript reconstruction
+			// and HTML exports. Do not summarize or restyle native thinking there.
+			if (!enabled() || context.messageType !== "assistant-thinking") return markdown;
 			const sections = splitThinkingSections(markdown);
 			this.hasToggleableThinking ||= sectionsHaveDetail(sections);
 			const theme = this.theme;
@@ -241,6 +244,7 @@ export class ThinkingCycleController {
 
 	bind(ctx: ExtensionContext): void {
 		this.unsubscribe?.();
+		this.context = ctx;
 		this.theme = ctx.ui.theme;
 		this.hasToggleableThinking = false;
 		// Match Pi's persisted host visibility after startup or /reload. When the
@@ -277,11 +281,15 @@ export class ThinkingCycleController {
 		});
 	}
 
-	dispose(): void {
-		this.unsubscribe?.();
+	dispose(restoreNative = false): void {
+		const context = this.context;
+		const unsubscribe = this.unsubscribe;
+		this.context = undefined;
 		this.unsubscribe = undefined;
 		this.refreshThinking = undefined;
 		this.hasToggleableThinking = false;
 		this.theme = undefined;
+		try { unsubscribe?.(); }
+		finally { if (restoreNative) context?.ui.setHiddenThinkingLabel(); }
 	}
 }

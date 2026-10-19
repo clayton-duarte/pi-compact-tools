@@ -251,7 +251,6 @@ export class SilentActivityAnimator {
 
 	constructor(private readonly pi: ExtensionAPI) {
 		pi.on("agent_start", () => {
-			if (!this.context) return;
 			this.running = true;
 			this.answering = false;
 			this.refresh();
@@ -265,7 +264,6 @@ export class SilentActivityAnimator {
 		});
 		pi.on("tool_execution_start", () => this.setAnswering(false));
 		pi.on("turn_start", () => {
-			if (!this.context) return;
 			this.running = true;
 			this.answering = false;
 			this.refresh();
@@ -274,17 +272,16 @@ export class SilentActivityAnimator {
 		// Keep the shared clock alive until Pi declares final settlement, as the
 		// working-label controller already does.
 		pi.on("agent_settled", () => {
-			if (!this.context) return;
 			this.running = false;
 			this.refresh();
 		});
 	}
 
-	bind(ctx: ExtensionContext): void {
+	bind(ctx: ExtensionContext, resume = false): void {
 		this.hide();
 		this.context = ctx;
 		this.running = ctx.isIdle?.() === false;
-		this.answering = false;
+		if (!resume) this.answering = false;
 	}
 
 	setEnabled(enabled: boolean): void {
@@ -293,10 +290,12 @@ export class SilentActivityAnimator {
 	}
 
 	dispose(): void {
-		this.hide();
-		this.context = undefined;
-		this.running = false;
-		this.enabled = false;
+		try { this.hide(); }
+		finally {
+			this.context = undefined;
+			this.running = false;
+			this.enabled = false;
+		}
 	}
 
 	/** Guarded like the progress label: a host with a partial API keeps the default color. */
@@ -305,7 +304,7 @@ export class SilentActivityAnimator {
 	}
 
 	private setAnswering(answering: boolean): void {
-		if (!this.context || this.answering === answering) return;
+		if (this.answering === answering) return;
 		this.answering = answering;
 		this.refresh();
 	}

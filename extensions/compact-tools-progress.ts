@@ -96,28 +96,24 @@ export class ProgressController {
 	private level: ThinkingLevel = "medium";
 
 	constructor(private readonly pi: ExtensionAPI) {
-		// Every handler leaves early while unbound. Pi keeps dispatching to this
-		// extension in non-TUI modes, and guarding at the top keeps that work — and
-		// any future handler added here — out of the detached path.
+		// Keep only the current phase/active calls while detached. No UI work or
+		// clock runs, but re-enabling mid-stream can resume the correct label.
 		pi.on("agent_start", () => {
-			if (!this.context) return;
 			this.setMessage("Thinking…");
 		});
 		pi.on("message_update", (event) => {
-			if (!this.context) return;
-			const type = event.assistantMessageEvent.type;
+			const type = event.assistantMessageEvent?.type;
 			if (type === "thinking_start" || type === "thinking_delta") this.setMessage("Thinking…");
 			else if (type === "text_start" || type === "text_delta") this.setMessage("Responding…");
 			else if (type === "toolcall_start" || type === "toolcall_delta") this.setMessage("Preparing tools…");
 		});
 		pi.on("tool_execution_start", (event) => {
-			if (!this.context) return;
+			if (typeof event.toolName !== "string") return;
 			const message = formatToolProgress(event.toolName, event.args ?? {});
 			this.activeTools.set(event.toolCallId, message);
 			this.setMessage(message);
 		});
 		pi.on("tool_execution_end", (event) => {
-			if (!this.context) return;
 			this.activeTools.delete(event.toolCallId);
 			const remaining = [...this.activeTools.values()].at(-1);
 			this.setMessage(remaining ?? "Processing results…");
@@ -128,7 +124,6 @@ export class ProgressController {
 		// so releasing the label at agent_end makes a retried turn reappear under Pi's
 		// default label. Release it at the final settlement instead.
 		pi.on("agent_settled", () => {
-			if (!this.context) return;
 			this.activeTools.clear();
 			this.clearMessage();
 		});
@@ -146,30 +141,34 @@ export class ProgressController {
 		if (typeof this.pi.getThinkingLevel === "function") this.level = this.pi.getThinkingLevel();
 	}
 
-	bind(ctx: ExtensionContext): void {
+	bind(ctx: ExtensionContext, resume = false): void {
 		this.stopAnimation();
 		this.context = ctx;
 		this.readLevel();
-		this.activeTools.clear();
+		const message = resume && ctx.isIdle?.() === false ? this.message ?? "Thinking…" : undefined;
+		if (!message) this.activeTools.clear();
 		this.message = undefined;
 		this.frames = [];
 		this.frame = 0;
 		ctx.ui.setWorkingVisible(true);
 		ctx.ui.setWorkingIndicator({ frames: [] });
+		if (message) this.setMessage(message);
 	}
 
-	dispose(): void {
-		this.stopAnimation();
-		this.activeTools.clear();
-		this.context?.ui.setWorkingMessage();
-		this.context?.ui.setWorkingIndicator();
-		this.message = undefined;
-		this.frames = [];
+	dispose(preservePhase = false): void {
+		const context = this.context;
 		this.context = undefined;
+		this.stopAnimation();
+		if (!preservePhase) this.activeTools.clear();
+		if (!preservePhase) this.message = undefined;
+		this.frames = [];
+		try { context?.ui.setWorkingMessage(); }
+		finally { context?.ui.setWorkingIndicator(); }
 	}
 
 	private setMessage(message: string): void {
-		if (!this.context || (this.message === message && this.stopTicking)) return;
+		if (!this.context) { this.message = message; return; }
+		if (this.message === message && this.stopTicking) return;
 		this.message = message;
 		this.frames = [];
 		this.frame = 0;

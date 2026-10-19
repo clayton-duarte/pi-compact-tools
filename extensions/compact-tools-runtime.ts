@@ -1,9 +1,8 @@
-import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
 import { DEFAULT_CONFIG } from "./compact-tools-config.ts";
+import { onTick } from "./compact-tools-clock.ts";
 import { isSilent } from "./compact-tools-silent.ts";
 import {
 	SUPPORTED_TOOL_SET,
-	type BuiltInDefinition,
 	type CompactToolName,
 	type CompactToolsConfig,
 	type RenderContext,
@@ -27,7 +26,6 @@ export function validDurationMs(value: unknown): value is number {
 	return typeof value === "number" && Number.isFinite(value) && value >= 0;
 }
 type Indicator = { invalidate: () => void; drawnAt: number };
-type TimedExecute = (...args: any[]) => Promise<AgentToolResult<unknown>>;
 type SharedState = typeof globalThis & {
 	[EXECUTION_TIMINGS_KEY]?: Map<string, ExecutionTiming>;
 };
@@ -38,7 +36,7 @@ export class ToolRuntime {
 	private readonly executionTimings: Map<string, ExecutionTiming>;
 	private readonly indicators = new Map<string, Indicator>();
 	private indicatorFrame = 0;
-	private indicatorTimer: ReturnType<typeof setInterval> | undefined;
+	private stopIndicatorTicks: (() => void) | undefined;
 	/** Pi's frame request, once bound to its terminal; rows then repaint without being rebuilt. */
 	private requestRender: (() => void) | undefined;
 	/** Whether the agent is working; undefined until the host says, which counts as working. */
@@ -49,12 +47,6 @@ export class ToolRuntime {
 	 * more than one run's calls.
 	 */
 	private readonly currentCalls = new Set<string>();
-	/**
-	 * Calls a tool is making through `ctx.executeTool()`, as codemode scripts do. They
-	 * never get a row of their own, so no execution timing is kept for them.
-	 * The independent nested-summary observer keeps only their outcome counts.
-	 */
-	private readonly nestedCalls = new Set<string>();
 
 	constructor(private readonly clock: () => number = () => performance.now()) {
 		const shared = globalThis as SharedState;
@@ -111,7 +103,6 @@ export class ToolRuntime {
 	setBusy(busy: boolean): void {
 		if (busy && this.busy !== true) {
 			this.currentCalls.clear();
-			this.nestedCalls.clear();
 		}
 		this.busy = busy;
 		if (busy) return;
@@ -127,12 +118,6 @@ export class ToolRuntime {
 	 */
 	noteCall(toolCallId: string): void {
 		this.currentCalls.add(toolCallId);
-	}
-
-	/** A call another tool made began (`running`) or finished; Pi says so with `parentToolCallId`. */
-	noteNestedCall(toolCallId: string, running: boolean): void {
-		if (running) this.nestedCalls.add(toolCallId);
-		else this.nestedCalls.delete(toolCallId);
 	}
 
 	/**
@@ -158,10 +143,7 @@ export class ToolRuntime {
 		} else {
 			this.indicators.set(toolCallId, { invalidate, drawnAt: this.clock() });
 		}
-		if (!this.indicatorTimer) {
-			this.indicatorTimer = setInterval(() => this.tick(), INDICATOR_INTERVAL_MS);
-			this.indicatorTimer.unref?.();
-		}
+		this.stopIndicatorTicks ??= onTick(() => this.tick(), INDICATOR_INTERVAL_MS);
 		return this.indicatorFrame;
 	}
 
@@ -211,12 +193,7 @@ export class ToolRuntime {
 		return state;
 	}
 
-	/**
-	 * Record when a tool this extension does not wrap starts and ends. Pi reports
-	 * both to extensions before it redraws the row, and the row draws its status
-	 * dot before its result, so without this a finished custom tool kept the
-	 * running dot. Wrapped built-ins already have timings, which are kept.
-	 */
+	/** Record top-level execution events without wrapping model-facing tools. */
 	noteExecutionStart(toolCallId: string): void {
 		if (!this.executionTimings.has(toolCallId)) this.executionTimings.set(toolCallId, { startedAt: Date.now() });
 		this.trimTimings();
@@ -228,24 +205,6 @@ export class ToolRuntime {
 		if (validDurationMs(durationMs)) timing.durationMs = durationMs;
 		this.executionTimings.set(toolCallId, timing);
 		this.trimTimings();
-	}
-
-	createTimedExecute(definition: BuiltInDefinition): TimedExecute {
-		const execute = definition.execute as TimedExecute;
-		return async (...args: any[]) => {
-			const toolCallId = typeof args[0] === "string" && !this.nestedCalls.has(args[0]) ? args[0] : undefined;
-			const startedAt = (toolCallId ? this.executionTimings.get(toolCallId)?.startedAt : undefined) ?? Date.now();
-			if (toolCallId && !this.executionTimings.has(toolCallId)) {
-				this.executionTimings.set(toolCallId, { startedAt });
-				this.trimTimings();
-			}
-			try {
-				return await execute.apply(definition, args);
-			} finally {
-				const timing = toolCallId ? this.executionTimings.get(toolCallId) : undefined;
-				if (timing) timing.endedAt = Date.now();
-			}
-		};
 	}
 
 	private tick(): void {
@@ -269,15 +228,15 @@ export class ToolRuntime {
 
 	private removeIndicator(toolCallId: string): void {
 		this.indicators.delete(toolCallId);
-		if (this.indicators.size > 0 || !this.indicatorTimer) return;
-		clearInterval(this.indicatorTimer);
-		this.indicatorTimer = undefined;
+		if (this.indicators.size > 0) return;
+		this.stopIndicatorTicks?.();
+		this.stopIndicatorTicks = undefined;
 		this.indicatorFrame = 0;
 	}
 
 	private stopIndicators(): void {
-		if (this.indicatorTimer) clearInterval(this.indicatorTimer);
-		this.indicatorTimer = undefined;
+		this.stopIndicatorTicks?.();
+		this.stopIndicatorTicks = undefined;
 		this.indicators.clear();
 		this.indicatorFrame = 0;
 	}

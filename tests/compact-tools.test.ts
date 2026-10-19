@@ -69,7 +69,7 @@ import {
 	ThinkingCycleController,
 	type ThinkingPhase,
 } from "../extensions/compact-tools-thinking.ts";
-import { SUPPORTED_TOOLS, type BuiltInDefinition, type RowState } from "../extensions/compact-tools-types.ts";
+import { SUPPORTED_TOOLS, type RowState } from "../extensions/compact-tools-types.ts";
 import { fakeTheme, hostResolvesColors, rgb } from "./theme-fixture.ts";
 
 // Tests must never read the developer's real ~/.pi/agent: its settings.json
@@ -875,29 +875,6 @@ test("merges trusted project configuration over the global configuration", () =>
 	assert.equal(loadConfig(projectDir, true).previewLines, 7);
 	if (previousAgentDir === undefined) delete process.env[agentDirVariable];
 	else process.env[agentDirVariable] = previousAgentDir;
-});
-
-test("forwards Pi's complete execution context through the timing wrapper", async () => {
-	const runtime = new ToolRuntime();
-	const executionContext = {
-		model: { inputLimits: { images: { resize: { maxPixels: 1_000_000 } } } },
-	} as unknown as ExtensionContext;
-	let received: unknown[] | undefined;
-	const definition = {
-		async execute(...args: unknown[]) {
-			received = args;
-			return { content: [{ type: "text", text: "ok" }], details: undefined };
-		},
-	} as unknown as BuiltInDefinition;
-	const signal = new AbortController().signal;
-	const onUpdate = () => {};
-
-	await runtime.createTimedExecute(definition)("read-context", { path: "image.png" }, signal, onUpdate, executionContext);
-	assert.equal(received?.[0], "read-context");
-	assert.equal(received?.[2], signal);
-	assert.equal(received?.[3], onUpdate);
-	assert.equal(received?.[4], executionContext);
-	runtime.reset(true);
 });
 
 test("stops the shared indicator timer and keeps parallel tools independent", async () => {

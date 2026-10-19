@@ -215,7 +215,10 @@ for (const [styleName, config] of Object.entries(STYLES)) {
 			// Hidden rows ask for no frames of their own, however long the call runs.
 			const before = harness.requestRenders();
 			timerClock.tick(ACTIVITY_BREATH_MS);
-			assert.equal(harness.requestRenders() - before, activityOnly, "only the activity line's frames");
+			const hiddenFrames = harness.requestRenders() - before;
+			// An 80ms activity update can land on the next shared 45ms indicator
+			// tick. At a window boundary at most one frame is deferred, never extra.
+			assert.ok(hiddenFrames <= activityOnly && hiddenFrames >= activityOnly - 1, "only the activity line's quantized frames");
 
 			// Shown again: every row, in the style, with the running call pulsing again.
 			state.enabled = false;

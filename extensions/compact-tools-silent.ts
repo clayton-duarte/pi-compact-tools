@@ -311,9 +311,9 @@ export class SilentModeController {
 		return sharedState().enabled;
 	}
 
-	bind(ctx: ExtensionContext, mode: DisplayMode, reload: boolean): void {
+	bind(ctx: ExtensionContext, mode: DisplayMode, reload: boolean, resume = false): void {
 		this.context = ctx;
-		this.activity.bind(ctx);
+		this.activity.bind(ctx, resume);
 		// An invisible widget is the extension API's way to reach Pi's TUI, and
 		// through it the chat container whose notices silent mode hides.
 		ctx.ui.setWidget(WIDGET_KEY, (tui) => {
@@ -326,13 +326,16 @@ export class SilentModeController {
 	}
 
 	dispose(): void {
-		this.activity.dispose();
-		// A patched Pi prototype outlives this extension instance. Disable hiding
-		// while no instance is bound, but keep the choice for a subsequent /reload.
-		sharedState().active = false;
-		this.context?.ui.setStatus(STATUS_KEY, undefined);
-		this.context?.ui.setWidget(WIDGET_KEY, undefined, { placement: "belowEditor" });
+		const context = this.context;
 		this.context = undefined;
+		// Detach state before calling host UI: an exception must not reactivate
+		// silent hiding or its animation while the extension is off.
+		sharedState().active = false;
+		try { this.activity.dispose(); }
+		finally {
+			try { context?.ui.setStatus(STATUS_KEY, undefined); }
+			finally { context?.ui.setWidget(WIDGET_KEY, undefined, { placement: "belowEditor" }); }
+		}
 	}
 
 	private apply(enabled: boolean): boolean {

@@ -12,7 +12,6 @@ import { loadConfig } from "../extensions/compact-tools-config.ts";
 import { renderCodeView } from "../extensions/compact-tools-layout.ts";
 import { ToolRuntime } from "../extensions/compact-tools-runtime.ts";
 import { findAnchorTop } from "../extensions/compact-tools-viewport.ts";
-import type { BuiltInDefinition } from "../extensions/compact-tools-types.ts";
 
 /** Original allocation-heavy algorithm: differential tests protect candidate ordering and ties. */
 function originalAnchor(before: string[], top: number, height: number, after: string[]): number | undefined {
@@ -90,19 +89,17 @@ test("150,000-line file views do not exceed the argument limit and retain six-di
 	assert.equal(component.render(80), rows, "unchanged layout is cached");
 });
 
-for (const source of ["events", "wrapper", "rows"] as const) {
-	test(`timing retention is bounded without TUI rendering (${source})`, async () => {
+for (const source of ["events", "rows"] as const) {
+	test(`timing retention is bounded without TUI rendering (${source})`, () => {
 		const runtime = new ToolRuntime();
 		runtime.clearTimings();
-		const execute = runtime.createTimedExecute({ execute: async () => ({ content: [], details: undefined }) } as unknown as BuiltInDefinition);
 		try {
 			for (let index = 0; index < 2_100; index++) {
 				const id = `${source}-${index}`;
 				if (source === "events") {
 					runtime.noteExecutionStart(id);
 					runtime.noteExecutionEnd(id);
-				} else if (source === "wrapper") await execute(id);
-				else runtime.syncRow({ toolCallId: id, state: {}, executionStarted: true } as Parameters<ToolRuntime["syncRow"]>[0], true);
+				} else runtime.syncRow({ toolCallId: id, state: {}, executionStarted: true } as Parameters<ToolRuntime["syncRow"]>[0], true);
 			}
 			const timings = (globalThis as Record<symbol, Map<string, unknown>>)[Symbol.for("pi.compact-tools.execution-timings")]!;
 			assert.equal(timings.size, 2_000);

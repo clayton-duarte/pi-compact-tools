@@ -324,8 +324,9 @@ export class ToolGroupController {
 	}
 
 	dispose(): void {
-		this.context?.ui.setWidget(WIDGET_KEY, undefined, { placement: "belowEditor" });
+		const context = this.context;
 		this.context = undefined;
+		context?.ui.setWidget(WIDGET_KEY, undefined, { placement: "belowEditor" });
 	}
 
 	private makeGroup(rows: ToolRowLike[], members: unknown[], tui: { requestRender(): void }): Component {

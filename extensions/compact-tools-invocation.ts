@@ -3,6 +3,12 @@ import { stripTerminalSequences } from "@earendil-works/pi-tui";
 import { normalizeLineEndings } from "./compact-tools-core.ts";
 import type { ToolArgs } from "./compact-tools-types.ts";
 
+/** Historical/transcribed read arguments may contain numeric strings or null. Display only. */
+export function readStartLine(value: unknown): number {
+	if (typeof value === "string" && value.trim() !== "") value = Number(value);
+	return typeof value === "number" && Number.isFinite(value) ? value : 1;
+}
+
 function pathFrom(args: ToolArgs): string {
 	const value = args.path ?? args.file_path;
 	return typeof value === "string" ? normalizeLineEndings(value) : "";

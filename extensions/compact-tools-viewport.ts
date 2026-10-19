@@ -221,12 +221,14 @@ export class ViewportKeeper {
 	}
 
 	dispose(): void {
-		this.unsubscribe?.();
+		const context = this.context;
+		const unsubscribe = this.unsubscribe;
+		this.context = undefined;
 		this.unsubscribe = undefined;
 		const state = sharedState();
 		state.pending = undefined;
 		state.tui = undefined;
-		this.context?.ui.setWidget(WIDGET_KEY, undefined, { placement: "belowEditor" });
-		this.context = undefined;
+		try { unsubscribe?.(); }
+		finally { context?.ui.setWidget(WIDGET_KEY, undefined, { placement: "belowEditor" }); }
 	}
 }

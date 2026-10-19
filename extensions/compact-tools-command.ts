@@ -1,19 +1,19 @@
 import { chmodSync, existsSync, lstatSync, mkdirSync, readFileSync, realpathSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
-import { CONFIG_DIR_NAME, getAgentDir, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { CONFIG_DIR_NAME, getAgentDir, type ExtensionAPI, type ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { DISPLAY_STYLES, type CompactToolsConfig, type DisplayStyle } from "./compact-tools-types.ts";
 import { loadConfig } from "./compact-tools-config.ts";
 
 type Scope = "global" | "project";
 const SCOPES: readonly Scope[] = ["global", "project"];
-const HELP = "Usage: /compact-tools [compact|claude|codex|off] [global|project]\nWithout a scope the style is saved globally, or to this project when its settings choose the style.\n/compact-tools status · /compact-tools help\nCtrl+O expands rows; /silent toggles quiet mode. Styles switch at once, even while tools run; off reloads Pi.";
+const HELP = "Usage: /compact-tools [compact|claude|codex|off] [global|project]\nWithout a scope the style is saved globally, or to this project when its settings choose the style.\n/compact-tools status · /compact-tools help\nCtrl+O expands rows; /silent toggles quiet mode. All styles, including off, switch at once, even while tools run.";
 const BUSY = "Wait for the current response to finish before changing tool styles.";
 const CHOICES: Record<DisplayStyle, string> = {
 	compact: "Compact — one expandable row per tool call",
 	claude: "Claude — group reads and searches",
 	codex: "Codex — explored groups and output tails, like Codex CLI",
-	off: "Off — restore Pi's default tool rows",
+	off: "Off — restore Pi's native UI",
 };
 
 export function configPath(cwd: string, scope: Scope): string {
@@ -78,15 +78,10 @@ function errorMessage(error: unknown): string {
 
 /**
  * Draw the saved style in place, without a reload, and say whether it could: a switch
- * between the compact, Claude, and Codex styles keeps every tool's registration, so
- * it applies at once, even while a response runs. Turning rows off or back on cannot.
+ * between any style, including native/off, changes only UI routing. It applies
+ * at once while a response runs, with no tool registry or transcript changes.
  */
-export type ApplyStyle = (cwd: string, trusted: boolean) => boolean;
-
-/** Whether a switch needs Pi to reload: only off hands tools to or takes them from Pi's own renderers. */
-function needsReload(from: DisplayStyle, to: DisplayStyle): boolean {
-	return from === "off" || to === "off";
-}
+export type ApplyStyle = (cwd: string, trusted: boolean, ctx: ExtensionContext) => boolean;
 
 export function registerCompactToolsCommand(pi: ExtensionAPI, getConfig: () => CompactToolsConfig, applyStyle?: ApplyStyle): void {
 	pi.registerCommand("compact-tools", {
@@ -122,9 +117,9 @@ export function registerCompactToolsCommand(pi: ExtensionAPI, getConfig: () => C
 				ctx.ui.notify(HELP, "warning");
 				return;
 			}
-			// A switch between drawn styles applies in place, so only one that reloads waits for the response.
+			// Only a host/integration without live UI routing requires an idle reload.
 			const named = parts[0] as DisplayStyle | undefined;
-			if (named && !ctx.isIdle() && (needsReload(getConfig().style, named) || !applyStyle)) {
+			if (named && !ctx.isIdle() && !applyStyle) {
 				ctx.ui.notify(BUSY, "warning");
 				return;
 			}
@@ -155,7 +150,7 @@ export function registerCompactToolsCommand(pi: ExtensionAPI, getConfig: () => C
 				return;
 			}
 			// The agent may have started while the user was choosing in a dialog.
-			const reloads = needsReload(getConfig().style, style) || !applyStyle;
+			const reloads = !applyStyle;
 			if (reloads && !ctx.isIdle()) {
 				ctx.ui.notify(BUSY, "warning");
 				return;
@@ -175,7 +170,7 @@ export function registerCompactToolsCommand(pi: ExtensionAPI, getConfig: () => C
 				ctx.ui.notify(`Saved ${style} to global settings, but this project keeps its own ${effective} style. Run /compact-tools ${style} to switch it here.`, "warning");
 				return;
 			}
-			if (!reloads && applyStyle!(ctx.cwd, ctx.isProjectTrusted())) {
+			if (!reloads && applyStyle!(ctx.cwd, ctx.isProjectTrusted(), ctx)) {
 				ctx.ui.notify(`Switched to ${style} style (saved to ${where}).`, "info");
 				return;
 			}
@@ -183,7 +178,9 @@ export function registerCompactToolsCommand(pi: ExtensionAPI, getConfig: () => C
 				ctx.ui.notify(`Saved ${style} style to ${where}. It applies once the response finishes; run /reload then.`, "warning");
 				return;
 			}
-			ctx.ui.notify(`Switching to ${style} style (saved to ${where}). Reloading…`, "info");
+			ctx.ui.notify(style === "off"
+				? `Restoring Pi's native UI (saved to ${where}). Reloading…`
+				: `Switching to ${style} style (saved to ${where}). Reloading…`, "info");
 			// Reloading makes this ctx stale, so a failure is reported through the UI held from before.
 			const ui = ctx.ui;
 			try {

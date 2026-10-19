@@ -2,11 +2,12 @@
  * /compact-tools switches between the compact, Claude, and Codex styles in place: no
  * reload, so it works while a response runs. Rows already on screen, a running one
  * included, are drawn again in the new style and keep animating; silent mode hides
- * them in any style and shows them in the current one. Only off waits for the reload.
+ * them in any style and shows them in the current one. Off restores native UI live too.
  */
 import assert from "node:assert/strict";
 import test from "node:test";
 import { stripTerminalSequences } from "@earendil-works/pi-tui";
+import { createBashToolDefinition, createReadToolDefinition, createGrepToolDefinition } from "@earendil-works/pi-coding-agent";
 import {
 	announce, INDICATOR_INTERVAL_MS, loadExtension, makeRow, restoreClocks, shutdown, text, timerClock, type Harness,
 } from "./indicator-harness.ts";
@@ -18,7 +19,8 @@ let sequence = 0;
 function started(harness: Harness, name: string, args: object, output?: string): Row {
 	const id = `live-${name}-${++sequence}`;
 	announce(harness, id, name);
-	const row = makeRow(name, id, args, harness.definitions.get(name));
+	const factory = ({ bash: createBashToolDefinition, read: createReadToolDefinition, grep: createGrepToolDefinition } as Record<string, (cwd: string) => object>)[name];
+	const row = makeRow(name, id, args, factory ? factory("/project") : harness.definitions.get(name));
 	row.setArgsComplete();
 	harness.handlers.get("tool_execution_start")!({ toolCallId: id, toolName: name, args });
 	row.markExecutionStarted();
@@ -116,16 +118,20 @@ test("a running call keeps pulsing after a switch, in every style", async () => 
 	} finally { shutdown(harness); }
 });
 
-test("only a switch to or from off waits for the response, and then reloads", async () => {
+test("off and re-enabling a style switch during execution without reloading", async () => {
 	const { harness } = await transcript("claude");
 	try {
-		const blocked = await switchTo(harness, "off");
-		assert.match(blocked.notices.at(-1)!.message, /Wait for the current response/u);
-		assert.equal(blocked.reloads(), 0);
-		assert.ok(heads(harness).some((line) => line.startsWith(HEADS.claude[0])), "nothing changed");
-		const idle = await switchTo(harness, "off", false);
-		assert.equal(idle.reloads(), 1, "idle, off reloads Pi");
-		assert.match(idle.notices.at(-1)!.message, /Reloading/u);
+		for (const style of ["off", "compact", "off", "codex", "off", "claude"] as const) {
+			const command = await switchTo(harness, style);
+			assert.equal(command.reloads(), 0);
+			assert.match(command.notices.at(-1)!.message, new RegExp(`Switched to ${style} style`, "u"));
+			if (style === "off") {
+				assert.deepEqual(heads(harness), [], "no compact bullets or exploration groups");
+				assert.ok(plain(harness).some(line => line.includes("echo tick $i")), "the running native command remains visible");
+			} else {
+				for (const head of HEADS[style]) assert.ok(heads(harness).some(line => line.startsWith(head)), head);
+			}
+		}
 	} finally { shutdown(harness); }
 });
 

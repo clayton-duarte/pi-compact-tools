@@ -7,12 +7,11 @@ import type {
 	ToolDefinition,
 	ToolRenderResultOptions,
 } from "@earendil-works/pi-coding-agent";
-import { ToolExecutionComponent } from "@earendil-works/pi-coding-agent";
 import type { Component } from "@earendil-works/pi-tui";
 import { classifyCallStatus, formatDurationMs, normalizeLineEndings, type RowStatus } from "./compact-tools-core.ts";
 import { loadConfig } from "./compact-tools-config.ts";
 import { paletteOf } from "./compact-tools-color.ts";
-import { hasAuthorRenderers, refreshRowShell } from "./compact-tools-rendering.ts";
+import { hasAuthorRenderers, loadNativeTimerRenderers, syncNativeToolTimer } from "./compact-tools-rendering.ts";
 import { registerCompactToolsCommand } from "./compact-tools-command.ts";
 import { clearRowResolver, installToolRowPatch, setRowResolver, type RowRenderers, type ToolRow } from "./compact-tools-custom.ts";
 import {
@@ -23,6 +22,7 @@ import {
 	getEditDiff,
 	getEditPatch,
 	getFileOutput,
+	readStartLine,
 	getTextResult,
 	isReadTextResult,
 	splitReadFooter,
@@ -56,7 +56,8 @@ import { chromePainter, completionPainter, paintIndicator } from "./compact-tool
 import { ProgressController } from "./compact-tools-progress.ts";
 import { showReleaseNotice } from "./compact-tools-release.ts";
 import { ToolRuntime } from "./compact-tools-runtime.ts";
-import { findChat, isKind, SilentModeController } from "./compact-tools-silent.ts";
+import { SilentModeController } from "./compact-tools-silent.ts";
+import { attemptUI, createTranscriptRenderer, type UIFailure } from "./compact-tools-transcript.ts";
 import { ThinkingCycleController } from "./compact-tools-thinking.ts";
 import { ViewportKeeper } from "./compact-tools-viewport.ts";
 import {
@@ -72,7 +73,6 @@ const PREVIEW_DIFF_CONTEXT_LINES = 1;
 
 const runtime = new ToolRuntime();
 const nestedSummaries = new NestedCallSummaries();
-const RENDER_WIDGET_KEY = "compact-tools-render";
 let registeredConfiguration: string | undefined;
 /**
  * Whether the last session found its directory trusted. A /reload rebuilds the
@@ -278,7 +278,7 @@ function renderFileBody(
 	}
 	if (name === "read" && isReadTextResult(result)) {
 		const { body, footer } = splitReadFooter(output);
-		const startLine = typeof args.offset === "number" ? args.offset : 1;
+		const startLine = readStartLine(args.offset);
 		return renderCodeView(body, path, theme, { startLine, footer, rail }) ?? fallback();
 	}
 	if (name === "write") return renderCodeView(output, path, theme, { rail }) ?? fallback();
@@ -509,9 +509,15 @@ function createCustomRenderers(name: string, author: ToolDefinition<any, any, an
 					// Compact owns the outer margin and the result rail. An author
 					// renderer is embedded content, not another host-padded shell.
 					// Leave the field absent on legacy hosts.
-					value.component = authorRenderer(result, { ...options, expanded }, theme, {
-						...ctx, lastComponent: value.component, ...((ctx as { outputPad?: number }).outputPad === undefined ? {} : { outputPad: 0 }),
-					});
+					try {
+						value.component = authorRenderer(result, { ...options, expanded }, theme, {
+							...ctx, lastComponent: value.component, ...((ctx as { outputPad?: number }).outputPad === undefined ? {} : { outputPad: 0 }),
+						});
+					} finally {
+						// Compact owns animation; a delegated native codemode preview
+						// must not leave a second clock when later collapsed.
+						syncNativeToolTimer({ rendererState: ctx.state }, name, author, false);
+					}
 					return value.component;
 				}
 				: undefined;
@@ -552,6 +558,7 @@ type RendererAPI = ExtensionAPI & {
 };
 let publicRendering = false;
 let sessionReady = false;
+let publicBases = new WeakMap<object, ToolDefinition<any, any, any> | undefined>();
 let publicOwners = new WeakMap<object, { call?: unknown; result?: unknown }>();
 function publicRowDefinition(name: string, base: ToolDefinition<any, any, any> | undefined): ToolDefinition<any, any, any> | undefined {
 	// Preserve next()'s result exactly once the session's configuration is known.
@@ -580,46 +587,47 @@ function publicRowDefinition(name: string, base: ToolDefinition<any, any, any> |
 		const render = decide()?.renderResult ?? base?.renderResult;
 		return render!(value, options, theme, context(ctx, "result", render));
 	};
-	return {
+	const definition = {
 		get renderShell() { return decide() ? "self" : base?.renderShell ?? "default"; },
 		get renderCall() { return decide()?.renderCall || base?.renderCall ? call : undefined; },
 		get renderResult() { return decide()?.renderResult || base?.renderResult ? result : undefined; },
 	} as ToolDefinition<any, any, any>;
+	publicBases.set(definition, base);
+	return definition;
 }
 let legacyResolver: ((row: ToolRow) => RowRenderers | undefined) | undefined;
-let refreshTranscriptRows: (() => void) | undefined;
-function invalidateRowDecisions(): void {
+let refreshTranscriptRows: ((failures: UIFailure[]) => void) | undefined;
+function invalidateRowDecisions(failures: UIFailure[]): void {
 	if (!publicRendering) {
 		legacyResolver = (row) => resolveCustomRow(row);
 		setRowResolver(legacyResolver);
 	}
-	refreshTranscriptRows?.();
+	refreshTranscriptRows?.(failures);
 }
 
-function configure(_pi: ExtensionAPI, cwd?: string, projectTrusted = false): void {
+function configure(_pi: ExtensionAPI, cwd?: string, projectTrusted = false, failures: UIFailure[] = []): void {
 	const resolvedCwd = cwd ?? process.cwd();
 	const config = loadConfig(resolvedCwd, projectTrusted);
 	const signature = JSON.stringify([resolvedCwd, config]);
 	if (signature === registeredConfiguration) return;
 	runtime.configure(config);
 	registeredConfiguration = signature;
-	invalidateRowDecisions();
+	invalidateRowDecisions(failures);
 }
 
 /**
  * Apply a style saved by /compact-tools without reloading Pi. The compact, Claude, and
  * Codex styles share every tool registration and read the style as they draw, so the
  * configuration is swapped and each tool row on screen is drawn again, a running one
- * included. Anything else that changed, or a switch to or from off, needs a reload.
+ * included. Only non-style configuration changes require a reload.
  */
-function applyStyle(cwd: string, trusted: boolean): boolean {
+function applyStyle(cwd: string, trusted: boolean, failures: UIFailure[]): boolean {
 	const config = loadConfig(cwd, trusted);
 	const current = runtime.config;
-	if (config.style === "off" || current.style === "off") return false;
 	if (JSON.stringify({ ...config, style: current.style }) !== JSON.stringify(current)) return false;
 	runtime.configure(config);
 	registeredConfiguration = JSON.stringify([cwd, config]);
-	invalidateRowDecisions();
+	invalidateRowDecisions(failures);
 	return true;
 }
 
@@ -643,44 +651,15 @@ function madeByTool(event: object): boolean {
 	return typeof (event as { parentToolCallId?: unknown }).parentToolCallId === "string";
 }
 
-/** Hand the animation Pi's frame request, reached through an invisible widget as the extension API allows. */
-function bindRenderer(ctx: ExtensionContext): void {
-	ctx.ui.setWidget(RENDER_WIDGET_KEY, (tui) => {
-		runtime.bindRenderer(() => tui.requestRender());
-		refreshTranscriptRows = () => {
-			const visit = (parent: { children?: unknown[] }) => {
-				for (const child of parent.children ?? []) {
-					if (!child || typeof child !== "object") continue;
-					if (isKind(child, ToolExecutionComponent)) {
-						const row = child as ToolRow & { updateDisplay?(): void };
-						refreshRowShell(row);
-						row.updateDisplay?.();
-					} else visit(child as { children?: unknown[] });
-				}
-			};
-			const chat = findChat(tui);
-			if (chat && chat.children.length > 0) { visit(chat); tui.requestRender(); }
-		};
-		return { render: () => [], invalidate() {} };
-	}, { placement: "belowEditor" });
-	refreshTranscriptRows?.();
-}
-
-function unbindRenderer(ctx: ExtensionContext | undefined): void {
-	refreshTranscriptRows = undefined;
-	runtime.bindRenderer(undefined);
-	ctx?.ui.setWidget(RENDER_WIDGET_KEY, undefined, { placement: "belowEditor" });
-}
-
 export default function compactTools(pi: ExtensionAPI): void {
 	// The cached factory is invoked again after session replacement and reload.
 	// Reset configuration memoization, but never change the host's tool registry.
 	registeredConfiguration = undefined;
+	refreshTranscriptRows = undefined;
 	sessionReady = false;
 	publicOwners = new WeakMap();
-
-	registerCompactToolsCommand(pi, () => runtime.config, applyStyle);
-	const thinkingCycle = new ThinkingCycleController(pi);
+	publicBases = new WeakMap();
+	const thinkingCycle = new ThinkingCycleController(pi, () => runtime.config.style !== "off");
 	const progress = new ProgressController(pi);
 	const viewport = new ViewportKeeper();
 	const silent = new SilentModeController(pi, showReleaseNotice);
@@ -696,15 +675,66 @@ export default function compactTools(pi: ExtensionAPI): void {
 			const base = next();
 			return publicRowDefinition(name, base as ToolDefinition<any, any, any> | undefined);
 		});
-	} else invalidateRowDecisions();
+	} else invalidateRowDecisions([]);
+	const transcript = createTranscriptRenderer({
+		runtime, publicRendering, resolve: resolveCustomRow, definition: publicRowDefinition,
+		unwrap: (current) => current && publicBases.has(current) ? publicBases.get(current) : current,
+	});
+	refreshTranscriptRows = transcript.refresh;
 	let customRowsWarned = false;
-	let renderContext: ExtensionContext | undefined;
+	let sessionContext: ExtensionContext | undefined;
+	const reportFailures = (ctx: ExtensionContext | undefined, failures: UIFailure[]) => {
+		if (ctx && failures.length > 0) {
+			const operations = [...new Set(failures.map(failure => failure.operation))].join(", ");
+			const message = `Compact tools: UI refresh/cleanup failed (${operations}). The selected style is saved; affected UI may need /reload.`;
+			try { ctx.ui.notify(message, "warning"); }
+			catch (error) { console.warn(message, "UI notification also failed:", error); }
+		}
+	};
+	const enableUI = (ctx: ExtensionContext, reload: boolean, resume: boolean, failures: UIFailure[]) => {
+		// Observe relayout keys before the thinking controller consumes them.
+		attemptUI(failures, "viewport bind", () => viewport.bind(ctx));
+		attemptUI(failures, "progress bind", () => progress.bind(ctx, resume));
+		attemptUI(failures, "thinking bind", () => thinkingCycle.bind(ctx));
+		attemptUI(failures, "silent bind", () => silent.bind(ctx, runtime.config.mode, reload, resume));
+		attemptUI(failures, "groups bind", () => groups.bind(ctx));
+		transcript.bind(ctx, failures);
+	};
+	// One ownership/cleanup inventory for live off, session replacement and shutdown.
+	// Each action is independent: a host failure must not skip later cleanup steps.
+	const detachUI = (options: { preservePhase?: boolean; restoreNative?: boolean; clearTimings?: boolean }, failures: UIFailure[]) => {
+		attemptUI(failures, "thinking cleanup", () => thinkingCycle.dispose(options.restoreNative));
+		attemptUI(failures, "progress cleanup", () => progress.dispose(options.preservePhase));
+		attemptUI(failures, "silent cleanup", () => silent.dispose());
+		attemptUI(failures, "groups cleanup", () => groups.dispose());
+		attemptUI(failures, "viewport cleanup", () => viewport.dispose());
+		attemptUI(failures, "animation cleanup", () => runtime.reset(options.clearTimings === true));
+		attemptUI(failures, "renderer cleanup", () => transcript.detach());
+	};
+	registerCompactToolsCommand(pi, () => runtime.config, (cwd, trusted, ctx) => {
+		const failures: UIFailure[] = [];
+		const wasOff = runtime.config.style === "off";
+		if (!applyStyle(cwd, trusted, failures)) return false;
+		const uiContext = sessionContext ?? ctx;
+		if (uiContext.mode === "tui") {
+			if (runtime.config.style === "off") detachUI({ preservePhase: true, restoreNative: true }, failures);
+			else if (wasOff) enableUI(uiContext, true, true, failures);
+			// Off->off has no attached thinking context to restore the native label.
+			if (wasOff && runtime.config.style === "off") attemptUI(failures, "native thinking", () => uiContext.ui.setHiddenThinkingLabel());
+		}
+		reportFailures(uiContext, failures);
+		return true;
+	});
 	// Configure UI routing before Pi rebuilds transcript rows. Tool declarations
 	// and the active loadout must remain exactly as the host selected them.
 	const cwd = process.cwd();
 	const lastTrust = (globalThis as TrustSlot)[TRUST_KEY];
 	configure(pi, cwd, lastTrust?.cwd === realDirectory(cwd) && lastTrust.trusted);
+	pi.on("session_start", () => loadNativeTimerRenderers());
 	pi.on("session_start", (event, ctx) => {
+		const failures: UIFailure[] = [];
+		detachUI({ restoreNative: true }, failures);
+		sessionContext = ctx;
 		if (event.reason !== "reload") {
 			runtime.clearTimings();
 			nestedSummaries.clear();
@@ -715,33 +745,21 @@ export default function compactTools(pi: ExtensionAPI): void {
 		if (typeof ctx.isIdle === "function") runtime.setBusy(!ctx.isIdle());
 		const trusted = ctx.isProjectTrusted();
 		(globalThis as TrustSlot)[TRUST_KEY] = { cwd: realDirectory(ctx.cwd), trusted };
-		configure(pi, ctx.cwd, trusted);
+		configure(pi, ctx.cwd, trusted, failures);
 		sessionReady = true;
-		unbindRenderer(renderContext);
-		renderContext = undefined;
-		// Even off must reconcile rows built before trusted config was available.
-		if (ctx.mode === "tui") bindRenderer(ctx);
 		if (ctx.mode === "tui" && runtime.config.style !== "off") {
-			renderContext = ctx;
-			// First, so its input listener sees relayout keys before the thinking controller consumes them.
-			viewport.bind(ctx);
-			progress.bind(ctx);
-			thinkingCycle.bind(ctx);
-			silent.bind(ctx, runtime.config.mode, event.reason === "reload");
-			groups.bind(ctx);
+			enableUI(ctx, event.reason === "reload", false, failures);
 			if (!silent.isEnabled()) showReleaseNotice(ctx);
 			if ((runtime.config.custom_tools.enabled || runtime.config.tools.length > 0) && !customRowsAvailable && !customRowsWarned) {
 				customRowsWarned = true;
 				ctx.ui.notify("Compact tool rendering is unavailable in this version of Pi", "warning");
 			}
-		} else {
-			if (ctx.mode === "tui") unbindRenderer(ctx);
-			viewport.dispose();
-			progress.dispose();
-			thinkingCycle.dispose();
-			silent.dispose();
-			groups.dispose();
+		} else if (ctx.mode === "tui") {
+			// Startup-off also reconciles rows built using provisional/trusted config,
+			// but never attaches animation or the compact controllers.
+			transcript.reconcileOnce(ctx, failures);
 		}
+		reportFailures(ctx, failures);
 	});
 	// /tree changes the branch without session_start. Fill sibling-branch records
 	// before Pi rebuilds its transcript, while retaining richer same-process deltas.
@@ -761,7 +779,6 @@ export default function compactTools(pi: ExtensionAPI): void {
 	});
 	pi.on("tool_execution_start", (event) => {
 		if (madeByTool(event)) {
-			runtime.noteNestedCall(event.toolCallId, true);
 			nestedSummaries.note(event, false);
 			return;
 		}
@@ -771,7 +788,6 @@ export default function compactTools(pi: ExtensionAPI): void {
 	});
 	pi.on("tool_execution_end", (event) => {
 		if (madeByTool(event)) {
-			runtime.noteNestedCall(event.toolCallId, false);
 			if (nestedSummaries.note(event, true)) runtime.repaint();
 			return;
 		}
@@ -779,14 +795,10 @@ export default function compactTools(pi: ExtensionAPI): void {
 		runtime.noteExecutionEnd(event.toolCallId, (event as { durationMs?: number }).durationMs);
 	});
 	pi.on("session_shutdown", (event) => {
-		thinkingCycle.dispose();
-		progress.dispose();
-		silent.dispose();
-		groups.dispose();
-		viewport.dispose();
-		unbindRenderer(renderContext);
-		renderContext = undefined;
-		runtime.reset(event.reason !== "reload");
+		const failures: UIFailure[] = [];
+		detachUI({ clearTimings: event.reason !== "reload" }, failures);
+		reportFailures(sessionContext, failures);
+		sessionContext = undefined;
 		if (event.reason !== "reload") nestedSummaries.clear();
 		// A reload that keeps the extension sets it again before Pi rebuilds the transcript.
 		if (legacyResolver) clearRowResolver(legacyResolver);
