@@ -687,7 +687,8 @@ export default function compactTools(pi: ExtensionAPI): void {
 	sessionReady = false;
 	publicOwners = new WeakMap();
 	publicBases = new WeakMap();
-	const thinkingCycle = new ThinkingCycleController(pi, () => runtime.config.style !== "off");
+	const thinkingCycle = new ThinkingCycleController(pi, () => runtime.config.style !== "off",
+		() => foldToggles() ? runtime.config.toggle : undefined);
 	const progress = new ProgressController(pi);
 	const viewport = new ViewportKeeper();
 	const silent = new SilentModeController(pi, showReleaseNotice);

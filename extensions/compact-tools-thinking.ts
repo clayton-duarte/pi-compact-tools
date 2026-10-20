@@ -1,5 +1,5 @@
 /*
- * fold: "toggle" (hs-d488), thinking block. NOT YET IMPLEMENTED; see README.md "Fold toggle".
+ * fold: "toggle" (hs-d488), thinking block; see README.md "Fold toggle".
  *
  * renderThinkingSections with fold "toggle" (the three views map as follows):
  *   hidden   unchanged: "Thinking...", no toggle row.
@@ -23,6 +23,7 @@ import {
 	wrapTextWithAnsi,
 } from "@earendil-works/pi-tui";
 import { chromePainter } from "./compact-tools-palette.ts";
+import type { ToggleGlyphs } from "./compact-tools-types.ts";
 
 export type ThinkingView = "summary" | "detail" | "hidden";
 export type ThinkingPhase = "summary" | "detail" | "summary-after-detail" | "hidden";
@@ -32,6 +33,8 @@ type ThinkingRenderOptions = {
 	styleDetailPrefix?: (prefix: string) => string;
 	controls?: string | ((hasDetail: boolean) => string | undefined);
 	styleControlPrefix?: (prefix: string) => string;
+	/** fold: "toggle": the glyphs of the toggle row that replaces the "└ " control row. */
+	toggle?: ToggleGlyphs;
 };
 
 const NEXT_PHASE: Record<ThinkingPhase, ThinkingPhase> = {
@@ -156,6 +159,20 @@ export function hasThinkingDetail(markdown: string): boolean {
 	return sectionsHaveDetail(splitThinkingSections(markdown));
 }
 
+/** `╰<glyph> <label>`, then ` · <hint>` when there is a hint. */
+function toggleRow(
+	style: (text: string) => string,
+	glyph: string,
+	label: string,
+	hint: string | undefined,
+	availableWidth: number,
+): string[] {
+	const text = style(` ${label}`) + (hint ? style(" · ") + hint : "");
+	return wrapTextWithAnsi(text, Math.max(1, availableWidth - 2)).map(
+		(line, index) => `${index === 0 ? style(`╰${glyph}`) : "  "}${line}`,
+	);
+}
+
 function renderThinkingSections(
 	sections: readonly ThinkingSection[],
 	view: ThinkingView,
@@ -176,7 +193,13 @@ function renderThinkingSections(
 			const sectionControls = view === "detail"
 				? typeof controls === "function" ? controls(detail.length > 0) : controls
 				: undefined;
-			const controlLines = sectionControls
+			const { toggle } = options;
+			// fold: "toggle": summary is folded, detail is expanded; only a section with detail has a toggle.
+			const controlLines = toggle
+				? detail.length === 0 ? [] : view === "detail"
+					? toggleRow(styleControlPrefix, toggle.collapse, "collapse", sectionControls, availableWidth)
+					: toggleRow(styleControlPrefix, toggle.expand, "expand", undefined, availableWidth)
+				: sectionControls
 				? wrapTextWithAnsi(sectionControls, Math.max(1, availableWidth - 2)).map(
 						(line, index) => `${index === 0 ? styleControlPrefix("└ ") : "  "}${line}`,
 					)
@@ -221,7 +244,7 @@ export class ThinkingCycleController {
 	private hasToggleableThinking = false;
 	private refreshThinking: (() => void) | undefined;
 
-	constructor(pi: ExtensionAPI, enabled: () => boolean = () => true) {
+	constructor(pi: ExtensionAPI, enabled: () => boolean = () => true, toggle: () => ToggleGlyphs | undefined = () => undefined) {
 		pi.registerMarkdownTransformer((markdown, context) => {
 			// Off also applies before session_start, during transcript reconstruction
 			// and HTML exports. Do not summarize or restyle native thinking there.
@@ -251,6 +274,7 @@ export class ThinkingCycleController {
 						: undefined
 					: undefined,
 				styleControlPrefix: rail,
+				toggle: toggle(),
 			});
 		});
 	}
