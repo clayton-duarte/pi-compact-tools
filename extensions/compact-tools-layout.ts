@@ -1,3 +1,11 @@
+/*
+ * fold: "toggle" (hs-d488), head half. NOT YET IMPLEMENTED; see README.md "Fold toggle".
+ *
+ * renderToolCall: with fold "toggle" the first line's prefix is "╭" (chrome-painted) instead of
+ * " "; today's " " stays under fold "status". Continuation lines keep " │ ". The head is "╭" for
+ * every tool row: read, write, edit, bash, powershell, grep, find, ls, custom tools (including
+ * MCP and codemode), in every state (running, done, failed, folded, expanded).
+ */
 import { highlightCode, type Theme } from "@earendil-works/pi-coding-agent";
 import type { Component } from "@earendil-works/pi-tui";
 import {

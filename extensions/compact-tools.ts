@@ -1,3 +1,19 @@
+/*
+ * fold: "toggle" (hs-d488), closing row. NOT YET IMPLEMENTED; see README.md "Fold toggle".
+ *
+ * renderControls (the closing row), with fold "toggle", compact style:
+ *   running           unchanged: " └ " + the running timer ("Running" or the elapsed time).
+ *   has a result      " ╰" + glyph + " " + label, then " · " + metadata when there is any.
+ *                     glyph/label: toggle.expand + " expand" while folded,
+ *                                  toggle.collapse + " collapse" while expanded.
+ *                     metadata is today's text, unchanged: "Done in 0.3s", "Done in 0.3s (12 lines)",
+ *                     "Done in 0.3s (+3 -1)" for an edit, "Failed in 0.3s · <reason>", plus the
+ *                     nested summary after another " · ". With no duration and no summary there is
+ *                     no metadata and no " · ": the row is just " ╰▸ expand".
+ *   Toggle and " · " are chrome-painted; the label follows the same painter as the toggle.
+ * The row is drawn whether folded or expanded; the body lines between head and closing row keep
+ * the " │ " rail. A folded row shows head and closing row only.
+ */
 import { realpathSync } from "node:fs";
 import type {
 	AgentToolResult,

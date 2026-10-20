@@ -89,12 +89,50 @@ Optional: `~/.pi/agent/compact-tools.json` or `<project>/.pi/compact-tools.json`
   "style": "compact",
   "mode": "normal",
   "previewLines": 10,
+  "fold": "status",
+  "toggle": { "expand": "▸", "collapse": "▾" },
   "auto_compact": { "read": true, "write": true, "edit": false, "bash": true },
   "custom_tools": { "enabled": true, "auto_compact": true, "exclude": [] }
 }
 ```
 
 `auto_compact` entries set to `true` start Compact rows collapsed. Add tool names to `custom_tools.exclude` to keep their own rendering. All options are described in the linked schema.
+
+`fold` (`"status"` by default) and `toggle` (`{ "expand": "▸", "collapse": "▾" }`) are described in [Fold toggle](#fold-toggle).
+
+## Fold toggle
+
+Fork option, off by default; without it the rows are upstream's. `"fold": "toggle"` draws every compact row in one fold language. It only acts with `style: "compact"`. `toggle.expand` and `toggle.collapse` are the glyphs (below written `▸`/`▾`); the defaults are plain so a terminal without a Nerd Font works. See [examples/compact-tools-fold-toggle.json](examples/compact-tools-fold-toggle.json), which uses the Nerd Font glyphs U+F004B and U+F0063.
+
+JSON: write the glyphs as literal characters or as escapes; pi's loader is `JSON.parse`, which accepts both. Those code points are outside the BMP, so the escapes are surrogate pairs: U+F004B is `"\uDB80\uDC4B"`, U+F0063 is `"\uDB80\uDC63"`.
+
+Applies to read, write, edit, bash, powershell, grep, find, ls and every custom tool (MCP and codemode included).
+
+**Head.** The first line starts with `╭` where it now starts with a space. Continuation lines keep ` │ `.
+
+**Closing row.** Once the call has a result:
+
+| State | Closing row |
+| --- | --- |
+| folded, with metadata | ` ╰▸ expand · Done in 0.3s (12 lines)` |
+| expanded, with metadata | ` ╰▾ collapse · Done in 0.3s (12 lines)` |
+| folded / expanded, no metadata | ` ╰▸ expand` / ` ╰▾ collapse` (no ` · `) |
+| failed | ` ╰▸ expand · Failed in 0.3s` (expanded: `collapse`) |
+| failed with a reason | ` ╰▸ expand · Failed in 0.3s · <reason>` |
+| edit | ` ╰▸ expand · Done in 0.3s (+3 -1)` |
+| nested summary | the metadata, then ` · <summary>` |
+| running | unchanged: ` └ ` and the timer; no toggle yet |
+
+The metadata is exactly today's closing-row text; only its prefix changes. Folded shows head and closing row; expanded also shows the ` │ ` body lines between them.
+
+**Thinking block.** The three views map as: hidden is unchanged (`Thinking...`, no toggle row); summary is folded; detail is expanded.
+
+| View | Each section with detail | Section without detail |
+| --- | --- | --- |
+| summary (folded) | title, then `╰▸ expand` | title only |
+| detail (expanded) | title, `│` detail lines, then `╰▾ collapse · ctrl+t toggle • click to hide` | title only |
+
+This replaces the `└ ctrl+t toggle • click to hide` row; the hint now follows the ` · `.
 
 ## Development
 

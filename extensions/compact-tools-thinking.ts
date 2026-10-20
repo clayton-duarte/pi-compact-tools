@@ -1,3 +1,16 @@
+/*
+ * fold: "toggle" (hs-d488), thinking block. NOT YET IMPLEMENTED; see README.md "Fold toggle".
+ *
+ * renderThinkingSections with fold "toggle" (the three views map as follows):
+ *   hidden   unchanged: "Thinking...", no toggle row.
+ *   summary  = folded. Each section prints its title, then, only when the section has detail,
+ *            the row "╰" + toggle.expand + " expand" (chrome rail, same painter as the tool rows).
+ *            A section without detail has nothing to expand and no toggle row.
+ *   detail   = expanded. Title, the "│" detail lines as today, then for a section with detail
+ *            "╰" + toggle.collapse + " collapse · ctrl+t toggle • click to hide" (the hint after
+ *            " · ", dim, as today). A section without detail has no toggle row.
+ * Replaces today's "└ ctrl+t toggle • click to hide" control row; the "└ " prefix is not used.
+ */
 import { getAgentDir, type ExtensionAPI, type ExtensionContext, type Theme } from "@earendil-works/pi-coding-agent";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

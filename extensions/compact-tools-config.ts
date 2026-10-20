@@ -1,3 +1,17 @@
+/*
+ * fold: "toggle" (hs-d488), config half. Documented here and in README.md; NOT YET IMPLEMENTED.
+ *
+ * Two new keys, both optional; the fork without them behaves as upstream:
+ *   fold:   "status" | "toggle"                 default "status"
+ *   toggle: { expand: string, collapse: string } default { expand: "▸", collapse: "▾" }
+ * mergeConfig parses `fold` with parseChoice (an unknown value warns and keeps the previous one)
+ * and `toggle` field by field: each glyph must be a non-empty string without control characters
+ * or newlines, otherwise warn and keep the previous glyph. Project settings override global ones
+ * field by field, like every other key. The merged config gains `fold` and `toggle`.
+ * Glyphs may be literal code points or JSON escapes: JSON.parse (readJson) accepts both;
+ * U+F004B is "\uDB80\uDC4B" and U+F0063 is "\uDB80\uDC63" (surrogate pairs).
+ * `fold` only acts when style is "compact"; claude, codex and off ignore it.
+ */
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { CONFIG_DIR_NAME, getAgentDir } from "@earendil-works/pi-coding-agent";
