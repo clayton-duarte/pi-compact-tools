@@ -1,0 +1,3 @@
+# worktrunk hooks, read by cpd (Plan pi-pin, hs-d488): the fork's quick check and its Gate.
+pre-commit = "npx tsc --noEmit"
+pre-merge = "npm ci && npm run check"
