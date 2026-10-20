@@ -288,6 +288,7 @@ test("thinking, folded (summary): the title, then ╰<glyph> expand", async () =
 test("thinking, expanded (detail): │ lines, then ╰<glyph> collapse · with the ctrl+t hint after the ·", async () => {
 	const block = await thinking({ ...TOGGLE, toggle: NERD });
 	try {
+		block.draw(); // the controller learns the block has detail on its first draw, as in Pi
 		block.press();
 		assert.deepEqual(block.draw().map((line) => line.trimEnd()), [
 			"Check the implementation",
