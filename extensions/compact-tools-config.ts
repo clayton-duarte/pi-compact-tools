@@ -1,5 +1,5 @@
 /*
- * fold: "toggle" (hs-d488), config half. Documented here and in README.md; NOT YET IMPLEMENTED.
+ * fold: "toggle" (hs-d488), config half. Documented here and in README.md.
  *
  * Two new keys, both optional; the fork without them behaves as upstream:
  *   fold:   "status" | "toggle"                 default "status"
@@ -18,11 +18,14 @@ import { CONFIG_DIR_NAME, getAgentDir } from "@earendil-works/pi-coding-agent";
 import {
 	DISPLAY_MODES,
 	DISPLAY_STYLES,
+	FOLD_STYLES,
 	SUPPORTED_TOOL_SET,
 	type CompactToolName,
 	type CompactToolsConfig,
 	type DisplayMode,
 	type DisplayStyle,
+	type FoldStyle,
+	type ToggleGlyphs,
 } from "./compact-tools-types.ts";
 
 const CONFIG_FILE = "compact-tools.json";
@@ -33,6 +36,8 @@ export const DEFAULT_CONFIG: CompactToolsConfig = {
 	style: "compact",
 	tools: ["read", "write", "edit", "bash"],
 	previewLines: 10,
+	fold: "status",
+	toggle: { expand: "▸", collapse: "▾" },
 	auto_compact: {
 		read: true,
 		write: true,
@@ -66,6 +71,23 @@ function parseChoice<T extends string>(value: unknown, choices: readonly T[], ke
 	if ((choices as readonly unknown[]).includes(value)) return value as T;
 	warn(path, `${key} must be one of ${choices.join(", ")}; using previous value`);
 	return undefined;
+}
+
+function parseToggle(base: ToggleGlyphs, value: unknown, path: string): ToggleGlyphs {
+	if (value === undefined) return base;
+	if (!isObject(value)) {
+		warn(path, "toggle must be an object; using previous values");
+		return base;
+	}
+	const result = { ...base };
+	for (const key of ["expand", "collapse"] as const) {
+		if (value[key] === undefined) continue;
+		const glyph = value[key];
+		// eslint-disable-next-line no-control-regex
+		if (typeof glyph === "string" && glyph !== "" && !/[\u0000-\u001f\u007f-\u009f]/u.test(glyph)) result[key] = glyph;
+		else warn(path, `toggle.${key} must be a non-empty string without control characters; using previous value`);
+	}
+	return result;
 }
 
 function parseTools(value: unknown, path: string): CompactToolName[] | undefined {
@@ -140,6 +162,8 @@ export function mergeConfig(base: CompactToolsConfig, value: unknown, path: stri
 	}
 	const mode = value.mode === undefined ? base.mode : (parseChoice<DisplayMode>(value.mode, DISPLAY_MODES, "mode", path) ?? base.mode);
 	const style = value.style === undefined ? base.style : (parseChoice<DisplayStyle>(value.style, DISPLAY_STYLES, "style", path) ?? base.style);
+	const fold = value.fold === undefined ? base.fold : (parseChoice<FoldStyle>(value.fold, FOLD_STYLES, "fold", path) ?? base.fold);
+	const toggle = parseToggle(base.toggle, value.toggle, path);
 	const tools = value.tools === undefined ? base.tools : (parseTools(value.tools, path) ?? base.tools);
 	const auto_compact = parseAutoCompact(base.auto_compact, value.auto_compact, path);
 	const custom_tools = parseCustomTools(base.custom_tools, value.custom_tools, path);
@@ -148,7 +172,7 @@ export function mergeConfig(base: CompactToolsConfig, value: unknown, path: stri
 	if (value.previewLines !== undefined && !isIntegerInRange(value.previewLines, 1, 100)) {
 		warn(path, "previewLines must be 1–100; using previous value");
 	}
-	return { mode, style, tools, auto_compact, custom_tools, previewLines };
+	return { mode, style, tools, auto_compact, custom_tools, previewLines, fold, toggle };
 }
 
 function readJson(path: string): unknown {

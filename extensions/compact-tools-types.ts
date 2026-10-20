@@ -13,6 +13,14 @@ export type DisplayMode = (typeof DISPLAY_MODES)[number];
 /** How tool rows are drawn: compactly, the way Claude Code or Codex draws them, or by Pi itself. */
 export const DISPLAY_STYLES = ["compact", "claude", "codex", "off"] as const;
 export type DisplayStyle = (typeof DISPLAY_STYLES)[number];
+/** Fork option (hs-d488): "toggle" draws compact rows in one fold language; "status" is upstream's. */
+export const FOLD_STYLES = ["status", "toggle"] as const;
+export type FoldStyle = (typeof FOLD_STYLES)[number];
+
+export interface ToggleGlyphs {
+	expand: string;
+	collapse: string;
+}
 
 export interface CustomToolsConfig {
 	/** Render tools registered by other extensions compactly as well. */
@@ -29,6 +37,8 @@ export interface CompactToolsConfig {
 	auto_compact: Record<CompactToolName, boolean> & { [tool: string]: boolean | undefined };
 	custom_tools: CustomToolsConfig;
 	previewLines: number;
+	fold: FoldStyle;
+	toggle: ToggleGlyphs;
 }
 
 export interface RowState {

@@ -1,5 +1,5 @@
 /*
- * fold: "toggle" (hs-d488), head half. NOT YET IMPLEMENTED; see README.md "Fold toggle".
+ * fold: "toggle" (hs-d488), head half; see README.md "Fold toggle".
  *
  * renderToolCall: with fold "toggle" the first line's prefix is "╭" (chrome-painted) instead of
  * " "; today's " " stays under fold "status". Continuation lines keep " │ ". The head is "╭" for
@@ -285,9 +285,9 @@ export function renderToolCall(
 	details: string | undefined,
 	theme: Theme,
 	continuationPrefix = paintChrome(theme, " │ "),
+	firstPrefix = " ",
 ): Component {
 	const text = details ? `${title} ${details}` : title;
-	const firstPrefix = " ";
 	const prefixWidth = visibleWidth(continuationPrefix);
 	return new CachedComponent((width) => {
 		const lines = hardWrapTextWithAnsi(text, width - prefixWidth);
