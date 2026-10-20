@@ -1,3 +1,19 @@
+/*
+ * fold: "toggle" (hs-d488), closing row; see README.md "Fold toggle".
+ *
+ * renderControls (the closing row), with fold "toggle", compact style:
+ *   running           unchanged: " └ " + the running timer ("Running" or the elapsed time).
+ *   has a result      " ╰" + glyph + " " + label, then " · " + metadata when there is any.
+ *                     glyph/label: toggle.expand + " expand" while folded,
+ *                                  toggle.collapse + " collapse" while expanded.
+ *                     metadata is today's text, unchanged: "Done in 0.3s", "Done in 0.3s (12 lines)",
+ *                     "Done in 0.3s (+3 -1)" for an edit, "Failed in 0.3s · <reason>", plus the
+ *                     nested summary after another " · ". With no duration and no summary there is
+ *                     no metadata and no " · ": the row is just " ╰▸ expand".
+ *   Toggle and " · " are chrome-painted; the label follows the same painter as the toggle.
+ * The row is drawn whether folded or expanded; the body lines between head and closing row keep
+ * the " │ " rail. A folded row shows head and closing row only.
+ */
 import { realpathSync } from "node:fs";
 import type {
 	AgentToolResult,
@@ -52,7 +68,7 @@ import { CODEX_BULLET, CODEX_INDENT } from "./compact-tools-codex.ts";
 import { NestedCallSummaries } from "./compact-tools-nested.ts";
 import { renderCodexCall, renderCodexResult } from "./compact-tools-codex-rows.ts";
 import { ToolGroupController } from "./compact-tools-grouping.ts";
-import { chromePainter, completionPainter, paintIndicator } from "./compact-tools-palette.ts";
+import { chromePainter, completionPainter, paintChrome, paintIndicator } from "./compact-tools-palette.ts";
 import { ProgressController } from "./compact-tools-progress.ts";
 import { showReleaseNotice } from "./compact-tools-release.ts";
 import { ToolRuntime } from "./compact-tools-runtime.ts";
@@ -102,6 +118,11 @@ function rowKind(name: string): RowKind {
 
 function isClaude(): boolean {
 	return runtime.config.style === "claude";
+}
+
+/** fork option fold: "toggle"; only the compact style draws it. */
+function foldToggles(): boolean {
+	return runtime.config.fold === "toggle" && runtime.config.style === "compact";
 }
 
 function isCodex(): boolean {
@@ -203,6 +224,13 @@ function renderControls(
 	// A failed call produced no result worth counting; "(0 lines)" would only mislead.
 	else if (state.resultLineSummary && !running && !isError) details += metadata(` (${state.resultLineSummary})`);
 	if (nestedSummary && !running) details += chrome(" · ") + nestedSummary;
+	if (!running && foldToggles() && prefix === " └ ") {
+		// fold: "toggle": the closing row is the toggle, and today's text becomes its metadata.
+		const { expand, collapse } = runtime.config.toggle;
+		const label = state.expanded ? " collapse" : " expand";
+		const bare = !isError && !duration && !nestedSummary && !state.resultLineSummary && !changes;
+		return prefixedSentence(chrome(label) + (bare ? "" : chrome(" · ") + details), chrome(` ╰${state.expanded ? collapse : expand}`), "   ", true);
+	}
 	return nestedSummary ? prefixedSentence(details, chrome(prefix), indent, true) : prefixedText(details, chrome(prefix), indent);
 }
 
@@ -249,7 +277,7 @@ function renderRowCallContent(name: string, args: ToolArgs, theme: Theme, ctx: R
 		const summary = kind === "file" ? getCallDetails(name, args) : summarizeCustomArguments(args);
 		details = summary ? styleMultiline(summary, (line) => theme.fg("toolOutput", line)) : undefined;
 	}
-	const container = new LiveCallContainer(indicator, (dot) => renderToolCall(dot + title, details, theme));
+	const container = new LiveCallContainer(indicator, (dot) => renderToolCall(dot + title, details, theme, undefined, foldToggles() ? paintChrome(theme, "╭") : undefined));
 	const extra = kind === "file" ? getArgumentDetails(name, args) : kind === "custom" && state.expanded ? args : {};
 	if (Object.keys(extra).length > 0) container.addChild(renderArguments(extra, theme));
 	return new WithinWidth(container);
@@ -659,7 +687,8 @@ export default function compactTools(pi: ExtensionAPI): void {
 	sessionReady = false;
 	publicOwners = new WeakMap();
 	publicBases = new WeakMap();
-	const thinkingCycle = new ThinkingCycleController(pi, () => runtime.config.style !== "off");
+	const thinkingCycle = new ThinkingCycleController(pi, () => runtime.config.style !== "off",
+		() => foldToggles() ? runtime.config.toggle : undefined);
 	const progress = new ProgressController(pi);
 	const viewport = new ViewportKeeper();
 	const silent = new SilentModeController(pi, showReleaseNotice);

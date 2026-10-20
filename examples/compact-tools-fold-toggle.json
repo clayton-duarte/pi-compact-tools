@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nedleeds/pi-compact-tools/main/schemas/compact-tools.schema.json",
+  "style": "compact",
+  "fold": "toggle",
+  "toggle": {
+    "expand": "\uDB80\uDC4B",
+    "collapse": "\uDB80\uDC63"
+  },
+  "tools": ["read", "write", "edit", "bash", "grep", "find", "ls"]
+}

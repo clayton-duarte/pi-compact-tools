@@ -20,6 +20,32 @@
       "enum": ["normal", "silent"],
       "default": "normal"
     },
+    "fold": {
+      "description": "How a compact row shows that it folds. status keeps the row as it is. toggle draws the one fold language: the head starts with ╭, and once the call has a result the closing row is ╰<glyph> expand (folded) or ╰<glyph> collapse (expanded), followed by ' · ' and the row's metadata (Done in 0.3s (12 lines)). While the call runs, the timer row is unchanged. The thinking block gets the same toggle row. Only acts when style is compact.",
+      "type": "string",
+      "enum": ["status", "toggle"],
+      "default": "status"
+    },
+    "toggle": {
+      "description": "Glyphs for fold: toggle. Plain defaults work without a Nerd Font; set Nerd Font glyphs if you have one.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "expand": {
+          "description": "Glyph before 'expand' on a folded row.",
+          "type": "string",
+          "minLength": 1,
+          "default": "▸"
+        },
+        "collapse": {
+          "description": "Glyph before 'collapse' on an expanded row.",
+          "type": "string",
+          "minLength": 1,
+          "default": "▾"
+        }
+      },
+      "default": { "expand": "▸", "collapse": "▾" }
+    },
     "tools": {
       "description": "Built-in tools that use compact rendering. Omitted tools keep Pi's default renderer.",
       "type": "array",
